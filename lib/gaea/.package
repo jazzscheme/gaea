@@ -12,6 +12,7 @@
                             script.syntax)
                     (dependencies jazz))
             (gaea (title "Gaea")
+                  (test gaea.validate.run)
                   (update gaea.dye
                           gaea.geometry
                           gaea.geometry.base
