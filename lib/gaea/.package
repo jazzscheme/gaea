@@ -1,0 +1,30 @@
+(package gaea
+  
+  (title "Gaea")
+  (description "Gaea Game engine")
+  (authors "Guillaume Cartier" "Alain Marcotte" "Edouard Hebert")
+  (stage alpha)
+  (root "src")
+  (install gaea.install)
+  (products (script (title "Script")
+                    (update script
+                            script.expand
+                            script.syntax)
+                    (dependencies jazz))
+            (gaea (title "Gaea")
+                  (update gaea.dye
+                          gaea.geometry
+                          gaea.geometry.base
+                          gaea.geometry.classes
+                          gaea.geometry.syntax
+                          gaea.homogeneous
+                          gaea.install
+                          gaea.literals
+                          gaea.lookat
+                          gaea.math
+                          gaea.movement
+                          gaea.parallelepiped
+                          gaea.plane
+                          gaea.types)
+                   (dependencies jazz)))
+  (project ".project"))

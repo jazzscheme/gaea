@@ -1,0 +1,166 @@
+;;;==============
+;;;  GaeaScheme
+;;;==============
+;;;
+;;;; Homogeneous Vectors
+;;;
+;;;  The contents of this file are subject to the Mozilla Public License Version
+;;;  1.1 (the "License"); you may not use this file except in compliance with
+;;;  the License. You may obtain a copy of the License at
+;;;  http://www.mozilla.org/MPL/
+;;;
+;;;  Software distributed under the License is distributed on an "AS IS" basis,
+;;;  WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
+;;;  for the specific language governing rights and limitations under the
+;;;  License.
+;;;
+;;;  The Original Code is JazzScheme.
+;;;
+;;;  The Initial Developer of the Original Code is Guillaume Cartier.
+;;;  Portions created by the Initial Developer are Copyright (C) 1996-2021
+;;;  the Initial Developer. All Rights Reserved.
+;;;
+;;;  Contributor(s):
+;;;
+;;;  Alternatively, the contents of this file may be used under the terms of
+;;;  the GNU General Public License Version 2 or later (the "GPL"), in which
+;;;  case the provisions of the GPL are applicable instead of those above. If
+;;;  you wish to allow use of your version of this file only under the terms of
+;;;  the GPL, and not to allow others to use your version of this file under the
+;;;  terms of the MPL, indicate your decision by deleting the provisions above
+;;;  and replace them with the notice and other provisions required by the GPL.
+;;;  If you do not delete the provisions above, a recipient may use your version
+;;;  of this file under the terms of any one of the MPL or the GPL.
+;;;
+;;;  See www.jazzscheme.org for details.
+
+
+(module gaea.homogeneous jazz
+
+
+(proclaim (warn optimizations))
+
+(declare (optimize-dead-local-variables))
+
+
+;;;
+;;;; FX
+;;;
+
+
+(definition public inline (fx val <fx>) <s32>
+  (s32vector val))
+
+
+(definition public inline (make-fx) <s32>
+  (s32vector 0))
+
+
+(definition public inline (fx-ref fx <s32>) <fx>
+  (s32vector-ref fx 0))
+
+
+(definition public inline (fx-set! fx <s32> val <fx>) <void>
+  (s32vector-set! fx 0 val))
+
+
+(definition public inline (fx! fx <s32> val <fx>) <s32>
+  (fx-set! fx val)
+  fx)
+
+
+(definition public inline (fx-copy! dst <s32> src <s32>) <s32>
+  (fx-set! dst (fx-ref src))
+  dst)
+
+
+;;;
+;;;; FL
+;;;
+
+
+(definition public inline (fl! fl <fl> val <fl>) <fl>
+  (flset! fl 0 val)
+  fl)
+
+
+(definition public inline (flo fl <fl>) <fl>
+  (fl! (flalloc) fl))
+
+
+(definition public inline (make-fl) <fl>
+  (fl! (flalloc) 0.))
+
+
+;;;
+;;;; F32
+;;;
+
+
+(definition public inline (f32 fl <fl>) <f32>
+  (f32vector fl))
+
+
+(definition public inline (make-f32) <f32>
+  (f32vector 0.))
+
+
+(definition public inline (f32-ref f32 <f32>) <fl>
+  (f32vector-ref f32 0))
+
+
+(definition public inline (f32-set! f32 <f32> val <fl>) <void>
+  (f32vector-set! f32 0 val))
+
+
+(definition public inline (f32! f32 <f32> fl <fl>) <f32>
+  (f32-set! f32 fl)
+  f32)
+
+
+(definition public inline (f32-copy! dst <f32> src <f32>) <f32>
+  (f32-set! dst (f32-ref src))
+  dst)
+
+
+;;;
+;;;; F64
+;;;
+
+
+(definition public inline (f64 fl <fl>) <f64>
+  (f64vector fl))
+
+
+(definition public inline (make-f64) <f64>
+  (f64vector 0.))
+
+
+(definition public inline (f64-ref f64 <f64>) <fl>
+  (flref f64 0))
+
+
+(definition public inline (f64-set! f64 <f64> val <fv>) <void>
+  (flset! f64 0 val))
+
+
+(definition public inline (f64! f64 <f64> fv <fv>) <f64>
+  (f64-set! f64 fv)
+  f64)
+
+
+(definition public inline (f64-copy! dst <f64> src <f64>) <f64>
+  (f64-set! dst (f64-ref src))
+  dst)
+
+
+;;;
+;;;; Box
+;;;
+
+;; move to its own module at some point
+
+
+(definition public inline (box! box <object> val <object>) <object>
+  (set-box! box val)
+  box))

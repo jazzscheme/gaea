@@ -1,0 +1,169 @@
+;;;==============
+;;;  GaeaScheme
+;;;==============
+;;;
+;;;; Planes
+;;;
+;;;  The contents of this file are subject to the Mozilla Public License Version
+;;;  1.1 (the "License"); you may not use this file except in compliance with
+;;;  the License. You may obtain a copy of the License at
+;;;  http://www.mozilla.org/MPL/
+;;;
+;;;  Software distributed under the License is distributed on an "AS IS" basis,
+;;;  WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
+;;;  for the specific language governing rights and limitations under the
+;;;  License.
+;;;
+;;;  The Original Code is JazzScheme.
+;;;
+;;;  The Initial Developer of the Original Code is Guillaume Cartier.
+;;;  Portions created by the Initial Developer are Copyright (C) 1996-2021
+;;;  the Initial Developer. All Rights Reserved.
+;;;
+;;;  Contributor(s):
+;;;    Alain Marcotte
+;;;
+;;;  Alternatively, the contents of this file may be used under the terms of
+;;;  the GNU General Public License Version 2 or later (the "GPL"), in which
+;;;  case the provisions of the GPL are applicable instead of those above. If
+;;;  you wish to allow use of your version of this file only under the terms of
+;;;  the GPL, and not to allow others to use your version of this file under the
+;;;  terms of the MPL, indicate your decision by deleting the provisions above
+;;;  and replace them with the notice and other provisions required by the GPL.
+;;;  If you do not delete the provisions above, a recipient may use your version
+;;;  of this file under the terms of any one of the MPL or the GPL.
+;;;
+;;;  See www.jazzscheme.org for details.
+
+
+(module gaea.plane jazz
+
+
+(import (gaea.geometry.base)
+        (gaea.geometry.classes))
+
+
+(proclaim (not check bounds)
+          (warn optimizations))
+
+(declare (optimize-dead-local-variables))
+
+
+;;;
+;;;; Plane
+;;;
+
+
+(proclaim (not warn optimizations))
+
+
+(class Plane-Class extends (:class Object)
+  
+  
+  (method override (marshall-object self object)
+    (serialize-object (class-of object)
+                      (vector (serialize (get-origin object))
+                              (serialize (get-normal object)))))
+  
+  
+  (method override (unmarshall-object self content)
+    (bind-vector (origin normal) content
+      (allocate self
+                (deserialize origin)
+                (deserialize normal)))))
+
+
+(proclaim (warn optimizations))
+
+
+(class Plane metaclass Plane-Class extends Object
+  
+  
+  (slot origin <vertex> initialize (make-vertex) getter generate)
+  (slot normal <vertex> initialize (make-vertex) getter generate)
+  
+  
+  (method override (initialize self origin normal)
+    (nextmethod self)
+    ;; use finite to validate
+    (cond-expand
+      (finite
+       (validate-vertex-normalized normal))
+      (else))
+    (vertex-copy! self.origin origin)
+    (vertex-copy! self.normal normal))
+  
+  
+  (method override (assemble self origin normal)
+    ;; use finite to validate
+    (cond-expand
+      (finite
+       (validate-vertex-normalized normal))
+      (else))
+    (vertex-copy! self.origin origin)
+    (vertex-copy! self.normal normal))
+  
+  
+  (method override (print self output readably)
+    (print-unreadable self output
+      (lambda (output)
+        (format output "{a} {a}" (present-vertex origin) (present-vertex normal)))))
+  
+  
+  (method public (set-origin self orig)
+    (vertex-copy! origin orig))
+  
+  
+  (method public (set-normal self nrm)
+    (vertex-copy! normal nrm))
+  
+  
+  (method public (set-vector self vec)
+    (vertex-normalize! normal vec)))
+
+
+(definition public (allocate-plane)
+  (allocate Plane
+            (make-vertex)
+            (make-vertex)))
+
+
+;;;
+;;;; Pool
+;;;
+
+
+(constant planes-cardinality <fx>
+  4096)
+
+(definition protected planes-pool <vector>
+  (make-vector planes-cardinality #f))
+
+(definition protected planes-allocated <fx>
+  0)
+
+(definition protected planes-available <fx>
+  0)
+
+
+(definition protected (alloc-plane$) <Plane>
+  (if (= planes-available 0)
+      (assert (< planes-allocated planes-cardinality)
+        (increase! planes-allocated)
+        (allocate-plane))
+    (decrease! planes-available)
+    (let ((plane (vector-ref planes-pool planes-available)))
+      (vector-set! planes-pool planes-available #f)
+      plane)))
+
+
+(definition protected (make-plane$ origin normal) <Plane>
+  (let ((plane (alloc-plane$)))
+    (assemble plane origin normal)
+    plane))
+
+
+(definition protected (free-plane$ plane <Plane>) <void>
+  (assert (< planes-available planes-cardinality))
+  (vector-set! planes-pool planes-available plane)
+  (increase! planes-available)))

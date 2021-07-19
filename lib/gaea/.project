@@ -1,0 +1,35 @@
+;;;==============
+;;;  JazzScheme
+;;;==============
+;;;
+;;;; Project
+;;;
+
+
+(data jazz.ide.data.project
+
+
+(import (jazz.project)
+        (jazz.editor.jazz))
+
+
+(form
+  (<Project>                 name: gaea           description-file: {File :context ".package"}
+    (<Project-Directory>                          directory: {Directory :context "src"}
+      (<Project-Directory>                        directory: {Directory :context "src" "gaea"}
+        (<Project-Directory>                      directory: {Directory :context "src" "gaea" "geometry"}
+          (<Jazz-File>       name: _geometry      source: {File :context "src" "gaea" "geometry" "_geometry.jazz"})
+          (<Jazz-File>       name: classes        source: {File :context "src" "gaea" "geometry" "classes.jazz"})
+          (<Jazz-File>       name: syntax         source: {File :context "src" "gaea" "geometry" "syntax.jazz"})
+          (<Jazz-File>       name: base           source: {File :context "src" "gaea" "geometry" "base.jazz"}))
+        (<Jazz-File>         name: homogeneous    source: {File :context "src" "gaea" "homogeneous.jazz"})
+        (<Jazz-File>         name: lookat         source: {File :context "src" "gaea" "lookat.jazz"})
+        (<Jazz-File>         name: math           source: {File :context "src" "gaea" "math.jazz"})
+        (<Jazz-File>         name: movement       source: {File :context "src" "gaea" "movement.jazz"})
+        (<Jazz-File>         name: parallelepiped source: {File :context "src" "gaea" "parallelepiped.jazz"})
+        (<Jazz-File>         name: plane          source: {File :context "src" "gaea" "plane.jazz"})
+        (<Jazz-File>         name: install        source: {File :context "src" "gaea" "install.jazz"})
+        (<Jazz-File>         name: types          source: {File :context "src" "gaea" "types.jazz"})
+        (<Jazz-File>         name: dye            source: {File :context "src" "gaea" "dye.jazz"})
+        (<Jazz-File>         name: literals       source: {File :context "src" "gaea" "literals.jazz"})
+        (<Jazz-File>         name: syntax         source: {File :context "src" "gaea" "syntax.jazz"}))))))
