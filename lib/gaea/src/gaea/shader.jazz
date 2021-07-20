@@ -1,0 +1,210 @@
+;;;==============
+;;;  GaeaScheme
+;;;==============
+;;;
+;;;; Gaea Shader
+;;;
+;;;  The contents of this file are subject to the Mozilla Public License Version
+;;;  1.1 (the "License"); you may not use this file except in compliance with
+;;;  the License. You may obtain a copy of the License at
+;;;  http://www.mozilla.org/MPL/
+;;;
+;;;  Software distributed under the License is distributed on an "AS IS" basis,
+;;;  WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
+;;;  for the specific language governing rights and limitations under the
+;;;  License.
+;;;
+;;;  The Original Code is JazzScheme.
+;;;
+;;;  The Initial Developer of the Original Code is Guillaume Cartier.
+;;;  Portions created by the Initial Developer are Copyright (C) 1996-2021
+;;;  the Initial Developer. All Rights Reserved.
+;;;
+;;;  Contributor(s):
+;;;
+;;;  Alternatively, the contents of this file may be used under the terms of
+;;;  the GNU General Public License Version 2 or later (the "GPL"), in which
+;;;  case the provisions of the GPL are applicable instead of those above. If
+;;;  you wish to allow use of your version of this file only under the terms of
+;;;  the GPL, and not to allow others to use your version of this file under the
+;;;  terms of the MPL, indicate your decision by deleting the provisions above
+;;;  and replace them with the notice and other provisions required by the GPL.
+;;;  If you do not delete the provisions above, a recipient may use your version
+;;;  of this file under the terms of any one of the MPL or the GPL.
+;;;
+;;;  See www.jazzscheme.org for details.
+
+
+(module gaea.shader jazz
+
+
+(import (jazz.opengl)
+        (jazz.opengl.glew))
+
+
+;;;
+;;;; Shader
+;;;
+
+
+(definition public glsl-version
+  (cond-expand
+    (mac
+     #/C/
+#version 140
+
+//#)
+    (else
+     #/C/
+#version 130
+
+//#)))
+
+
+(class Shader extends Object
+  
+  
+  (slot type     <int>               accessors generate)
+  (slot code           initialize #f accessors generate)
+  (slot shaderid       initialize #f accessors generate)
+  
+  
+  (method override (initialize self type)
+    (set! self.type type))
+  
+  
+  (method public (create-shader self)
+    (set! shaderid (glCreateShader type))
+    (glShaderSource shaderid 1 (list code) #f))
+  
+  
+  (method public (compile-shader self)
+    (glCompileShader shaderid)
+    (when (/= (glGetShaderiv* shaderid GL_COMPILE_STATUS) GL_TRUE)
+      (let ((loglength (glGetShaderiv* shaderid GL_INFO_LOG_LENGTH)))
+        (when (> loglength 0)
+          (error "{a}" (glGetShaderInfoLog* shaderid loglength)))))))
+
+
+;;;
+;;;; Program
+;;;
+
+
+(class Shader-Program extends Object
+  
+  
+  (slot name            <object> getter generate)
+  (slot vertex-shader   <object> accessors generate)
+  (slot fragment-shader <object> accessors generate)
+  (slot program         <object> accessors generate)
+  (slot attributes      <object> getter generate)
+  (slot uniforms        <object> getter generate)
+  
+  
+  (method override (initialize self (name: name #f))
+    (nextmethod self)
+    (set! self.name name)
+    (set! vertex-shader (new Shader GL_VERTEX_SHADER))
+    (set! fragment-shader (new Shader GL_FRAGMENT_SHADER))
+    (set! program (glCreateProgram))
+    (set! attributes (make-table test: equal?))
+    (set! uniforms (make-table test: equal?))
+    (prepare self)
+    (gl-check-error))
+  
+  
+  (method package virtual (prepare self)
+    )
+  
+  
+  (method protected virtual (default-vertex-shader self)
+    )
+  
+  (method protected virtual (default-fragment-shader self)
+    )
+  
+  
+  (method public (set-fs self code)
+    (set-code fragment-shader code))
+  
+  (method public (set-vs self code)
+    (set-code vertex-shader code))
+  
+  
+  (method public (link self)
+    (create-shaders self)
+    (attach-shaders self))
+  
+  
+  (method public (relink self)
+    (detach-shaders self)
+    (set-vs self (default-vertex-shader self))
+    (set-fs self (default-fragment-shader self))
+    (prepare self))
+  
+  
+  (method public (create-shaders self)
+    (create-shader vertex-shader)
+    (create-shader fragment-shader)
+    (compile-shader vertex-shader)
+    (compile-shader fragment-shader))
+  
+  
+  (method public (attach-shaders self)
+    (when (and (get-shaderid vertex-shader)
+               (get-shaderid fragment-shader))
+      (glAttachShader program (get-shaderid vertex-shader))
+      (glAttachShader program (get-shaderid fragment-shader))
+      (glLinkProgram program)
+      (when (/= (glGetProgramiv* program GL_LINK_STATUS) GL_TRUE)
+        (let ((loglength (glGetProgramiv* program GL_INFO_LOG_LENGTH)))
+          (when (> loglength 0)
+            (error "{a}" (glGetProgramInfoLog* program loglength)))))))
+  
+  
+  (method public (detach-shaders self)
+    (when (and (get-shaderid vertex-shader)
+               (get-shaderid fragment-shader))
+      (glDetachShader program (get-shaderid vertex-shader))
+      (glDetachShader program (get-shaderid fragment-shader))
+      (set-shaderid vertex-shader #f)
+      (set-shaderid fragment-shader #f)))
+  
+  
+  (method public (use self)
+    (glUseProgram program))
+  
+  
+  (method public (unuse self)
+    (glUseProgram 0))
+  
+  
+  ;;;
+  ;;;; Uniforms
+  ;;;
+  
+  
+  (method public (get-uniform self name)
+    (table-ref uniforms name))
+  
+  
+  (method public (add-uniform self name)
+    (let ((location (glGetUniformLocation* program name)))
+      (table-set! uniforms name location)
+      location))
+  
+  
+  ;;;
+  ;;;; Attributes
+  ;;;
+  
+  
+  (method public (get-attribute self name)
+    (table-ref attributes name))
+  
+  
+  (method public (add-attribute self name)
+    (let ((location (glGetAttribLocation* program name)))
+      (table-set! attributes name location)
+      location))))

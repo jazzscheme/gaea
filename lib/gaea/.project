@@ -37,4 +37,5 @@
           (<Project-Directory>                      directory: {Directory :context "src" "gaea" "validate" "suite"}
             (<Jazz-File>       name: geometry       source: {File :context "src" "gaea" "validate" "suite" "geometry.jazz"}))
           (<Jazz-File>         name: _validate      source: {File :context "src" "gaea" "validate" "_validate.jazz"})
-          (<Jazz-File>         name: run            source: {File :context "src" "gaea" "validate" "run.jazz"})))))))
+          (<Jazz-File>         name: run            source: {File :context "src" "gaea" "validate" "run.jazz"}))
+        (<Jazz-File>           name: shader         source: {File :context "src" "gaea" "shader.jazz"}))))))
