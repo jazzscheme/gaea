@@ -27,6 +27,7 @@
                           gaea.parallelepiped
                           gaea.plane
                           gaea.shader
+                          gaea.syntax
                           gaea.types)
                    (dependencies jazz)))
   (project ".project"))
