@@ -177,7 +177,7 @@
                 (smooth-vertex n)
                 (smooth-vertex (+ n vertex-floats))
                 (smooth-vertex (+ n (* vertex-floats 2)))))))
-    (let ((mesh (new Mesh material: material)))
+    (let ((mesh (new Vertex-Mesh material: material)))
       (allocate-vertices mesh)
       (set-data (get-vertices-buffer mesh) content (f32vector-length (allege content)) vertex-floats)
       (when neighbors?

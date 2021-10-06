@@ -90,6 +90,8 @@
   
   (method override (enable-attributes self mesh <Mesh>) <void>
     (let ((buffer (get-vertices-buffer mesh)))
+      (terminal (get-buffer buffer))
+      (exit)
       (bind-buffer buffer)
       (enable-vertex-attrib buffer vertex_coord-attribute)
       (set-attrib-pointer buffer vertex_coord-attribute 3 GL_FLOAT vertex-stride vertex-offset)

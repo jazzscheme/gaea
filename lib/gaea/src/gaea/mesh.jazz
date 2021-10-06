@@ -148,6 +148,43 @@
 ;;;
 
 
+(class Mesh extends Object
+  
+  
+  (slot array <object> initialize #f accessors generate)
+  
+  
+  (method override (destroy self)
+    (free-resources self))
+  
+  
+  (method public virtual (empty? self)
+    #t)
+  
+  
+  (method public virtual (count-floats self)
+    0)
+  
+  
+  (method public virtual (setup-array self program)
+    (set! array (create-array program self)))
+  
+  
+  (method public virtual (draw-array self)
+    )
+  
+  
+  (method protected virtual (free-resources self)
+    (when array
+      (glDeleteVertexArrays* array)
+      (set! array #f))))
+
+
+;;;
+;;;; Vertex-Mesh
+;;;
+
+
 ;; Vertices
 ;;   triangle1 ...
 ;;   v1 n1 t1 b1 v2 n2 t2 b2 v3 n3 t3 b3 ...
@@ -165,7 +202,7 @@
 ;;   m1 m2 m3 ...
 
 
-(class Mesh extends Object
+(class Vertex-Mesh extends Mesh
   
   
   (slot vertices-buffer  <Buffer>    getter generate)
@@ -173,7 +210,6 @@
   (slot lightmap-buffer  <Buffer>    getter generate)
   (slot instance-buffer  <Buffer>    getter generate)
   (slot feedback-buffer  <Buffer>    getter generate)
-  (slot array            <object>    accessors generate)
   (slot material         <Material+> accessors generate)
   
   ;; debug
@@ -182,20 +218,20 @@
   
   
   (method override (initialize self (material: material #f))
+    (nextmethod self)
     (set! self.vertices-buffer (new Buffer))
     (set! self.neighbors-buffer (new Buffer))
     (set! self.lightmap-buffer (new Buffer))
     (set! self.instance-buffer (new Buffer))
     (set! self.feedback-buffer (new Buffer))
-    (set! self.array #f)
     (set! self.material material))
   
   
-  (method public (empty? self)
+  (method override (empty? self)
     (empty? vertices-buffer))
   
   
-  (method public (count-floats self)
+  (method override (count-floats self)
     (+ (or (get-floats vertices-buffer) 0)
        @need-to-adjust-debug-info-calculations
        (or (get-floats neighbors-buffer) 0)
@@ -203,15 +239,11 @@
        (or (get-floats lightmap-buffer) 0)))
   
   
-  (method public (setup-array self program)
+  (method override (setup-array self program)
     (set! array (create-array program self)))
-
-  
-  (method public (draw self)
-    (draw vertices-buffer))
   
   
-  (method public (draw-array self)
+  (method override (draw-array self)
     (define (draw)
       (glBindVertexArray array)
       (glDrawArrays GL_TRIANGLES 0 (get-indices vertices-buffer)))
@@ -259,16 +291,10 @@
     (free-buffer feedback-buffer))
   
   
-  (method public (free-resources self)
+  (method override (free-resources self)
     (free-vertices self)
     (free-neighbors self)
     (free-lightmap self)
     (free-instance self)
     (free-feedback self)
-    (when array
-      (glDeleteVertexArrays* array)
-      (set! array #f)))
-  
-  
-  (method override (destroy self)
-    (free-resources self))))
+    (nextmethod self))))
