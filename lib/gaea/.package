@@ -31,7 +31,9 @@
                           gaea.parallelepiped
                           gaea.plane
                           gaea.program
-                          gaea.programs
+                          gaea.program.color
+                          gaea.program.mesh
+                          gaea.program.model
                           gaea.shader
                           gaea.syntax
                           gaea.types)

@@ -2,7 +2,7 @@
 ;;;  GaeaScheme
 ;;;==============
 ;;;
-;;;; Programs
+;;;; Model Program
 ;;;
 ;;;  The contents of this file are subject to the Mozilla Public License Version
 ;;;  1.1 (the "License"); you may not use this file except in compliance with
@@ -35,7 +35,7 @@
 ;;;  See www.jazzscheme.org for details.
 
 
-(module gaea.programs jazz
+(module gaea.program.model jazz
 
 
 (import (jazz.platform)
@@ -49,12 +49,7 @@
         (gaea.shaders))
 
 
-;;;
-;;;; Mesh
-;;;
-
-
-(class Mesh-Program extends Program
+(class Model-Program extends Mesh-Program
   
   
   (slot projection_matrix-uniform)
@@ -163,62 +158,4 @@
   
   
   (method package virtual (unbind-uniforms self)
-    ))
-
-
-;;;
-;;;; Mesh-Color
-;;;
-
-
-(class Mesh-Color-Program extends Mesh-Program
-  
-  
-  (slot color-uniform)
-  
-  
-  (method override (prepare self)
-    (nextmethod self)
-    (set! color-uniform (add-uniform self "color")))
-  
-  
-  (method override (use-normal? self)
-    #f)
-  
-  
-  (method override (create-vertex-shader self)
-    (build-mesh-color-vs))
-  
-  (method override (create-fragment-shader self)
-    (build-mesh-color-fs))
-  
-  
-  (method override (bind-uniforms self projection-matrix view-matrix @convert overlay @convert alpha-cut @convert lighting color)
-    (nextmethod self projection-matrix view-matrix @convert #f @convert overlay @convert alpha-cut @convert lighting)
-    ;; Color
-    (assert color)
-    (glUniform4fv* color-uniform 1 color)))
-
-
-;;;
-;;;; Programs
-;;;
-
-
-(definition protected mesh-programs
-  (make-table test: eq?))
-
-
-(definition public (register-mesh-program name program)
-  (table-set! mesh-programs name program))
-
-(definition public (registered-mesh-program name)
-  (table-ref mesh-programs name #f))
-
-(definition public (require-mesh-program name)
-  (or (table-ref mesh-programs name #f)
-      (error "Unknown mesh program: {s}" name)))
-
-
-(definition protected (prepare-programs)
-  (register-mesh-program 'color (new Mesh-Color-Program))))
+    )))

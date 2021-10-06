@@ -43,6 +43,11 @@
         (gaea.shader))
 
 
+;;;
+;;;; Program
+;;;
+
+
 (class Program extends Object
   
   
@@ -175,4 +180,29 @@
   (method public (add-attribute self name)
     (let ((location (glGetAttribLocation* program name)))
       (table-set! attributes name location)
-      location))))
+      location)))
+
+
+;;;
+;;;; Programs
+;;;
+
+
+(definition protected mesh-programs
+  (make-table test: eq?))
+
+
+(definition public (register-mesh-program name program)
+  (table-set! mesh-programs name program))
+
+(definition public (registered-mesh-program name)
+  (let ((program (table-ref mesh-programs name #f)))
+    (if (procedure? program)
+        (let ((program (program)))
+          (table-set! mesh-programs name program)
+          program)
+      program)))
+
+(definition public (require-mesh-program name)
+  (or (registered-mesh-program name)
+      (error "Unknown mesh program: {s}" name))))

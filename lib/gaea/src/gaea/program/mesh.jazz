@@ -1,0 +1,118 @@
+;;;==============
+;;;  GaeaScheme
+;;;==============
+;;;
+;;;; Mesh Program
+;;;
+;;;  The contents of this file are subject to the Mozilla Public License Version
+;;;  1.1 (the "License"); you may not use this file except in compliance with
+;;;  the License. You may obtain a copy of the License at
+;;;  http://www.mozilla.org/MPL/
+;;;
+;;;  Software distributed under the License is distributed on an "AS IS" basis,
+;;;  WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
+;;;  for the specific language governing rights and limitations under the
+;;;  License.
+;;;
+;;;  The Original Code is JazzScheme.
+;;;
+;;;  The Initial Developer of the Original Code is Guillaume Cartier.
+;;;  Portions created by the Initial Developer are Copyright (C) 1996-2021
+;;;  the Initial Developer. All Rights Reserved.
+;;;
+;;;  Contributor(s):
+;;;
+;;;  Alternatively, the contents of this file may be used under the terms of
+;;;  the GNU General Public License Version 2 or later (the "GPL"), in which
+;;;  case the provisions of the GPL are applicable instead of those above. If
+;;;  you wish to allow use of your version of this file only under the terms of
+;;;  the GPL, and not to allow others to use your version of this file under the
+;;;  terms of the MPL, indicate your decision by deleting the provisions above
+;;;  and replace them with the notice and other provisions required by the GPL.
+;;;  If you do not delete the provisions above, a recipient may use your version
+;;;  of this file under the terms of any one of the MPL or the GPL.
+;;;
+;;;  See www.jazzscheme.org for details.
+
+
+(module gaea.program.mesh jazz
+
+
+(import (jazz.platform)
+        (jazz.opengl.glew)
+        (jazz.syntax (phase syntax))
+        (gaea.buffer)
+        (gaea.geometry)
+        (gaea.mesh)
+        (gaea.program)
+        (gaea.shader)
+        (gaea.shaders))
+
+
+(class Mesh-Program extends Program
+  
+  
+  (slot projection_matrix-uniform)
+  (slot view_matrix-uniform)
+  (slot model_matrix-uniform)
+  (slot vertex-attribute)
+  (slot normal-attribute)
+  
+  
+  (method override (prepare self)
+    (set-vs self (create-vertex-shader self))
+    (set-fs self (create-fragment-shader self))
+    (link self)
+    (set! projection_matrix-uniform (add-uniform self "projection_matrix"))
+    (set! view_matrix-uniform (add-uniform self "view_matrix"))
+    (set! model_matrix-uniform (add-uniform self "model_matrix"))
+    (set! vertex-attribute (add-attribute self "vertex"))
+    (when (use-normal? self)
+      (set! normal-attribute (add-attribute self "normal"))))
+  
+  
+  (method override (enable-attributes self mesh <Mesh>) <void>
+    (let ((buffer (get-vertices-buffer mesh)))
+      (bind-buffer buffer)
+      (enable-vertex-attrib buffer vertex-attribute)
+      (set-attrib-pointer buffer vertex-attribute 3 GL_FLOAT vertex-stride vertex-offset)
+      (when (use-normal? self)
+        (enable-vertex-attrib buffer normal-attribute)
+        (set-attrib-pointer buffer normal-attribute 3 GL_FLOAT vertex-stride normal-offset))
+      (unbind-buffer buffer)))
+  
+  
+  (method protected virtual (use-normal? self)
+    #t)
+  
+  
+  (method package virtual (bind-uniforms self projection-matrix view-matrix)
+    ;; Projection matrix
+    (glUniformMatrix4dv* projection_matrix-uniform 1 #f projection-matrix)
+    ;; View matrix
+    (glUniformMatrix4dv* view_matrix-uniform 1 #f view-matrix))
+  
+  
+  ;; Model matrix
+  (method protected (bind-model-matrix self matrix <matrix>)
+    (glUniformMatrix4dv* model_matrix-uniform 1 #f matrix))
+  
+  
+  (method package virtual (bind-mesh-matrix self position <vertex>)
+    (let ((matrix (make-identity-matrix&)))
+      (matrix-set! matrix 12 (vertex-x position))
+      (matrix-set! matrix 13 (vertex-y position))
+      (matrix-set! matrix 14 (vertex-z position))
+      (bind-model-matrix self matrix)))
+  
+  
+  (method package (bind-entity-matrix self matrix <matrix>)
+    (bind-model-matrix self matrix))
+  
+  
+  (method package virtual (draw-mesh self mesh <Mesh>) <void>
+    (draw-array mesh))
+  
+  
+  (method package virtual (unbind-uniforms self)
+    )))

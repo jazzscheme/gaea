@@ -181,6 +181,59 @@
 
 
 ;;;
+;;;; Color-Mesh
+;;;
+
+
+(class Color-Mesh extends Mesh
+  
+  
+  (slot vertices-buffer  <Buffer>    getter generate)
+  (slot colors-buffer    <Buffer>    getter generate)
+  
+  
+  (method override (initialize self (material: material #f))
+    (nextmethod self)
+    (set! self.vertices-buffer (new Buffer))
+    (set! self.colors-buffer (new Buffer)))
+  
+  
+  (method override (empty? self)
+    (empty? vertices-buffer))
+  
+  
+  (method override (count-floats self)
+    (+ (or (get-floats vertices-buffer) 0)
+       @need-to-adjust-debug-info-calculations
+       (or (get-floats colors-buffer) 0)))
+  
+  
+  (method override (draw-array self)
+    (glBindVertexArray array)
+    (glDrawArrays GL_TRIANGLES 0 (get-indices vertices-buffer)))
+  
+  
+  (method public (allocate-vertices self)
+    (generate-buffer vertices-buffer))
+  
+  (method public (allocate-colors self)
+    (generate-buffer colors-buffer))
+  
+  
+  (method public (free-vertices self)
+    (free-buffer vertices-buffer))
+  
+  (method public (free-colors self)
+    (free-buffer colors-buffer))
+  
+  
+  (method override (free-resources self)
+    (free-vertices self)
+    (free-colors self)
+    (nextmethod self)))
+
+
+;;;
 ;;;; Vertex-Mesh
 ;;;
 
@@ -237,10 +290,6 @@
        (or (get-floats neighbors-buffer) 0)
        @need-to-adjust-debug-info-calculations
        (or (get-floats lightmap-buffer) 0)))
-  
-  
-  (method override (setup-array self program)
-    (set! array (create-array program self)))
   
   
   (method override (draw-array self)
