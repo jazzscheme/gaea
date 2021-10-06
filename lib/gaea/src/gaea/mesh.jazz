@@ -188,8 +188,8 @@
 (class Color-Mesh extends Mesh
   
   
-  (slot vertices-buffer  <Buffer>    getter generate)
-  (slot colors-buffer    <Buffer>    getter generate)
+  (slot vertices-buffer <Buffer> getter generate)
+  (slot colors-buffer   <Buffer> getter generate)
   
   
   (method override (initialize self (material: material #f))
@@ -264,10 +264,6 @@
   (slot instance-buffer  <Buffer>    getter generate)
   (slot feedback-buffer  <Buffer>    getter generate)
   (slot material         <Material+> accessors generate)
-  
-  ;; debug
-  (slot vertices-data <object> initialize #f accessors generate)
-  (slot lightmap-data <object> initialize #f accessors generate)
   
   
   (method override (initialize self (material: material #f))

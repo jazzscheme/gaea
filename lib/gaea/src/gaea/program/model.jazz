@@ -49,6 +49,7 @@
         (gaea.shaders))
 
 
+@w
 (class Model-Program extends Mesh-Program
   
   

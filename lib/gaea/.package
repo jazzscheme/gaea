@@ -27,6 +27,7 @@
                           gaea.material
                           gaea.math
                           gaea.mesh
+                          gaea.mesher
                           gaea.movement
                           gaea.parallelepiped
                           gaea.plane
