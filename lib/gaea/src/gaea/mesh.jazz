@@ -39,6 +39,7 @@
 
 
 (import (jazz.opengl.glew)
+        (gaea.array)
         (gaea.buffer)
         (gaea.material)
         (gaea.program)
@@ -46,6 +47,32 @@
 
 
 (proclaim (warn optimizations))
+
+
+(definition protected transform-feedback?
+  (make-parameter #f))
+
+
+;;;
+;;;; Mesh
+;;;
+
+
+;; Vertices
+;;   triangle1 ...
+;;   v1 n1 t1 b1 v2 n2 t2 b2 v3 n3 t3 b3 ...
+;;   v1x v1y v1z n1x n1y n1z t1u t1v t1z b1 v2x v2y v2z n2x n2y n2z t2u t2v t2z b2 v3x v3y v3z n3x n3y n3z t3u t3v t3z b3 ...
+;;
+;; Neighbors
+;;   rank neighbor1 neighbor2 ...
+;;   rank v11 v12 v13 v21 v22 v23 ...
+;;
+;; Lightmap
+;;   l1 l2 l3 ...
+;;   l1r l1g l1b l2r l2g l2b l3r l3g l3b ...
+;;
+;; Instance
+;;   m1 m2 m3 ...
 
 
 (constant inline vertex-floats <fx>
@@ -139,123 +166,7 @@
   (* 3 feedback-floats))
 
 
-(definition protected transform-feedback?
-  (make-parameter #f))
-
-
-;;;
-;;;; Mesh
-;;;
-
-
-(class Mesh extends Object
-  
-  
-  (slot array <object> initialize #f accessors generate)
-  
-  
-  (method override (destroy self)
-    (free-resources self))
-  
-  
-  (method public virtual (empty? self)
-    #t)
-  
-  
-  (method public virtual (count-floats self)
-    0)
-  
-  
-  (method public virtual (setup-array self program)
-    (set! array (create-array program self)))
-  
-  
-  (method public virtual (draw-array self)
-    )
-  
-  
-  (method protected virtual (free-resources self)
-    (when array
-      (glDeleteVertexArrays* array)
-      (set! array #f))))
-
-
-;;;
-;;;; Color-Mesh
-;;;
-
-
-(class Color-Mesh extends Mesh
-  
-  
-  (slot vertices-buffer <Buffer> getter generate)
-  (slot colors-buffer   <Buffer> getter generate)
-  
-  
-  (method override (initialize self (material: material #f))
-    (nextmethod self)
-    (set! self.vertices-buffer (new Buffer))
-    (set! self.colors-buffer (new Buffer)))
-  
-  
-  (method override (empty? self)
-    (empty? vertices-buffer))
-  
-  
-  (method override (count-floats self)
-    (+ (or (get-floats vertices-buffer) 0)
-       @need-to-adjust-debug-info-calculations
-       (or (get-floats colors-buffer) 0)))
-  
-  
-  (method override (draw-array self)
-    (glBindVertexArray array)
-    (glDrawArrays GL_TRIANGLES 0 (get-indices vertices-buffer)))
-  
-  
-  (method public (allocate-vertices self)
-    (generate-buffer vertices-buffer))
-  
-  (method public (allocate-colors self)
-    (generate-buffer colors-buffer))
-  
-  
-  (method public (free-vertices self)
-    (free-buffer vertices-buffer))
-  
-  (method public (free-colors self)
-    (free-buffer colors-buffer))
-  
-  
-  (method override (free-resources self)
-    (free-vertices self)
-    (free-colors self)
-    (nextmethod self)))
-
-
-;;;
-;;;; Vertex-Mesh
-;;;
-
-
-;; Vertices
-;;   triangle1 ...
-;;   v1 n1 t1 b1 v2 n2 t2 b2 v3 n3 t3 b3 ...
-;;   v1x v1y v1z n1x n1y n1z t1u t1v t1z b1 v2x v2y v2z n2x n2y n2z t2u t2v t2z b2 v3x v3y v3z n3x n3y n3z t3u t3v t3z b3 ...
-;;
-;; Neighbors
-;;   rank neighbor1 neighbor2 ...
-;;   rank v11 v12 v13 v21 v22 v23 ...
-;;
-;; Lightmap
-;;   l1 l2 l3 ...
-;;   l1r l1g l1b l2r l2g l2b l3r l3g l3b ...
-;;
-;; Instance
-;;   m1 m2 m3 ...
-
-
-(class Vertex-Mesh extends Mesh
+(class Mesh extends Array
   
   
   (slot vertices-buffer  <Buffer>    getter generate)
@@ -336,7 +247,7 @@
     (free-buffer feedback-buffer))
   
   
-  (method override (free-resources self)
+  (method override (free-array self)
     (free-vertices self)
     (free-neighbors self)
     (free-lightmap self)

@@ -153,10 +153,5 @@
     (bind-model-matrix self matrix))
   
   
-  (method package virtual (draw-mesh self mesh <Mesh>) <void>
-    (site draw-mesh
-      (draw-array mesh)))
-  
-  
   (method package virtual (unbind-uniforms self)
     )))

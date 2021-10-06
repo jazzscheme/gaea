@@ -188,21 +188,21 @@
 ;;;
 
 
-(definition protected mesh-programs
+(definition protected programs
   (make-table test: eq?))
 
 
-(definition public (register-mesh-program name program)
-  (table-set! mesh-programs name program))
+(definition public (register-program name program)
+  (table-set! programs name program))
 
-(definition public (registered-mesh-program name)
-  (let ((program (table-ref mesh-programs name #f)))
+(definition public (registered-program name)
+  (let ((program (table-ref programs name #f)))
     (if (procedure? program)
         (let ((program (program)))
-          (table-set! mesh-programs name program)
+          (table-set! programs name program)
           program)
       program)))
 
-(definition public (require-mesh-program name)
-  (or (registered-mesh-program name)
-      (error "Unknown mesh program: {s}" name))))
+(definition public (require-program name)
+  (or (registered-program name)
+      (error "Unknown program: {s}" name))))

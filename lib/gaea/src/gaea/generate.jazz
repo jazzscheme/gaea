@@ -38,7 +38,8 @@
 (module gaea.generate jazz
 
 
-(import (gaea.buffer)
+(import (gaea.array)
+        (gaea.buffer)
         (gaea.geometry)
         (gaea.mesh)
         (gaea.syntax (phase syntax)))
@@ -177,7 +178,7 @@
                 (smooth-vertex n)
                 (smooth-vertex (+ n vertex-floats))
                 (smooth-vertex (+ n (* vertex-floats 2)))))))
-    (let ((mesh (new Vertex-Mesh material: material)))
+    (let ((mesh (new Mesh material: material)))
       (allocate-vertices mesh)
       (set-data (get-vertices-buffer mesh) content (f32vector-length (allege content)) vertex-floats)
       (when neighbors?

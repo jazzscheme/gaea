@@ -38,7 +38,8 @@
 (module gaea.mesher jazz
 
 
-(import (gaea.buffer)
+(import (gaea.array)
+        (gaea.buffer)
         (gaea.geometry)
         (gaea.material)
         (gaea.mesh))
@@ -147,7 +148,7 @@
   
   
   (method package (get-mesh self program) <Mesh>
-    (let ((mesh (new Vertex-Mesh material: material)))
+    (let ((mesh (new Mesh material: material)))
       (allocate-vertices mesh)
       (set-data (get-vertices-buffer mesh) content (* used triangle-floats) vertex-floats)
       (allocate-neighbors mesh)

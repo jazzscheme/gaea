@@ -13,7 +13,8 @@
                     (dependencies jazz))
             (gaea (title "Gaea")
                   (test gaea.validate.run)
-                  (update gaea.buffer
+                  (update gaea.array
+                          gaea.buffer
                           gaea.dye
                           gaea.generate
                           gaea.geometry

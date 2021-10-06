@@ -41,12 +41,75 @@
 (import (jazz.platform)
         (jazz.opengl.glew)
         (jazz.syntax (phase syntax))
+        (gaea.array)
         (gaea.buffer)
         (gaea.geometry)
-        (gaea.mesh)
         (gaea.program)
-        (gaea.program.mesh)
         (gaea.shader))
+
+
+;;;
+;;;; Array
+;;;
+
+
+;; Vertices
+;;   triangle1 ...
+;;   v1 c1 v2 c2 v3 c3 ...
+;;   v1x v1y v1z c1r c1g c1b v2x v2y v2z c2r c2g c2b v3x v3y v3z c3r c3g c3b ...
+
+
+(constant inline color-vertex-floats <fx>
+  6)
+
+(constant inline color-triangle-floats <fx>
+  (* 3 color-vertex-floats))
+
+(constant inline color-vertex-stride <fx>
+  (* color-vertex-floats float-size))
+
+(constant inline color-vertex-offset <fx>
+  0)
+
+(constant inline color-color-offset <fx>
+  (* 3 float-size))
+
+
+(class Color-Array extends Array
+  
+  
+  (slot vertices-buffer <Buffer> getter generate)
+  
+  
+  (method override (initialize self)
+    (nextmethod self)
+    (set! self.vertices-buffer (new Buffer)))
+  
+  
+  (method override (empty? self)
+    (empty? vertices-buffer))
+  
+  
+  (method override (count-floats self)
+    (or (get-floats vertices-buffer) 0))
+  
+  
+  (method override (draw-array self)
+    (glBindVertexArray array)
+    (glDrawArrays GL_TRIANGLES 0 (get-indices vertices-buffer)))
+  
+  
+  (method public (allocate-vertices self)
+    (generate-buffer vertices-buffer))
+  
+  
+  (method public (free-vertices self)
+    (free-buffer vertices-buffer))
+  
+  
+  (method override (free-array self)
+    (free-vertices self)
+    (nextmethod self)))
 
 
 ;;;
@@ -54,32 +117,26 @@
 ;;;
 
 
-(definition (build-mesh-color-vs)
+(definition (build-color-vs)
   (string-append glsl-version
     #/C/
 uniform mat4 projection_matrix;
 uniform mat4 view_matrix;
-uniform mat4 model_matrix;
-uniform vec4 color;
-//#
 
-#/C/
 in vec3 vertex;
+in vec4 color;
 
 out vec4 final_color;
 
 void main()
 {
-//#
-
-#/C/
-    gl_Position = projection_matrix * view_matrix * model_matrix * vec4(vertex, 1.0);
+    gl_Position = projection_matrix * view_matrix * vec4(vertex, 1.0);
     final_color = color;
 }
 //#))
 
 
-(definition (build-mesh-color-fs)
+(definition (build-color-fs)
   (string-append glsl-version
     #/C/
 in vec4 final_color;
@@ -98,33 +155,51 @@ void main()
 ;;;
 
 
-(class Color-Program extends Mesh-Program
+(class Color-Program extends Program
   
   
-  (slot color-uniform)
+  (slot projection_matrix-uniform)
+  (slot view_matrix-uniform)
+  (slot vertex-attribute)
+  (slot color-attribute)
   
   
   (method override (prepare self)
-    (nextmethod self)
-    (set! color-uniform (add-uniform self "color")))
-  
-  
-  (method override (use-normal? self)
-    #f)
+    (set-vs self (create-vertex-shader self))
+    (set-fs self (create-fragment-shader self))
+    (link self)
+    (set! projection_matrix-uniform (add-uniform self "projection_matrix"))
+    (set! view_matrix-uniform (add-uniform self "view_matrix"))
+    (set! vertex-attribute (add-attribute self "vertex"))
+    (set! color-attribute (add-attribute self "color")))
   
   
   (method override (create-vertex-shader self)
-    (build-mesh-color-vs))
+    (build-color-vs))
   
   (method override (create-fragment-shader self)
-    (build-mesh-color-fs))
+    (build-color-fs))
   
   
-  (method override (bind-uniforms self projection-matrix view-matrix @convert overlay @convert alpha-cut @convert lighting color)
-    (nextmethod self projection-matrix view-matrix @convert #f @convert overlay @convert alpha-cut @convert lighting)
-    ;; Color
-    (assert color)
-    (glUniform4fv* color-uniform 1 color)))
+  (method override (enable-attributes self array <Array>) <void>
+    (let ((buffer (get-vertices-buffer array)))
+      (bind-buffer buffer)
+      (enable-vertex-attrib buffer vertex-attribute)
+      (set-attrib-pointer buffer vertex-attribute 3 GL_FLOAT color-vertex-stride color-vertex-offset)
+      (enable-vertex-attrib buffer color-attribute)
+      (set-attrib-pointer buffer color-attribute 3 GL_FLOAT color-vertex-stride color-color-offset)
+      (unbind-buffer buffer)))
+  
+  
+  (method package (bind-uniforms self projection-matrix view-matrix)
+    ;; Projection matrix
+    (glUniformMatrix4dv* projection_matrix-uniform 1 #f projection-matrix)
+    ;; View matrix
+    (glUniformMatrix4dv* view_matrix-uniform 1 #f view-matrix))
+  
+  
+  (method package (unbind-uniforms self)
+    ))
 
 
 ;;;
@@ -132,4 +207,4 @@ void main()
 ;;;
 
 
-(register-mesh-program 'color (lambda () (new Color-Program))))
+(register-program 'color (lambda () (new Color-Program))))
