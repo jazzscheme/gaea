@@ -30,6 +30,7 @@
                           gaea.movement
                           gaea.parallelepiped
                           gaea.plane
+                          gaea.program
                           gaea.programs
                           gaea.shader
                           gaea.syntax

@@ -44,6 +44,7 @@
         (gaea.buffer)
         (gaea.geometry)
         (gaea.mesh)
+        (gaea.program)
         (gaea.shader)
         (gaea.shaders))
 
@@ -68,8 +69,8 @@
   
   
   (method override (prepare self)
-    (set-vs self (default-vertex-shader self))
-    (set-fs self (default-fragment-shader self))
+    (set-vs self (create-vertex-shader self))
+    (set-fs self (create-fragment-shader self))
     (link self)
     (set! projection_matrix-uniform (add-uniform self "projection_matrix"))
     (set! view_matrix-uniform (add-uniform self "view_matrix"))
@@ -185,11 +186,11 @@
     #f)
   
   
-  (method override (default-vertex-shader self)
-    mesh-color-vs)
+  (method override (create-vertex-shader self)
+    (build-mesh-color-vs))
   
-  (method override (default-fragment-shader self)
-    mesh-color-fs)
+  (method override (create-fragment-shader self)
+    (build-mesh-color-fs))
   
   
   (method override (bind-uniforms self projection-matrix view-matrix @convert overlay @convert alpha-cut @convert lighting color)

@@ -38,11 +38,7 @@
 (module gaea.shaders jazz
 
 
-(definition glsl-version
-  #/C/
-#version 150
-
-//#)
+(import (gaea.shader))
 
 
 ;;;
@@ -50,7 +46,7 @@
 ;;;
 
 
-(definition (build-mesh-color-vs)
+(definition protected (build-mesh-color-vs)
   (string-append glsl-version
     #/C/
 uniform mat4 projection_matrix;
@@ -80,7 +76,7 @@ void main()
 //#))
 
 
-(definition public (build-mesh-color-fs)
+(definition protected (build-mesh-color-fs)
   (string-append glsl-version
     #/C/
 uniform vec4 overlay;
@@ -94,25 +90,4 @@ void main()
     // fragColor = final_color * overlay;
     fragColor = final_color;
 }
-//#))
-
-
-(definition public mesh-color-vs
-  #f)
-
-(definition public mesh-color-fs
-  #f)
-
-
-(definition public (build-color-shaders)
-  (set! mesh-color-vs (build-mesh-color-vs))
-  (set! mesh-color-fs (build-mesh-color-fs)))
-
-
-;;;
-;;;; Shaders
-;;;
-
-
-(definition protected (prepare-shaders)
-  (build-color-shaders)))
+//#)))
