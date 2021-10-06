@@ -60,14 +60,11 @@
 uniform mat4 projection_matrix;
 uniform mat4 view_matrix;
 uniform mat4 model_matrix;
-uniform vec4 overlay;
 uniform vec4 color;
 //#
 
 #/C/
 in vec3 vertex;
-in vec3 normal;
-in float bone_id;
 
 out vec4 final_color;
 
@@ -76,9 +73,7 @@ void main()
 //#
 
 #/C/
-    vec4 skeletal_pos = vec4(vertex, 1.0);
-    // vec3 skeletal_normal = normal;
-    gl_Position = projection_matrix * view_matrix * model_matrix * skeletal_pos;
+    gl_Position = projection_matrix * view_matrix * model_matrix * vec4(vertex, 1.0);
     final_color = color;
 }
 //#))
@@ -87,15 +82,12 @@ void main()
 (definition (build-mesh-color-fs)
   (string-append glsl-version
     #/C/
-uniform vec4 overlay;
-
 in vec4 final_color;
 
 out vec4 fragColor;
 
 void main()
 {
-    // fragColor = final_color * overlay;
     fragColor = final_color;
 }
 //#))
