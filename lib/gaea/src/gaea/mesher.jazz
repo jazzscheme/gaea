@@ -149,7 +149,6 @@
   (method package (get-mesh self program) <Mesh>
     (let ((mesh (new Vertex-Mesh material: material)))
       (allocate-vertices mesh)
-      (terminal 'mesher (* used triangle-floats))
       (set-data (get-vertices-buffer mesh) content (* used triangle-floats) vertex-floats)
       (allocate-neighbors mesh)
       (set-data (get-neighbors-buffer mesh) neighbors (* used triangle-neighbors-floats) neighbors-floats)
