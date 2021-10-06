@@ -91,7 +91,7 @@
 ;;;
 
 
-(class Shader-Program extends Object
+(class Program extends Object
   
   
   (slot name            <object> getter generate)
@@ -170,6 +170,22 @@
       (glDetachShader program (get-shaderid fragment-shader))
       (set-shaderid vertex-shader #f)
       (set-shaderid fragment-shader #f)))
+  
+  
+  (method protected virtual (setup-transform-feedback self)
+    )
+  
+  
+  (method protected virtual (enable-attributes self mesh)
+    )
+  
+  
+  (method public (create-array self mesh)
+    (let ((array (glGenVertexArrays*)))
+      (glBindVertexArray array)
+      (enable-attributes self mesh)
+      (glBindVertexArray 0)
+      array))
   
   
   (method public (use self)

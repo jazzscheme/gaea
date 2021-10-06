@@ -13,7 +13,9 @@
                     (dependencies jazz))
             (gaea (title "Gaea")
                   (test gaea.validate.run)
-                  (update gaea.dye
+                  (update gaea.buffer
+                          gaea.dye
+                          gaea.generate
                           gaea.geometry
                           gaea.geometry.base
                           gaea.geometry.classes
@@ -22,10 +24,13 @@
                           gaea.install
                           gaea.literals
                           gaea.lookat
+                          gaea.material
                           gaea.math
+                          gaea.mesh
                           gaea.movement
                           gaea.parallelepiped
                           gaea.plane
+                          gaea.programs
                           gaea.shader
                           gaea.syntax
                           gaea.types)

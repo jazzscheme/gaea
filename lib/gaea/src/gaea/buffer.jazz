@@ -1,0 +1,149 @@
+;;;==============
+;;;  GaeaScheme
+;;;==============
+;;;
+;;;; Buffers
+;;;
+;;;  The contents of this file are subject to the Mozilla Public License Version
+;;;  1.1 (the "License"); you may not use this file except in compliance with
+;;;  the License. You may obtain a copy of the License at
+;;;  http://www.mozilla.org/MPL/
+;;;
+;;;  Software distributed under the License is distributed on an "AS IS" basis,
+;;;  WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
+;;;  for the specific language governing rights and limitations under the
+;;;  License.
+;;;
+;;;  The Original Code is JazzScheme.
+;;;
+;;;  The Initial Developer of the Original Code is Guillaume Cartier.
+;;;  Portions created by the Initial Developer are Copyright (C) 1996-2021
+;;;  the Initial Developer. All Rights Reserved.
+;;;
+;;;  Contributor(s):
+;;;
+;;;  Alternatively, the contents of this file may be used under the terms of
+;;;  the GNU General Public License Version 2 or later (the "GPL"), in which
+;;;  case the provisions of the GPL are applicable instead of those above. If
+;;;  you wish to allow use of your version of this file only under the terms of
+;;;  the GPL, and not to allow others to use your version of this file under the
+;;;  terms of the MPL, indicate your decision by deleting the provisions above
+;;;  and replace them with the notice and other provisions required by the GPL.
+;;;  If you do not delete the provisions above, a recipient may use your version
+;;;  of this file under the terms of any one of the MPL or the GPL.
+;;;
+;;;  See www.jazzscheme.org for details.
+
+
+(module gaea.buffer jazz
+
+
+(import (jazz.opengl.glew)
+        (jazz.platform.types))
+
+
+(proclaim (warn optimizations))
+
+
+;;;
+;;;; Buffer
+;;;
+
+
+(class Buffer extends Object
+  
+  
+  (slot buffer  <int+> initialize #f getter generate)
+  (slot floats  <fx+>  initialize #f getter generate)
+  (slot indices <fx+>  initialize #f getter generate)
+  
+  
+  (method public (bind-buffer self)
+    (glBindBuffer GL_ARRAY_BUFFER buffer))
+  
+  (method public (unbind-buffer self)
+    (glBindBuffer GL_ARRAY_BUFFER 0))
+  
+  
+  (method public (bind-feedback-buffer self)
+    (glBindBuffer GL_ARRAY_BUFFER buffer)
+    (glBindBufferBase GL_TRANSFORM_FEEDBACK_BUFFER 0 buffer))
+  
+  (method public (unbind-feedback-buffer self)
+    (glBindBuffer GL_ARRAY_BUFFER 0))
+  
+  
+  (method public (empty? self)
+    (not buffer))
+  
+  
+  ;; Upload data to video card
+  (method public (set-data self content size <fx> floats-per-indice <fx>)
+    (set! floats size)
+    (set! indices (fxround/ floats floats-per-indice))
+    (glBindBuffer GL_ARRAY_BUFFER buffer)
+    (glBufferDataFloat* GL_ARRAY_BUFFER size content GL_STATIC_DRAW)
+    (glBindBuffer GL_ARRAY_BUFFER 0))
+  
+  
+  ;; Setup data in video card
+  (method public (setup-feedback-data self size <fx> floats-per-indice <fx>)
+    (set! floats size)
+    (set! indices (fxround/ floats floats-per-indice))
+    (glBindBuffer GL_ARRAY_BUFFER buffer)
+    (glBufferData GL_ARRAY_BUFFER (* size float-size) #f GL_STATIC_READ)
+    (glBindBuffer GL_ARRAY_BUFFER 0))
+  
+  
+  ;; Upload data to video card
+  (method public (set-stream-data self content size <fx> floats-per-indice <fx>)
+    (set! floats size)
+    (set! indices (fxround/ floats floats-per-indice))
+    (glBindBuffer GL_ARRAY_BUFFER buffer)
+    (glBufferDataFloat* GL_ARRAY_BUFFER size content GL_STREAM_DRAW)
+    (glBindBuffer GL_ARRAY_BUFFER 0))
+  
+  
+  (method public (update-stream-data self offset content size <fx>)
+    (glBindBuffer GL_ARRAY_BUFFER buffer)
+    (glBufferSubDataFloat* GL_ARRAY_BUFFER offset size content)
+    (glBindBuffer GL_ARRAY_BUFFER 0))
+  
+  
+  ;; Enable vertex attrib array before passing values to a shader
+  (method public (enable-vertex-attrib self location)
+    (glEnableVertexAttribArray location))
+  
+  ;; Disable vertex attrib array
+  (method public (disable-vertex-attrib self location)
+    (glDisableVertexAttribArray location))
+
+  
+  (method public (draw self)
+    (glDrawArrays GL_TRIANGLES 0 indices))
+  
+  
+  ;; Set the vertex attrib pointer to pass to the vertex shader
+  (method public (set-attrib-pointer self location size type stride offset)
+    (glVertexAttribPointer* location size type GL_FALSE stride offset))
+  
+  
+  (method public (set-attrib-divisor self location divisor)
+    (glVertexAttribDivisor location divisor))
+  
+  
+  (method public (generate-buffer self)
+    (free-buffer self)
+    (set! buffer (glGenBuffers*)))
+  
+  
+  (method public (free-buffer self)
+    (when buffer
+      (glDeleteBuffers* buffer)
+      (set! indices #f)
+      (set! floats #f)
+      (set! buffer #f)))
+  
+  
+  (method override (destroy self)
+    (free-buffer self))))
