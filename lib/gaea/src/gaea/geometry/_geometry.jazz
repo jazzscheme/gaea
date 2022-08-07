@@ -1604,10 +1604,22 @@
         dir))))
 
 
+(definition public (random-upward-warp)
+  (let ((x (random-between -1. 1.))
+        (y (random-between .5 1.))
+        (z (random-between -1. 1.)))
+    (let ((dir (vertex-normalize-safe (vertex x y z))))
+      (if (or (vertex-zero? dir)
+              (float-near? y 1.)
+              (float-near? y -1.))
+          (random-upward-fly)
+        dir))))
+
+
 (definition public (random-upward-fly)
-  (let ((x (random-between 0. 1.))
+  (let ((x (random-between -1. 1.))
         (y (random-between 0. 1.))
-        (z (random-between 0. 1.)))
+        (z (random-between -1. 1.)))
     (let ((dir (vertex-normalize-safe (vertex x y z))))
       (if (or (vertex-zero? dir)
               (float-near? y 1.)
