@@ -2,7 +2,7 @@
 ;;;  GaeaScheme
 ;;;==============
 ;;;
-;;;; Types
+;;;; Camera
 ;;;
 ;;;  The contents of this file are subject to the Mozilla Public License Version
 ;;;  1.1 (the "License"); you may not use this file except in compliance with
@@ -35,32 +35,13 @@
 ;;;  See www.jazzscheme.org for details.
 
 
-(module gaea.types jazz
+(module gaea.camera jazz
 
 
-(definition public S32          (new-fixed-type FixedS32Vector  1))
-(definition public F32          (new-fixed-type FixedF32Vector  1))
-(definition public F64          (new-fixed-type FixedF64Vector  1))
-(definition public Vertex       (new-fixed-type FixedF64Vector  3))
-(definition public Quaternion   (new-fixed-type FixedF64Vector  4))
-(definition public Cuboid       (new-fixed-type FixedF64Vector  6))
-(definition public Matrix       (new-fixed-type FixedF64Vector 16))
-(definition public Index        (new-fixed-type FixedS32Vector  3))
-(definition public Planar-Index (new-fixed-type FixedS32Vector  2))
-(definition public Coverage     (new-fixed-type FixedS32Vector  6))
-(definition public Dye          (new-fixed-type FixedF32Vector  4))
-(definition public UV           (new-fixed-type FixedF32Vector  5))
+(import (jazz.geometry))
 
 
-(add-primitive-type 's32          S32)
-(add-primitive-type 'f32          F32)
-(add-primitive-type 'f64          F64)
-(add-primitive-type 'vertex       Vertex)
-(add-primitive-type 'quaternion   Quaternion)
-(add-primitive-type 'cuboid       Cuboid)
-(add-primitive-type 'matrix       Matrix)
-(add-primitive-type 'index        Index)
-(add-primitive-type 'planar-index Planar-Index)
-(add-primitive-type 'coverage     Coverage)
-(add-primitive-type 'dye          Dye)
-(add-primitive-type 'uv           UV))
+(definition public (pane-distance perspective-fov <fl> screen-width <fl> screen-height <fl> resolution-width <fl> width <fl>) <fl>
+  (let ((f (/ 1.0 (tan (* perspective-fov (/ PI 360.)))))
+        (ratio (/ screen-width screen-height)))
+    (* (/ f ratio) (/ width 2.) (/ screen-width resolution-width)))))

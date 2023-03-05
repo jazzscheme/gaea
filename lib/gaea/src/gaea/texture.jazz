@@ -1,0 +1,183 @@
+;;;==============
+;;;  GaeaScheme
+;;;==============
+;;;
+;;;; Texture
+;;;
+;;;  The contents of this file are subject to the Mozilla Public License Version
+;;;  1.1 (the "License"); you may not use this file except in compliance with
+;;;  the License. You may obtain a copy of the License at
+;;;  http://www.mozilla.org/MPL/
+;;;
+;;;  Software distributed under the License is distributed on an "AS IS" basis,
+;;;  WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
+;;;  for the specific language governing rights and limitations under the
+;;;  License.
+;;;
+;;;  The Original Code is JazzScheme.
+;;;
+;;;  The Initial Developer of the Original Code is Guillaume Cartier.
+;;;  Portions created by the Initial Developer are Copyright (C) 1996-2021
+;;;  the Initial Developer. All Rights Reserved.
+;;;
+;;;  Contributor(s):
+;;;
+;;;  Alternatively, the contents of this file may be used under the terms of
+;;;  the GNU General Public License Version 2 or later (the "GPL"), in which
+;;;  case the provisions of the GPL are applicable instead of those above. If
+;;;  you wish to allow use of your version of this file only under the terms of
+;;;  the GPL, and not to allow others to use your version of this file under the
+;;;  terms of the MPL, indicate your decision by deleting the provisions above
+;;;  and replace them with the notice and other provisions required by the GPL.
+;;;  If you do not delete the provisions above, a recipient may use your version
+;;;  of this file under the terms of any one of the MPL or the GPL.
+;;;
+;;;  See www.jazzscheme.org for details.
+
+
+(module gaea.texture jazz
+
+
+(require (gaea.types (phase syntax)))
+
+(import (jazz.cairo)
+        (jazz.graphic)
+        (jazz.io)
+        (jazz.jpeg)
+        (jazz.opengl.glew)
+        (jazz.opengl.texture)
+        (jazz.screen)
+        (gaea.external.targa))
+
+
+;;;
+;;;; File
+;;;
+
+
+(definition public (make-file-texture file (min-filter: min-filter #f) (mag-filter: mag-filter #f) (wrap: wrap #f) (mipmap?: mipmap? #t) (metadata: metadata #f))
+  (let ((ext (get-extension file)))
+    (cond ((extension=? ext "png")
+           (make-png-texture file min-filter: min-filter mag-filter: mag-filter wrap: wrap mipmap?: mipmap? metadata: metadata))
+          ((or (extension=? ext "jpg") (extension=? ext "jpeg"))
+           (make-jpeg-texture file min-filter: min-filter mag-filter: mag-filter wrap: wrap mipmap?: mipmap? metadata: metadata))
+          ((extension=? ext "tga")
+           (make-tga-texture file min-filter: min-filter mag-filter: mag-filter wrap: wrap mipmap?: mipmap? metadata: metadata))
+          (else
+           (error "Unsupported texture format: {a}" ext)))))
+
+
+(definition public (make-file-cairo-texture file (min-filter: min-filter #f) (mag-filter: mag-filter #f) (wrap: wrap #f) (mipmap?: mipmap? #t) (metadata: metadata #f))
+  (let ((ext (get-extension file)))
+    (cond ((extension=? ext "png")
+           (make-png-cairo-texture file min-filter: min-filter mag-filter: mag-filter wrap: wrap mipmap?: mipmap? metadata: metadata))
+          ((or (extension=? ext "jpg") (extension=? ext "jpeg"))
+           (make-jpeg-cairo-texture file min-filter: min-filter mag-filter: mag-filter wrap: wrap mipmap?: mipmap? metadata: metadata))
+          ((extension=? ext "tga")
+           (make-tga-cairo-texture file min-filter: min-filter mag-filter: mag-filter wrap: wrap mipmap?: mipmap? metadata: metadata))
+          (else
+           (error "Unsupported texture format: {a}" ext)))))
+
+
+(definition public (cairo-surface-from-file file)
+  (let ((ext (get-extension file)))
+    (cond ((extension=? ext "png")
+           (cairo-surface-from-png file))
+          ((or (extension=? ext "jpg") (extension=? ext "jpeg"))
+           (cairo-surface-from-jpeg file))
+          ((extension=? ext "tga")
+           (cairo-surface-from-tga file))
+          (else
+           (error "Unsupported texture format: {a}" ext)))))
+
+
+;;;
+;;;; PNG
+;;;
+
+
+(definition protected (make-png-texture file (min-filter: min-filter #f) (mag-filter: mag-filter #f) (wrap: wrap #f) (mipmap?: mipmap? #t) (metadata: metadata #f))
+  (assert (exists? file))
+  (bind-values (width height surf) (cairo-surface-from-png file)
+    (prog1 (let ((data (cairo_image_surface_get_data surf)))
+             (let ((ct (new Image-Texture width height data: data min-filter: min-filter mag-filter: mag-filter wrap: wrap mipmap?: mipmap? metadata: metadata file: file)))
+               (map-texture ct)
+               ct))
+      (cairo_surface_destroy surf))))
+
+
+(definition protected (make-png-cairo-texture file (min-filter: min-filter #f) (mag-filter: mag-filter #f) (wrap: wrap #f) (mipmap?: mipmap? #t) (metadata: metadata #f))
+  (assert (exists? file))
+  (bind-values (width height surf) (cairo-surface-from-png file)
+    (let ((surface (new Surface surf)))
+      (let ((ct (new Cairo-Texture width height surface: surface min-filter: min-filter mag-filter: mag-filter wrap: wrap mipmap?: mipmap? metadata: metadata file: file)))
+        (map-texture ct)
+        ct))))
+
+
+(definition protected (cairo-surface-from-png file)
+  (let ((surf (cairo_image_surface_create_from_png (parse file))))
+    (let ((width (cairo_image_surface_get_width surf))
+          (height (cairo_image_surface_get_height surf)))
+      (values width height surf))))
+
+
+;;;
+;;;; JPEG
+;;;
+
+
+(definition protected (make-jpeg-texture file (min-filter: min-filter #f) (mag-filter: mag-filter #f) (wrap: wrap #f) (mipmap?: mipmap? #t) (metadata: metadata #f))
+  (assert (exists? file))
+  (bind-values (width height surf) (cairo-surface-from-jpeg file)
+    (prog1 (let ((data (cairo_image_surface_get_data surf)))
+             (let ((ct (new Image-Texture width height data: data min-filter: min-filter mag-filter: mag-filter wrap: wrap mipmap?: mipmap? metadata: metadata file: file)))
+               (map-texture ct)
+               ct))
+      (cairo_surface_destroy surf))))
+
+
+(definition protected (make-jpeg-cairo-texture file (min-filter: min-filter #f) (mag-filter: mag-filter #f) (wrap: wrap #f) (mipmap?: mipmap? #t) (metadata: metadata #f))
+  (assert (exists? file))
+  (bind-values (width height surf) (cairo-surface-from-jpeg file)
+    (let ((surface (new Surface surf)))
+      (let ((ct (new Cairo-Texture width height surface: surface min-filter: min-filter mag-filter: mag-filter wrap: wrap mipmap?: mipmap? metadata: metadata file: file)))
+        (map-texture ct)
+        ct))))
+
+
+(definition protected (cairo-surface-from-jpeg file)
+  (let ((surf (create-cairo-surface-from-jpeg file)))
+    (let ((width (cairo_image_surface_get_width surf))
+          (height (cairo_image_surface_get_height surf)))
+      (values width height surf))))
+
+
+;;;
+;;;; TGA
+;;;
+
+
+(definition protected (make-tga-texture file (min-filter: min-filter #f) (mag-filter: mag-filter #f) (wrap: wrap #f) (mipmap?: mipmap? #t) (metadata: metadata #f))
+  (assert (exists? file))
+  (bind-values (width height bytes/pixel data) (load-tga file)
+    (let ((ct (new Image-Texture width height data: data min-filter: min-filter mag-filter: mag-filter wrap: wrap mipmap?: mipmap? metadata: metadata file: file)))
+      (map-texture ct)
+      ct)))
+
+
+(definition protected (make-tga-cairo-texture file (min-filter: min-filter #f) (mag-filter: mag-filter #f) (wrap: wrap #f) (mipmap?: mipmap? #t) (metadata: metadata #f))
+  (assert (exists? file))
+  (bind-values (width height surf) (cairo-surface-from-tga file)
+    (let ((surface (new Surface surf)))
+      (let ((ct (new Cairo-Texture width height surface: surface min-filter: min-filter mag-filter: mag-filter wrap: wrap mipmap?: mipmap? metadata: metadata file: file)))
+        (map-texture ct)
+        ct))))
+
+
+(definition protected (cairo-surface-from-tga file)
+  (bind-values (width height bytes/pixel data) (load-tga file)
+    (let ((format CAIRO_FORMAT_ARGB32))
+      (let ((stride (cairo_format_stride_for_width format width)))
+        (assert (= stride (* width bytes/pixel)))
+        (values width height (cairo_image_surface_create_for_data data format width height stride)))))))

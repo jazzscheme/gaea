@@ -1,0 +1,161 @@
+;;;==============
+;;;  GaeaScheme
+;;;==============
+;;;
+;;;; Mesher
+;;;
+;;;  The contents of this file are subject to the Mozilla Public License Version
+;;;  1.1 (the "License"); you may not use this file except in compliance with
+;;;  the License. You may obtain a copy of the License at
+;;;  http://www.mozilla.org/MPL/
+;;;
+;;;  Software distributed under the License is distributed on an "AS IS" basis,
+;;;  WITHOUT WARRANTY OF ANY KIND, either express or implied. See the License
+;;;  for the specific language governing rights and limitations under the
+;;;  License.
+;;;
+;;;  The Original Code is JazzScheme.
+;;;
+;;;  The Initial Developer of the Original Code is Guillaume Cartier.
+;;;  Portions created by the Initial Developer are Copyright (C) 1996-2021
+;;;  the Initial Developer. All Rights Reserved.
+;;;
+;;;  Contributor(s):
+;;;
+;;;  Alternatively, the contents of this file may be used under the terms of
+;;;  the GNU General Public License Version 2 or later (the "GPL"), in which
+;;;  case the provisions of the GPL are applicable instead of those above. If
+;;;  you wish to allow use of your version of this file only under the terms of
+;;;  the GPL, and not to allow others to use your version of this file under the
+;;;  terms of the MPL, indicate your decision by deleting the provisions above
+;;;  and replace them with the notice and other provisions required by the GPL.
+;;;  If you do not delete the provisions above, a recipient may use your version
+;;;  of this file under the terms of any one of the MPL or the GPL.
+;;;
+;;;  See www.jazzscheme.org for details.
+
+
+(module gaea.mesher jazz
+
+
+(import (gaea.array)
+        (gaea.buffer)
+        (gaea.geometry)
+        (gaea.material)
+        (gaea.mesh))
+
+
+(class Mesher extends Object
+  
+  
+  (slot content   <f32vector>               getter generate)
+  (slot neighbors <f32vector>               getter generate)
+  (slot lightmap  <f32vector>               getter generate)
+  (slot matrix    <matrix+>                 getter generate)
+  (slot material  <Material+>               getter generate)
+  (slot reserved  <fx>         initialize 0 getter generate)
+  (slot used      <fx>         initialize 0 getter generate)
+  (slot vi        <fx>         initialize 0 getter generate) ;; vertices index
+  (slot ni        <fx>         initialize 0 getter generate) ;; neighbors index
+  (slot li        <fx>         initialize 0 getter generate) ;; lightmap index
+  
+  
+  (method override (initialize self triangles-count <fx> quads-count <fx> (matrix: matrix #f) (material: material #f))
+    (let ((triangles (+ triangles-count (* quads-count 2))))
+      (set! content (make-f32vector (* triangles triangle-floats)))
+      (set! neighbors (make-f32vector (* triangles triangle-neighbors-floats)))
+      (set! lightmap (make-f32vector (* triangles triangle-lightmap-floats)))
+      (set! reserved triangles))
+    (set! self.matrix matrix)
+    (set! self.material material))
+  
+  
+  (method package (reset self)
+    (set! used 0)
+    (set! vi 0)
+    (set! ni 0)
+    (set! li 0))
+  
+  
+  (method package (add-triangle self v1 <vertex> n1 <vertex> s1 <fx> t1 <fx> b1 <fx> v2 <vertex> n2 <vertex> s2 <fx> t2 <fx> b2 <fx> v3 <vertex> n3 <vertex> s3 <fx> t3 <fx> b3 <fx> uv <f32vector> tdepth <fl>)
+    (increase! used 1)
+    (let ((v1 (transform self v1))
+          (v2 (transform self v2))
+          (v3 (transform self v3)))
+      (add self
+        v1 n1 s1 t1 b1
+        v2 n2 s2 t2 b2
+        v3 n3 s3 t3 b3
+        uv
+        tdepth)))
+  
+  
+  (method package (add-quad self v1 <vertex> n1 <vertex> s1 <fx> t1 <fx> b1 <fx> v2 <vertex> n2 <vertex> s2 <fx> t2 <fx> b2 <fx> v3 <vertex> n3 <vertex> s3 <fx> t3 <fx> b3 <fx> v4 <vertex> n4 <vertex> s4 <fx> t4 <fx> b4 <fx> uv <f32vector> tdepth <fl>)
+    (increase! used 2)
+    (let ((v1 (transform self v1))
+          (v2 (transform self v2))
+          (v3 (transform self v3))
+          (v4 (transform self v4)))
+      (add self
+        v1 n1 s1 t1 b1
+        v2 n2 s2 t2 b2
+        v3 n3 s3 t3 b3
+        uv
+        tdepth)
+      (add self
+        v3 n3 s3 t3 b3
+        v4 n4 s4 t4 b4
+        v1 n1 s1 t1 b1
+        uv
+        tdepth)))
+  
+  
+  (method (transform self vert <vertex>) <vertex>
+    (matrix+-transform-3x4 matrix vert))
+  
+  
+  (method (add self v1 <vertex> n1 <vertex> s1 <fx> t1 <fx> b1 <fx> v2 <vertex> n2 <vertex> s2 <fx> t2 <fx> b2 <fx> v3 <vertex> n3 <vertex> s3 <fx> t3 <fx> b3 <fx> uv <f32vector> tdepth <fl>)
+    (add-vertex self v1 n1 s1 t1 uv tdepth b1) (add-neighbors self 0. v2 v3)
+    (add-vertex self v2 n2 s2 t2 uv tdepth b2) (add-neighbors self 1. v1 v3)
+    (add-vertex self v3 n3 s3 t3 uv tdepth b3) (add-neighbors self 2. v1 v2))
+  
+  
+  (method (add-vertex self vert <vertex> normal <vertex> s <fx> t <fx> uv <f32vector> tdepth <fl> bone <fx>)
+    (f32vector-set! content vi (vertex-x vert))
+    (f32vector-set! content (+ vi 1) (vertex-y vert))
+    (f32vector-set! content (+ vi 2) (vertex-z vert))
+    (f32vector-set! content (+ vi 3) (vertex-x normal))
+    (f32vector-set! content (+ vi 4) (vertex-y normal))
+    (f32vector-set! content (+ vi 5) (vertex-z normal))
+    (f32vector-set! content (+ vi 6) (f32vector-ref uv s))
+    (f32vector-set! content (+ vi 7) (f32vector-ref uv t))
+    (f32vector-set! content (+ vi 8) tdepth)
+    (f32vector-set! content (+ vi 9) (cast <fl> bone))
+    (set! vi (+ vi 10)))
+  
+  
+  (method (add-neighbors self rank <fl> n1 <vertex> n2 <vertex>)
+    (f32vector-set! neighbors ni rank)
+    (set! ni (+ ni 1))
+    (f32vector-set! neighbors ni (vertex-x n1))
+    (f32vector-set! neighbors (+ ni 1) (vertex-y n1))
+    (f32vector-set! neighbors (+ ni 2) (vertex-z n1))
+    (set! ni (+ ni 3))
+    (f32vector-set! neighbors ni (vertex-x n2))
+    (f32vector-set! neighbors (+ ni 1) (vertex-y n2))
+    (f32vector-set! neighbors (+ ni 2) (vertex-z n2))
+    (set! ni (+ ni 3)))
+  
+  
+  (method package (get-mesh self program) <Mesh>
+    (let ((mesh (new Mesh material: material)))
+      (allocate-vertices mesh)
+      (set-data (get-vertices-buffer mesh) content (* used triangle-floats) vertex-floats)
+      (allocate-neighbors mesh)
+      (set-data (get-neighbors-buffer mesh) neighbors (* used triangle-neighbors-floats) neighbors-floats)
+      (allocate-lightmap mesh)
+      (set-data (get-lightmap-buffer mesh) lightmap (* used triangle-lightmap-floats) lightmap-floats)
+      (setup-array mesh program)
+      (allocate-feedback mesh)
+      (setup-feedback-data (get-feedback-buffer mesh) (* used triangle-feedback-floats) feedback-floats)
+      mesh))))

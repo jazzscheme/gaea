@@ -13,7 +13,12 @@
                     (dependencies jazz))
             (gaea (title "Gaea")
                   (test gaea.validate.run)
-                  (update gaea.dye
+                  (update gaea.array
+                          gaea.buffer
+                          gaea.camera
+                          gaea.dye
+                          gaea.external.targa
+                          gaea.generate
                           gaea.geometry
                           gaea.geometry.base
                           gaea.geometry.classes
@@ -22,12 +27,25 @@
                           gaea.install
                           gaea.literals
                           gaea.lookat
+                          gaea.material
                           gaea.math
+                          gaea.mesh
+                          gaea.mesher
                           gaea.movement
                           gaea.parallelepiped
                           gaea.plane
+                          gaea.program
+                          gaea.program.color
+                          gaea.program.mesh
+                          gaea.program.model
                           gaea.shader
                           gaea.syntax
-                          gaea.types)
-                   (dependencies jazz)))
+                          gaea.texture
+                          gaea.types
+                          gaea.uv)
+                   (dependencies jazz))
+            (gaea.foreign (product gaea.foreign.product)
+                          (update gaea.foreign
+                                  gaea.foreign.product)
+                          (dependencies jazz)))
   (project ".project"))

@@ -2,7 +2,7 @@
 ;;;  GaeaScheme
 ;;;==============
 ;;;
-;;;; Types
+;;;; Array
 ;;;
 ;;;  The contents of this file are subject to the Mozilla Public License Version
 ;;;  1.1 (the "License"); you may not use this file except in compliance with
@@ -35,32 +35,40 @@
 ;;;  See www.jazzscheme.org for details.
 
 
-(module gaea.types jazz
+(module gaea.array jazz
 
 
-(definition public S32          (new-fixed-type FixedS32Vector  1))
-(definition public F32          (new-fixed-type FixedF32Vector  1))
-(definition public F64          (new-fixed-type FixedF64Vector  1))
-(definition public Vertex       (new-fixed-type FixedF64Vector  3))
-(definition public Quaternion   (new-fixed-type FixedF64Vector  4))
-(definition public Cuboid       (new-fixed-type FixedF64Vector  6))
-(definition public Matrix       (new-fixed-type FixedF64Vector 16))
-(definition public Index        (new-fixed-type FixedS32Vector  3))
-(definition public Planar-Index (new-fixed-type FixedS32Vector  2))
-(definition public Coverage     (new-fixed-type FixedS32Vector  6))
-(definition public Dye          (new-fixed-type FixedF32Vector  4))
-(definition public UV           (new-fixed-type FixedF32Vector  5))
+(import (jazz.opengl.glew)
+        (gaea.program))
 
 
-(add-primitive-type 's32          S32)
-(add-primitive-type 'f32          F32)
-(add-primitive-type 'f64          F64)
-(add-primitive-type 'vertex       Vertex)
-(add-primitive-type 'quaternion   Quaternion)
-(add-primitive-type 'cuboid       Cuboid)
-(add-primitive-type 'matrix       Matrix)
-(add-primitive-type 'index        Index)
-(add-primitive-type 'planar-index Planar-Index)
-(add-primitive-type 'coverage     Coverage)
-(add-primitive-type 'dye          Dye)
-(add-primitive-type 'uv           UV))
+(class Array extends Object
+  
+  
+  (slot array <object> initialize #f accessors generate)
+  
+  
+  (method override (destroy self)
+    (free-array self))
+  
+  
+  (method public virtual (empty? self)
+    #t)
+  
+  
+  (method public virtual (count-floats self)
+    0)
+  
+  
+  (method public virtual (setup-array self program)
+    (set! array (create-array program self)))
+  
+  
+  (method public virtual (draw-array self)
+    )
+  
+  
+  (method protected virtual (free-array self)
+    (when array
+      (glDeleteVertexArrays* array)
+      (set! array #f)))))
