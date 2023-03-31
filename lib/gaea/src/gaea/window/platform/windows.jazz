@@ -35,7 +35,7 @@
 ;;;  See www.jazzscheme.org for details.
 
 
-(module protected gaea.window.windows jazz
+(module protected gaea.window.platform.windows jazz
 
 
 (import (jazz.geometry)

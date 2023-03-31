@@ -35,7 +35,7 @@
 ;;;  See www.jazzscheme.org for details.
 
 
-(module protected gaea.window.x11 jazz
+(module protected gaea.window.platform.x11 jazz
 
 
 (import (jazz.event)
