@@ -41,6 +41,9 @@
 (import (jazz.settings))
 
 
+(hub setup-engine)
+
+
 (definition default-engine
   (cond-expand
     (cocoa (symbol-argument "engine" 'metal))
@@ -51,4 +54,13 @@
   default-engine)
 
 (definition public (get-engine)
-  *engine*))
+  *engine*)
+
+
+(definition package (prepare-engine-window window)
+  (case (get-engine)
+    ((opengl)
+     (gaea.engine.opengl:prepare-opengl-window window))
+    ((metal)
+     (gaea.engine.metal:prepare-metal-window window)
+     (setup-engine window)))))

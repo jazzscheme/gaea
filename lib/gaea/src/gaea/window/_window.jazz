@@ -80,10 +80,7 @@
     (nextmethod self rest)
     (set! context-mutex (make-mutex 'context))
     (set! window-mode (if (request-fullscreen?) 'fullscreen 'windowed))
-    (if (opengl? self)
-        (gaea.engine.opengl:prepare-opengl-window self)
-      (gaea.engine.metal:prepare-metal-window self)
-      (setup-opengl self)))
+    (prepare-engine-window self))
   
   
   (method public (with-context-current self thunk)
@@ -112,7 +109,7 @@
       (gaea.engine.opengl:opengl-resize-scene self width height)))
 
   
-  (method package virtual (setup-opengl self)
+  (method package virtual (setup-engine self)
     (when (opengl? self)
       (gaea.engine.opengl:opengl-setup)))
 

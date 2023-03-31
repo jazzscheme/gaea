@@ -406,7 +406,7 @@ void main()
     #t)
   
   
-  (method override (setup-opengl self)
+  (method override (setup-engine self)
     (nextmethod self)
     (when (default-render? self)
       (create-programs self)
