@@ -50,15 +50,16 @@
         (jazz.screen)
         (jazz.version)
         (jazz.window)
+        (gaea.engine)
         (gaea.window.cocoa   (cond cocoa))
         (gaea.window.windows (cond windows))
         (gaea.window.x11     (cond x11)))
 
-
+@w
 (definition minimum-needed-version
   {Version 3 3})
 
-
+@w
 (definition (prepare-opengl-window window (need-version: need-version #f))
   (let ((needed-version (or need-version minimum-needed-version)))
     (let ((needed-major (get-major needed-version))
@@ -167,16 +168,18 @@
 
 
   (method override (opengl? self)
-    #t)
+    (cond-expand
+      (cocoa (eq? (get-engine) 'opengl))
+      (else #t)))
 
 
   (method override (prepare self rest)
     (nextmethod self rest)
-    (set! context-mutex (make-mutex 'context))
-    (set! window-mode (if (request-fullscreen?) 'fullscreen 'windowed))
-    (prepare-opengl-window self))
+    @w(set! context-mutex (make-mutex 'context))
+    @w(set! window-mode (if (request-fullscreen?) 'fullscreen 'windowed))
+    @w(prepare-opengl-window self))
   
-  
+  @w
   (method public (with-context-current self thunk)
     (with-reentrant-render-mutex
       (lambda ()
@@ -187,7 +190,7 @@
               (thunk)) 
           (mutex-unlock! context-mutex)))))
 
-
+@w
   (method override (size-change self state size)
     (nextmethod self state size)
     (when (and (opened? self) (opengl-setup? self))
@@ -199,7 +202,7 @@
           @interesting-but-can-get-called-too-early
           (render-scene)))))
 
-
+@w
   (method package virtual (resize-scene self width <fl> height <fl>)
     ;; quick try to solve wiggles on resizing window
     (cond-expand
@@ -214,7 +217,7 @@
        (let ((device-size (get-device-size self)))
          (glViewport 0 0 (get-width device-size) (get-height device-size))))))
 
-
+@w
   (method package virtual (setup-opengl self)
     (glClearColor 0.0 0.0 0.0 1.0)
     (glClearDepth 1.0)
@@ -276,7 +279,7 @@
   ;;;; Render
   ;;;
 
-
+@w
   (method override (paint self)
     (with-painting self
       (lambda ()
@@ -284,21 +287,21 @@
           (lambda ()
             (render-scene self))))))
 
-
+@w
   (method protected virtual (render-ready? self)
     #t)
 
-
+@w
   (method package virtual (render-scene self)
     (when (render-ready? self)
       (draw-scene self)
       (render-sync self)))
 
-
+@w
   (method protected virtual (draw-scene self)
     (glClear (bitwise-ior GL_COLOR_BUFFER_BIT GL_DEPTH_BUFFER_BIT)))
 
-
+@w
   (method public (render-sync self)
     (with-reentrant-render-mutex
       (lambda ()
