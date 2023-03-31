@@ -17,6 +17,7 @@
                           gaea.buffer
                           gaea.camera
                           gaea.dye
+                          gaea.engine
                           gaea.external.targa
                           gaea.generate
                           gaea.geometry
@@ -42,10 +43,15 @@
                           gaea.syntax
                           gaea.texture
                           gaea.types
-                          gaea.uv)
+                          gaea.uv
+                          gaea.window)
                    (dependencies jazz))
             (gaea.foreign (product gaea.foreign.product)
                           (update gaea.foreign
                                   gaea.foreign.product)
+                          (dependencies jazz))
+            (gaea.metal   (product gaea.metal.product)
+                          (update gaea.metal
+                                  gaea.metal.product)
                           (dependencies jazz)))
   (project ".project"))
