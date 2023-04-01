@@ -63,11 +63,14 @@
           (<Jazz-File>         name: _metal         source: {File :context "src" "gaea" "metal" "_metal.jazz"})
           (<Jazz-File>         name: product        source: {File :context "src" "gaea" "metal" "product.jazz"}))
         (<Jazz-File>           name: autoload       source: {File :context "src" "gaea" "autoload.jazz"})
-        (<Jazz-File>           name: engine         source: {File :context "src" "gaea" "engine.jazz"})
         (<Project-Directory>                        directory: {Directory :context "src" "gaea" "window"}
-          (<Jazz-File>         name: _frame         source: {File :context "src" "gaea" "window" "_frame.jazz"})
           (<Jazz-File>         name: _window        source: {File :context "src" "gaea" "window" "_window.jazz"})
-          (<Jazz-File>         name: cocoa          source: {File :context "src" "gaea" "window" "cocoa.jazz"})
-          (<Jazz-File>         name: opengl         source: {File :context "src" "gaea" "window" "opengl.jazz"})
-          (<Jazz-File>         name: windows        source: {File :context "src" "gaea" "window" "windows.jazz"})
-          (<Jazz-File>         name: x11            source: {File :context "src" "gaea" "window" "x11.jazz"})))))))
+          (<Jazz-File>         name: frame          source: {File :context "src" "gaea" "window" "frame.jazz"})
+          (<Project-Directory>                      directory: {Directory :context "src" "gaea" "window" "platform"}
+            (<Jazz-File>       name: cocoa          source: {File :context "src" "gaea" "window" "platform" "cocoa.jazz"})
+            (<Jazz-File>       name: windows        source: {File :context "src" "gaea" "window" "platform" "windows.jazz"})
+            (<Jazz-File>       name: x11            source: {File :context "src" "gaea" "window" "platform" "x11.jazz"})))
+        (<Project-Directory>                        directory: {Directory :context "src" "gaea" "engine"}
+          (<Jazz-File>         name: _engine        source: {File :context "src" "gaea" "engine" "_engine.jazz"})
+          (<Jazz-File>         name: opengl         source: {File :context "src" "gaea" "engine" "opengl.jazz"})
+          (<Jazz-File>         name: metal          source: {File :context "src" "gaea" "engine" "metal.jazz"})))))))

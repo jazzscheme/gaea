@@ -39,12 +39,18 @@
 
 
 (import (jazz.platform)
-        (jazz.window))
+        (jazz.window)
+        (gaea.metal))
 
 
 (definition package (prepare-metal-window window)
-  (platformMakeWindowMetal (get-handle window)))
+  (let ((device (metalSetupDevice)))
+    (metalSetupQueue)
+    (platformMakeWindowMetal (get-handle window) device)))
 
 
-(definition package (render-metal-window window)
-  (platformRenderMetal (get-handle window))))
+(definition package (render-metal-clear window)
+  (metalRenderClear (platformGetWindowLayer (get-handle window))))
+
+(definition package (render-metal-triangle window pipeline)
+  (metalRenderTriangle (platformGetWindowLayer (get-handle window)) pipeline)))

@@ -39,7 +39,8 @@
 
 
 (import (jazz.foreign)
-        (jazz.platform.types))
+        (jazz.platform.types)
+        (jazz.platform.cocoa.types))
 
 
 (c-include "<stdio.h>")
@@ -54,4 +55,155 @@
 
 (c-declare cocoa #/Objective-C/
 
-//#))
+#import <Metal/Metal.h>
+#import <QuartzCore/CAMetalLayer.h>
+#import <simd/simd.h>
+
+//#)
+
+
+;;;
+;;;; Types
+;;;
+
+
+(c-type id<MTLCommandQueue> "id<MTLCommandQueue>")
+(c-type id<MTLLibrary> "id<MTLLibrary>")
+(c-type id<MTLRenderPipelineState> "id<MTLRenderPipelineState>")
+
+
+;;;
+;;;; Setup
+;;;
+
+
+(c-declare cocoa #/Objective-C/
+
+id<MTLDevice> device;
+id<MTLCommandQueue> queue;
+
+id<MTLDevice> metalSetupDevice()
+{
+    device = MTLCreateSystemDefaultDevice();
+    
+    return device;
+}
+
+id<MTLCommandQueue> metalSetupQueue()
+{
+    queue = [device newCommandQueue];
+    
+    return queue;
+}
+
+//#)
+
+
+;;;
+;;;; Library
+;;;
+
+
+(c-declare cocoa #/Objective-C/
+
+id<MTLLibrary> metalMakeLibrary(NSString* source)
+{
+    MTLCompileOptions* compileOptions = [MTLCompileOptions new];
+    compileOptions.languageVersion = MTLLanguageVersion1_1;
+    NSError* compileError;
+    id<MTLLibrary> lib = [device newLibraryWithSource:
+       source
+       options:compileOptions error:&compileError];
+    if (!lib)
+    {
+        NSLog(@"can't create library: %@", compileError); 
+        exit(EXIT_FAILURE);
+    }
+    return lib;
+}
+
+id<MTLRenderPipelineState> metalMakePipeline(id<MTLLibrary> lib)
+{
+    id<MTLFunction> vs = [lib newFunctionWithName:@"v_simple"];
+    assert(vs);
+    id<MTLFunction> fs = [lib newFunctionWithName:@"f_simple"];
+    assert(fs);
+    MTLRenderPipelineDescriptor* pipeline_descriptor = [MTLRenderPipelineDescriptor new];
+    pipeline_descriptor.vertexFunction = vs;
+    pipeline_descriptor.fragmentFunction = fs;
+    pipeline_descriptor.colorAttachments[0].pixelFormat = MTLPixelFormatBGRA8Unorm;
+    id<MTLRenderPipelineState> pipeline_state = [device newRenderPipelineStateWithDescriptor:pipeline_descriptor error:NULL];
+    assert(pipeline_state);
+
+    return pipeline_state;
+}
+
+//#)
+
+
+;;;
+;;;; Render
+;;;
+
+
+(c-declare cocoa #/Objective-C/
+
+void metalRenderClear(void* layer)
+{
+    @autoreleasepool {
+        id<CAMetalDrawable> drawable = [(CAMetalLayer*) layer nextDrawable];
+
+        MTLRenderPassDescriptor* pass = [MTLRenderPassDescriptor renderPassDescriptor];
+        pass.colorAttachments[0].clearColor = MTLClearColorMake(0, 0, 1, 1);
+        pass.colorAttachments[0].loadAction  = MTLLoadActionClear;
+        pass.colorAttachments[0].storeAction = MTLStoreActionStore;
+        pass.colorAttachments[0].texture = drawable.texture;
+
+        id<MTLCommandBuffer> buffer = [queue commandBuffer];
+        id<MTLRenderCommandEncoder> encoder = [buffer renderCommandEncoderWithDescriptor:pass];
+        [encoder endEncoding];
+        [buffer presentDrawable:drawable];
+        [buffer commit];
+    }
+}
+
+void metalRenderTriangle(void* layer, id<MTLRenderPipelineState> pipeline_state)
+{
+    @autoreleasepool {
+        id<CAMetalDrawable> drawable = [(CAMetalLayer*) layer nextDrawable];
+
+        id<MTLCommandBuffer> buffer = [queue commandBuffer];
+        MTLRenderPassDescriptor* pass = [MTLRenderPassDescriptor new];
+        MTLRenderPassColorAttachmentDescriptor* color = pass.colorAttachments[0];
+        color.texture = drawable.texture;
+        color.loadAction = MTLLoadActionClear;
+        color.clearColor = MTLClearColorMake(0, 0, 0, 1);
+        color.storeAction = MTLStoreActionStore;
+        id<MTLRenderCommandEncoder> encoder = [buffer renderCommandEncoderWithDescriptor:pass];
+        [encoder setRenderPipelineState:pipeline_state];
+        [encoder setVertexBytes:(vector_float4[]){
+            { 0, 0, 0, 1 },
+            { -1, 1, 0, 1 },
+            { 1, 1, 0, 1 },
+        } length:3 * sizeof(vector_float4) atIndex:0];
+        [encoder drawPrimitives:MTLPrimitiveTypeTriangle vertexStart:0 vertexCount:3];
+        [encoder endEncoding];
+        [buffer presentDrawable:drawable];
+        [buffer commit];
+    }
+}
+
+//#)
+
+
+;;;
+;;;; External
+;;;
+
+
+(c-external (metalSetupDevice) id<MTLDevice>)
+(c-external (metalSetupQueue) id<MTLCommandQueue>)
+(c-external (metalMakeLibrary NSString*) id<MTLLibrary>)
+(c-external (metalMakePipeline id<MTLLibrary>) id<MTLRenderPipelineState>)
+(c-external (metalRenderClear CAMetalLayer*) void)
+(c-external (metalRenderTriangle CAMetalLayer* id<MTLRenderPipelineState>) void))
