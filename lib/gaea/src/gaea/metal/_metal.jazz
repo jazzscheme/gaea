@@ -181,16 +181,35 @@ void metalRenderTriangle(void* layer, id<MTLRenderPipelineState> pipeline_state)
         color.storeAction = MTLStoreActionStore;
         id<MTLRenderCommandEncoder> encoder = [buffer renderCommandEncoderWithDescriptor:pass];
         [encoder setRenderPipelineState:pipeline_state];
-        [encoder setVertexBytes:(vector_float4[]){
-            { 0, 0, 0, 1 },
-            { -1, 1, 0, 1 },
-            { 1, 1, 0, 1 },
+        [encoder setVertexBytes:(float[]) {
+             0, 0, 0, 1 ,
+             -1, 1, 0, 1 ,
+             1, 1, 0, 1 ,
         } length:3 * sizeof(vector_float4) atIndex:0];
         [encoder drawPrimitives:MTLPrimitiveTypeTriangle vertexStart:0 vertexCount:3];
         [encoder endEncoding];
         [buffer presentDrawable:drawable];
         [buffer commit];
     }
+}
+
+void metalTest()
+{
+    float* ptr = (float*) (vector_float4[]){
+            { 0, 0, 0, 1 },
+            { -1, 1, 0, 1 },
+            { 1, 1, 0, 1 },
+        };
+    printf("%f %f %f %f\n", ptr[0], ptr[1], ptr[2], ptr[3]);
+    printf("%f %f %f %f\n", ptr[4], ptr[5], ptr[6], ptr[7]);
+    
+    float p[] = (float[]) {
+             0, 0, 0, 1 ,
+             -1, 1, 0, 1 ,
+             1, 1, 0, 1 ,
+        };
+    printf("%f %f %f %f\n", p[0], p[1], p[2], p[3]);
+    printf("%f %f %f %f\n", p[4], p[5], p[6], p[7]);
 }
 
 //#)
@@ -206,4 +225,5 @@ void metalRenderTriangle(void* layer, id<MTLRenderPipelineState> pipeline_state)
 (c-external (metalMakeLibrary NSString*) id<MTLLibrary>)
 (c-external (metalMakePipeline id<MTLLibrary>) id<MTLRenderPipelineState>)
 (c-external (metalRenderClear CAMetalLayer*) void)
-(c-external (metalRenderTriangle CAMetalLayer* id<MTLRenderPipelineState>) void))
+(c-external (metalRenderTriangle CAMetalLayer* id<MTLRenderPipelineState>) void)
+(c-external (metalTest) void))
