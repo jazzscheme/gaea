@@ -49,8 +49,5 @@
     (platformMakeWindowMetal (get-handle window) device)))
 
 
-(definition package (render-metal-clear window)
-  (metalRenderClear (platformGetWindowLayer (get-handle window))))
-
-(definition package (render-metal-triangle window pipeline)
-  (metalRenderTriangle (platformGetWindowLayer (get-handle window)) pipeline)))
+(definition package (get-window-layer window)
+  (platformGetWindowLayer (get-handle window))))
