@@ -69,6 +69,7 @@
 
 (c-type id<MTLCommandQueue> "id<MTLCommandQueue>")
 (c-type id<MTLLibrary> "id<MTLLibrary>")
+(c-type id<MTLBuffer> "id<MTLBuffer>")
 (c-type id<CAMetalDrawable> "id<CAMetalDrawable>")
 (c-type id<MTLRenderPipelineState> "id<MTLRenderPipelineState>")
 (c-type id<MTLCommandBuffer> "id<MTLCommandBuffer>")
@@ -148,6 +149,28 @@ id<MTLRenderPipelineState> metalMakePipeline(id<MTLLibrary> lib, NSString* vs_na
 
 
 ;;;
+;;;; Buffer
+;;;
+
+
+(c-declare cocoa #/Objective-C/
+
+id<MTLBuffer> metalNewBufferWithLength(int length)
+{
+    return [device newBufferWithLength:length options:MTLResourceOptionCPUCacheModeDefault];
+}
+
+id<MTLBuffer> metalNewBufferWithBytes(___SCMOBJ content, int size)
+{
+    return [device newBufferWithBytes:___CAST(float*,___BODY(content))
+                               length:size * sizeof(float)
+                              options:MTLResourceOptionCPUCacheModeDefault];
+}
+
+//#)
+
+
+;;;
 ;;;; Render
 ;;;
 
@@ -201,13 +224,9 @@ void metalEncoderSetRenderPipelineState(id<MTLRenderCommandEncoder> encoder, id<
     [encoder setRenderPipelineState:state];
 }
 
-void metalEncoderSetBytes(id<MTLRenderCommandEncoder> encoder)
+void metalEncoderSetVertexBuffer(id<MTLRenderCommandEncoder> encoder, id<MTLBuffer> buffer, int index)
 {
-    [encoder setVertexBytes:(float[]) {
-         0, 0, 0, 1 ,
-         -1, 1, 0, 1 ,
-         1, 1, 0, 1 ,
-    } length:3 * sizeof(vector_float4) atIndex:0];
+    [encoder setVertexBuffer:buffer offset:0 atIndex:index];
 }
 
 void metalEncoderDrawPrimitives(id<MTLRenderCommandEncoder> encoder)
@@ -234,6 +253,8 @@ void metalEndPresentCommit(id<CAMetalDrawable> drawable, id<MTLCommandBuffer> bu
 (c-external (metalSetupQueue) id<MTLCommandQueue>)
 (c-external (metalMakeLibrary NSString*) id<MTLLibrary>)
 (c-external (metalMakePipeline id<MTLLibrary> NSString* NSString*) id<MTLRenderPipelineState>)
+(c-external (metalNewBufferWithLength int) id<MTLBuffer>)
+(c-external (metalNewBufferWithBytes scheme-object int) id<MTLBuffer>)
 (c-external (metalLayerNextDrawable CAMetalLayer*) id<CAMetalDrawable>)
 (c-external (metalMakeCommandBuffer) id<MTLCommandBuffer>)
 (c-external (metalReleaseCommandBuffer id<MTLCommandBuffer>) void)
@@ -241,6 +262,6 @@ void metalEndPresentCommit(id<CAMetalDrawable> drawable, id<MTLCommandBuffer> bu
 (c-external (metalMakeRenderPassDescriptorClear id<CAMetalDrawable> double double double) MTLRenderPassDescriptor*)
 (c-external (metalMakeRenderCommandEncoder id<MTLCommandBuffer> MTLRenderPassDescriptor*) id<MTLRenderCommandEncoder>)
 (c-external (metalEncoderSetRenderPipelineState id<MTLRenderCommandEncoder> id<MTLRenderPipelineState>) void)
-(c-external (metalEncoderSetBytes id<MTLRenderCommandEncoder>) void)
+(c-external (metalEncoderSetVertexBuffer id<MTLRenderCommandEncoder> id<MTLBuffer> int) void)
 (c-external (metalEncoderDrawPrimitives id<MTLRenderCommandEncoder>) void)
 (c-external (metalEndPresentCommit id<CAMetalDrawable> id<MTLCommandBuffer> id<MTLRenderCommandEncoder>) void))
