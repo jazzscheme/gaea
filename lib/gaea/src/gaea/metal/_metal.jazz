@@ -59,6 +59,8 @@
 #import <QuartzCore/CAMetalLayer.h>
 #import <simd/simd.h>
 
+#include <Foundation/NSDebug.h>
+
 //#)
 
 
@@ -194,6 +196,12 @@ id<MTLTexture> metalNewTexture(int width, int height, int stride, void* data)
     return texture;
 }
 
+void metalTextureReplaceRegion(id<MTLTexture> texture, int width, int height, int stride, void* data)
+{
+    MTLRegion region = MTLRegionMake2D(0, 0, width, height);
+    [texture replaceRegion:region mipmapLevel:0 withBytes:data bytesPerRow:stride];
+}
+
 id<MTLSamplerState> metalNewSamplerState()
 {
     MTLSamplerDescriptor *samplerDesc = [MTLSamplerDescriptor new];
@@ -216,6 +224,24 @@ id<MTLSamplerState> metalNewSamplerState()
 
 
 (c-declare cocoa #/Objective-C/
+
+NSAutoreleasePool* pool;
+
+void metalStartRender()
+{
+    pool = [[NSAutoreleasePool alloc] init];
+}
+
+void metalEndRender()
+{
+    [pool release];
+}
+
+void metalShowPools()
+{
+    [NSAutoreleasePool showPools];
+}
+
 
 id<CAMetalDrawable> metalLayerNextDrawable(CAMetalLayer* layer)
 {
@@ -279,10 +305,18 @@ void metalEncoderDrawPrimitives(id<MTLRenderCommandEncoder> encoder, int count)
     [encoder drawPrimitives:MTLPrimitiveTypeTriangle vertexStart:0 vertexCount:count];
 }
 
-void metalEndPresentCommit(id<CAMetalDrawable> drawable, id<MTLCommandBuffer> buffer, id<MTLRenderCommandEncoder> encoder)
+void metalEndEncoding(id<MTLRenderCommandEncoder> encoder)
 {
     [encoder endEncoding];
+}
+
+void metalPresentDrawable(id<CAMetalDrawable> drawable, id<MTLCommandBuffer> buffer)
+{
     [buffer presentDrawable:drawable];
+}
+
+void metalCommit(id<MTLCommandBuffer> buffer)
+{
     [buffer commit];
 }
 
@@ -301,7 +335,11 @@ void metalEndPresentCommit(id<CAMetalDrawable> drawable, id<MTLCommandBuffer> bu
 (c-external (metalNewBufferWithLength int) id<MTLBuffer>)
 (c-external (metalNewBufferWithBytes scheme-object int) id<MTLBuffer>)
 (c-external (metalNewTexture int int int void*) id<MTLTexture>)
+(c-external (metalTextureReplaceRegion id<MTLTexture> int int int void*) void)
 (c-external (metalNewSamplerState) id<MTLSamplerState>)
+(c-external (metalStartRender) void)
+(c-external (metalEndRender) void)
+(c-external (metalShowPools) void)
 (c-external (metalLayerNextDrawable CAMetalLayer*) id<CAMetalDrawable>)
 (c-external (metalMakeCommandBuffer) id<MTLCommandBuffer>)
 (c-external (metalMakeRenderPassDescriptor id<CAMetalDrawable>) MTLRenderPassDescriptor*)
@@ -312,4 +350,6 @@ void metalEndPresentCommit(id<CAMetalDrawable> drawable, id<MTLCommandBuffer> bu
 (c-external (metalEncoderSetFragmentTexture id<MTLRenderCommandEncoder> id<MTLTexture> int) void)
 (c-external (metalEncoderSetFragmentSamplerState id<MTLRenderCommandEncoder> id<MTLSamplerState> int) void)
 (c-external (metalEncoderDrawPrimitives id<MTLRenderCommandEncoder> int) void)
-(c-external (metalEndPresentCommit id<CAMetalDrawable> id<MTLCommandBuffer> id<MTLRenderCommandEncoder>) void))
+(c-external (metalEndEncoding id<MTLRenderCommandEncoder>) void)
+(c-external (metalPresentDrawable id<CAMetalDrawable> id<MTLCommandBuffer>) void)
+(c-external (metalCommit id<MTLCommandBuffer>) void))

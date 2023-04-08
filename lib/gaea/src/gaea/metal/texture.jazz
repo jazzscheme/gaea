@@ -91,6 +91,10 @@
         (set! self.file file))))
   
   
+  (method public (yoreplace self)
+    (metalTextureReplaceRegion id width height stride data))
+  
+  
   (method override (destroy self)
     (with-reentrant-render-mutex
       (lambda ()
@@ -140,7 +144,8 @@
       (let ((surface (or surface (new Image-Surface (new Dimension width height) scale?: scale?))))
         (let ((stride (cairo_image_surface_get_stride (get-handle surface)))
               (data (cairo_image_surface_get_data (get-handle surface))))
-          (apply nextmethod self width height stride data scale?: scale? others)))))
+          (apply nextmethod self width height stride data scale?: scale? others)
+          (set! self.surface surface)))))
   
   
   (method override (destroy self)
