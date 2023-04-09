@@ -136,8 +136,7 @@ id<MTLLibrary> metalMakeLibrary(NSString* source)
     MTLCompileOptions* compileOptions = [MTLCompileOptions new];
     compileOptions.languageVersion = MTLLanguageVersion1_1;
     NSError* compileError;
-    id<MTLLibrary> lib = [device newLibraryWithSource:
-       source
+    id<MTLLibrary> lib = [device newLibraryWithSource:source
        options:compileOptions error:&compileError];
     if (!lib)
     {
@@ -178,8 +177,13 @@ id<MTLRenderPipelineState> metalMakeRenderPipelineState(id<MTLLibrary> lib, NSSt
     pipeline_descriptor.colorAttachments[0].pixelFormat = MTLPixelFormatBGRA8Unorm;
     pipeline_descriptor.vertexDescriptor = vertexDesc;
 
-    id<MTLRenderPipelineState> pipeline_state = [device newRenderPipelineStateWithDescriptor:pipeline_descriptor error:NULL];
-    assert(pipeline_state);
+    NSError* err;
+    id<MTLRenderPipelineState> pipeline_state = [device newRenderPipelineStateWithDescriptor:pipeline_descriptor error:&err];
+    if (!pipeline_state)
+    {
+        NSLog(@"can't make render pipeline state: %@", err); 
+        exit(EXIT_FAILURE);
+    }
 
     return pipeline_state;
 }
