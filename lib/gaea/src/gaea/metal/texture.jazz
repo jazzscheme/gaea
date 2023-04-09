@@ -91,10 +91,6 @@
         (set! self.file file))))
   
   
-  (method public (yoreplace self)
-    (metalTextureReplaceRegion id width height stride data))
-  
-  
   (method override (destroy self)
     (with-reentrant-render-mutex
       (lambda ()
@@ -113,19 +109,10 @@
         (proc))))
   
   
-  (method public (map-texture self (repeat?: repeat? #t))
+  (method public (map-texture self)
     (with-texture self
       (lambda ()
-        @w
-        (glTexImage2D target
-                      0
-                      GL_RGBA
-                      width
-                      height
-                      0
-                      GL_BGRA
-                      GL_UNSIGNED_BYTE
-                      data)))))
+        (metalTextureReplaceRegion id width height stride data)))))
 
 
 ;;;
