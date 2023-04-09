@@ -39,10 +39,10 @@
 
 
 (import (jazz.foreign)
-        (jazz.opengl.glew)
-        (jazz.opengl.syntax (phase syntax))
-        (jazz.opengl.trace)
-        (jazz.platform.types))
+        (jazz.platform.types)
+        (gaea.opengl.glew)
+        (gaea.opengl.syntax (phase syntax))
+        (gaea.opengl.trace))
 
 
 (c-include "<stdio.h>")

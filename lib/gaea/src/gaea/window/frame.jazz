@@ -35,20 +35,21 @@
 ;;;  See www.jazzscheme.org for details.
 
 
-(module jazz.opengl.frame jazz
+(module gaea.window.frame jazz
 
 
 (import (jazz.cairo)
         (jazz.geometry)
         (jazz.graphic)
-        (jazz.opengl)
-        (jazz.opengl.glew)
-        (jazz.opengl.texture)
         (jazz.platform)
         (jazz.screen)
         (jazz.settings)
         (jazz.view)
-        (jazz.window))
+        (jazz.window)
+        (gaea.opengl)
+        (gaea.opengl.glew)
+        (gaea.opengl.texture)
+        (gaea.window))
 
 
 ;;;
@@ -393,7 +394,7 @@ void main()
 ;;;
 
 
-(class OpenGL-Frame extends OpenGL-Window
+(class OpenGL-Frame extends Gaea-Window
   
   
   (slot interface-program   initialize #f getter generate)

@@ -39,10 +39,10 @@
 
 
 (import (jazz.event)
-        (jazz.opengl)
-        (jazz.opengl.glew)
         (jazz.platform)
-        (jazz.window))
+        (jazz.window)
+        (gaea.opengl)
+        (gaea.opengl.glew))
 
 
 (definition package (setup-opengl-window window)

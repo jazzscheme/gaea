@@ -35,9 +35,9 @@
 ;;;  See www.jazzscheme.org for details.
 
 
-(module protected jazz.opengl.autoload jazz
+(module protected gaea.autoload jazz
 
 
 (export
-  (jazz.opengl.frame (autoload OpenGL-Frame))
-  (jazz.opengl.window (autoload OpenGL-Window))))
+  (gaea.opengl.frame (autoload OpenGL-Frame))
+  (gaea.opengl.window (autoload OpenGL-Window))))

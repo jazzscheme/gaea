@@ -38,8 +38,8 @@
 (module gaea.shader jazz
 
 
-(import (jazz.opengl)
-        (jazz.opengl.glew))
+(import (gaea.opengl)
+        (gaea.opengl.glew))
 
 
 (definition protected glsl-version

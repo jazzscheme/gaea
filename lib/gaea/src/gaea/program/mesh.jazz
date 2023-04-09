@@ -39,11 +39,11 @@
 
 
 (import (jazz.platform)
-        (jazz.opengl.glew)
         (jazz.syntax (phase syntax))
         (gaea.buffer)
         (gaea.geometry)
         (gaea.mesh)
+        (gaea.opengl.glew)
         (gaea.program)
         (gaea.shader))
 

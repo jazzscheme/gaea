@@ -38,8 +38,8 @@
 (module gaea.program jazz
 
 
-(import (jazz.opengl)
-        (jazz.opengl.glew)
+(import (gaea.opengl)
+        (gaea.opengl.glew)
         (gaea.shader))
 
 

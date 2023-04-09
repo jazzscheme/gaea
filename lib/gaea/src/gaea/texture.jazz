@@ -44,11 +44,11 @@
         (jazz.graphic)
         (jazz.io)
         (jazz.jpeg)
-        (jazz.opengl.glew)
-        (jazz.opengl.texture)
         (jazz.screen)
         (gaea.external.targa)
-        (gaea.metal.texture))
+        (gaea.metal.texture)
+        (gaea.opengl.glew)
+        (gaea.opengl.texture))
 
 
 ;;;

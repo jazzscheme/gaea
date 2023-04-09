@@ -38,7 +38,7 @@
 (module gaea.program.texture jazz
 
 
-(import (jazz.opengl.glew)
+(import (gaea.opengl.glew)
         (gaea.program)
         (gaea.program.mesh)
         (gaea.shader))

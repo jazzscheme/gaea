@@ -1,0 +1,19 @@
+(package gaea.opengl.sample
+  
+  (title "OpenGL Sample")
+  (description "OpenGL Sample")
+  (authors "Guillaume Cartier")
+  (stage release)
+  (root "src")
+  (products (gaea.opengl.sample (alias shader)
+                                (title "OpenGL Shader Sample")
+                                (run gaea.opengl.sample.run)
+                                (build (gaea.opengl.sample executable: "shader"))
+                                (update gaea.opengl.sample
+                                        gaea.opengl.sample.appl
+                                        gaea.opengl.sample.run
+                                        gaea.opengl.sample.syntax
+                                        gaea.opengl.sample.window)
+                                (dependencies jazz
+                                              gaea.opengl)))
+  (project ".project"))

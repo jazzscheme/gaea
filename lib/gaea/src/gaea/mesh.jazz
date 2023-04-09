@@ -38,10 +38,10 @@
 (module gaea.mesh jazz
 
 
-(import (jazz.opengl.glew)
-        (gaea.array)
+(import (gaea.array)
         (gaea.buffer)
         (gaea.material)
+        (gaea.opengl.glew)
         (gaea.program)
         (gaea.shader))
 

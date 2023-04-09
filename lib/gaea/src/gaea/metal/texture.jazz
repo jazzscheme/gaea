@@ -42,10 +42,10 @@
         (jazz.geometry)
         (jazz.graphic)
         (jazz.math)
-        (jazz.opengl.render)
         (jazz.platform.types)
         (jazz.screen)
-        (gaea.metal))
+        (gaea.metal)
+        (gaea.opengl.render))
 
 
 ;;;

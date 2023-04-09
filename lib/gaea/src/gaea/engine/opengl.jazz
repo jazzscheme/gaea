@@ -38,11 +38,11 @@
 (module gaea.engine.opengl jazz
 
 
-(import (jazz.opengl.glew)
-        (jazz.opengl.render)
-        (jazz.platform)
+(import (jazz.platform)
         (jazz.version)
         (jazz.window)
+        (gaea.opengl.glew)
+        (gaea.opengl.render)
         (gaea.window))
 
 
