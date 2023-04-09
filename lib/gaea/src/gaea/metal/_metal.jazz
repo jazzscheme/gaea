@@ -100,7 +100,7 @@ id<MTLDevice> metalSetupDevice()
     return device;
 }
 
-id<MTLCommandQueue> metalSetupQueue()
+id<MTLCommandQueue> metalSetupCommandQueue()
 {
     queue = [device newCommandQueue];
     
@@ -133,7 +133,7 @@ id<MTLLibrary> metalMakeLibrary(NSString* source)
     return lib;
 }
 
-id<MTLRenderPipelineState> metalMakePipeline(id<MTLLibrary> lib, NSString* vs_name, NSString* fs_name)
+id<MTLRenderPipelineState> metalMakeRenderPipelineState(id<MTLLibrary> lib, NSString* vs_name, NSString* fs_name)
 {
     id<MTLFunction> vs = [lib newFunctionWithName:vs_name];
     assert(vs);
@@ -329,9 +329,9 @@ void metalCommit(id<MTLCommandBuffer> buffer)
 
 
 (c-external (metalSetupDevice) id<MTLDevice>)
-(c-external (metalSetupQueue) id<MTLCommandQueue>)
+(c-external (metalSetupCommandQueue) id<MTLCommandQueue>)
 (c-external (metalMakeLibrary NSString*) id<MTLLibrary>)
-(c-external (metalMakePipeline id<MTLLibrary> NSString* NSString*) id<MTLRenderPipelineState>)
+(c-external (metalMakeRenderPipelineState id<MTLLibrary> NSString* NSString*) id<MTLRenderPipelineState>)
 (c-external (metalNewBufferWithLength int) id<MTLBuffer>)
 (c-external (metalNewBufferWithBytes scheme-object int) id<MTLBuffer>)
 (c-external (metalNewTexture int int int void*) id<MTLTexture>)

@@ -45,7 +45,7 @@
 
 (definition package (prepare-metal-window window)
   (let ((device (metalSetupDevice)))
-    (metalSetupQueue)
+    (metalSetupCommandQueue)
     (platformMakeWindowMetal (get-handle window) device)))
 
 
