@@ -89,7 +89,8 @@
         (unwind-protect
             (begin
               (mutex-lock! context-mutex)
-              (make-context-current self)
+              (when (opengl? self)
+                (make-context-current self))
               (thunk)) 
           (mutex-unlock! context-mutex)))))
 
