@@ -179,10 +179,17 @@
     #t)
 
   
-  (method package virtual (render-scene self)
+  (method protected virtual (render-scene self)
     (when (render-ready? self)
+      (clear-scene self)
       (draw-scene self)
       (render-sync self)))
+  
+  
+  (method protected virtual (clear-scene self)
+    (when (opengl? self)
+      (glClearColor 0.0 0.0 0.0 0.0)
+      (glClear (bitwise-ior GL_COLOR_BUFFER_BIT GL_DEPTH_BUFFER_BIT))))
 
   
   (method protected virtual (draw-scene self)

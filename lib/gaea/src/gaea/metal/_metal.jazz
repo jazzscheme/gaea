@@ -79,8 +79,22 @@
 (c-type id<MTLCommandBuffer> "id<MTLCommandBuffer>")
 (c-type id<MTLRenderCommandEncoder> "id<MTLRenderCommandEncoder>")
 
+(c-type MTLVertexDescriptor "MTLVertexDescriptor")
+(c-type MTLVertexDescriptor* (pointer MTLVertexDescriptor))
+
 (c-type MTLRenderPassDescriptor "MTLRenderPassDescriptor")
 (c-type MTLRenderPassDescriptor* (pointer MTLRenderPassDescriptor))
+
+
+;;;
+;;;; Enumerants
+;;;
+
+
+(c-enumerant MTLVertexFormatFloat2)
+(c-enumerant MTLVertexFormatFloat3)
+(c-enumerant MTLVertexFormatFloat4)
+(c-enumerant MTLVertexStepFunctionPerVertex)
 
 
 ;;;
@@ -133,16 +147,37 @@ id<MTLLibrary> metalMakeLibrary(NSString* source)
     return lib;
 }
 
-id<MTLRenderPipelineState> metalMakeRenderPipelineState(id<MTLLibrary> lib, NSString* vs_name, NSString* fs_name)
+MTLVertexDescriptor* metalMakeVertexDescriptor()
+{
+    return [MTLVertexDescriptor vertexDescriptor];
+}
+
+void metalVertexDescriptorAttribute(MTLVertexDescriptor* vertexDesc, int index, int format, int offset, int bufferIndex)
+{
+    vertexDesc.attributes[index].format = format;
+    vertexDesc.attributes[index].offset = offset;
+    vertexDesc.attributes[index].bufferIndex = bufferIndex;
+}
+
+void metalVertexDescriptorLayout(MTLVertexDescriptor* vertexDesc, int index, int stepFunction, int stride)
+{
+    vertexDesc.layouts[index].stepFunction = stepFunction;
+    vertexDesc.layouts[index].stride = stride;
+}
+
+id<MTLRenderPipelineState> metalMakeRenderPipelineState(id<MTLLibrary> lib, NSString* vs_name, NSString* fs_name, MTLVertexDescriptor* vertexDesc)
 {
     id<MTLFunction> vs = [lib newFunctionWithName:vs_name];
     assert(vs);
     id<MTLFunction> fs = [lib newFunctionWithName:fs_name];
     assert(fs);
+    
     MTLRenderPipelineDescriptor* pipeline_descriptor = [MTLRenderPipelineDescriptor new];
     pipeline_descriptor.vertexFunction = vs;
     pipeline_descriptor.fragmentFunction = fs;
     pipeline_descriptor.colorAttachments[0].pixelFormat = MTLPixelFormatBGRA8Unorm;
+    pipeline_descriptor.vertexDescriptor = vertexDesc;
+
     id<MTLRenderPipelineState> pipeline_state = [device newRenderPipelineStateWithDescriptor:pipeline_descriptor error:NULL];
     assert(pipeline_state);
 
@@ -331,7 +366,10 @@ void metalCommit(id<MTLCommandBuffer> buffer)
 (c-external (metalSetupDevice) id<MTLDevice>)
 (c-external (metalSetupCommandQueue) id<MTLCommandQueue>)
 (c-external (metalMakeLibrary NSString*) id<MTLLibrary>)
-(c-external (metalMakeRenderPipelineState id<MTLLibrary> NSString* NSString*) id<MTLRenderPipelineState>)
+(c-external (metalMakeVertexDescriptor) MTLVertexDescriptor*)
+(c-external (metalVertexDescriptorAttribute MTLVertexDescriptor* int int int int) void)
+(c-external (metalVertexDescriptorLayout MTLVertexDescriptor* int int int) void)
+(c-external (metalMakeRenderPipelineState id<MTLLibrary> NSString* NSString* MTLVertexDescriptor*) id<MTLRenderPipelineState>)
 (c-external (metalNewBufferWithLength int) id<MTLBuffer>)
 (c-external (metalNewBufferWithBytes scheme-object int) id<MTLBuffer>)
 (c-external (metalNewTexture int int int void*) id<MTLTexture>)
