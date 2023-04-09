@@ -2,7 +2,7 @@
 ;;;  JazzScheme
 ;;;===============
 ;;;
-;;;; OpenGL Sample Syntax
+;;;; Shader Showcase Run
 ;;;
 ;;;  The contents of this file are subject to the Mozilla Public License Version
 ;;;  1.1 (the "License"); you may not use this file except in compliance with
@@ -35,20 +35,25 @@
 ;;;  See www.jazzscheme.org for details.
 
 
-(module gaea.opengl.sample.syntax jazz
+(module gaea.sample.run jazz
 
 
-(import (scheme.syntax-rules (phase syntax)))
+(import (jazz.io)
+        (jazz.window)
+        (gaea.engine)
+        (gaea.sample)
+        (gaea.sample.appl)
+        (gaea.sample.window)
+        (gaea.window))
 
 
-;;;
-;;;; Types
-;;;
+(definition (run-shader descriptor)
+  (if (eq? (get-engine) 'opengl)
+      (boot-sample Shader-Sample)
+    (terminal-string "You need to use -engine opengl at the moment")
+    (terminal)
+    (exit)))
 
 
-(class Sample-Vertex extends F64Vector)
-(class Sample-Matrix extends F64Vector)
-
-
-(add-primitive-type 'vertex Sample-Vertex)
-(add-primitive-type 'matrix Sample-Matrix))
+(register-product-run 'gaea.sample
+  run-shader))

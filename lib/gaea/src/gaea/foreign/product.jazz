@@ -46,18 +46,18 @@
 (cond-expand
   (windows
     (define jazz:gaea-foreign-units
-      (let ((glew-include-path        (jazz:quote-jazz-pathname "../gaea/lib/gaea.opengl/foreign/windows/opengl/glew/include"))
-            (glew-lib-path            (jazz:quote-jazz-pathname "../gaea/lib/gaea.opengl/foreign/windows/opengl/glew/lib")))
+      (let ((glew-include-path        (jazz:quote-jazz-pathname "../gaea/lib/gaea/foreign/windows/opengl/glew/include"))
+            (glew-lib-path            (jazz:quote-jazz-pathname "../gaea/lib/gaea/foreign/windows/opengl/glew/lib")))
         `((gaea.foreign cc-options: ,(string-append "-I" glew-include-path) ld-options: ,(string-append "-L" glew-lib-path " -lopengl32 -lglew32"))))))
   (cocoa
     (define jazz:gaea-foreign-units
-      (let ((glew-include-path        (jazz:quote-jazz-pathname "../gaea/lib/gaea.opengl/foreign/mac/opengl/glew/include"))
-            (glew-lib-path            (jazz:quote-jazz-pathname "../gaea/lib/gaea.opengl/foreign/mac/opengl/glew/lib")))
+      (let ((glew-include-path        (jazz:quote-jazz-pathname "../gaea/lib/gaea/foreign/mac/opengl/glew/include"))
+            (glew-lib-path            (jazz:quote-jazz-pathname "../gaea/lib/gaea/foreign/mac/opengl/glew/lib")))
         `((gaea.foreign cc-options: ,(jazz:patch-mac-ld-warnings (string-append "-I" glew-include-path)) ld-options: ,(string-append "-L" glew-lib-path " -framework OpenGL -lglew"))))))
   (else
     (define jazz:gaea-foreign-units
-      (let ((glew-include-path        (jazz:quote-jazz-pathname "../gaea/lib/gaea.opengl/foreign/linux/opengl/glew/include"))
-            (glew-lib-path            (jazz:quote-jazz-pathname "../gaea/lib/gaea.opengl/foreign/linux/opengl/glew/lib")))
+      (let ((glew-include-path        (jazz:quote-jazz-pathname "../gaea/lib/gaea/foreign/linux/opengl/glew/include"))
+            (glew-lib-path            (jazz:quote-jazz-pathname "../gaea/lib/gaea/foreign/linux/opengl/glew/lib")))
         (let ((ld-options (string-append  "-Wl,-rpath,$ORIGIN/../../../../.." " -L" glew-lib-path " -lGLEW -lGL")))
           `((gaea.foreign cc-options: ,(string-append "-I" glew-include-path) ld-options: ,ld-options)))))))
 
@@ -72,10 +72,10 @@
 (define (jazz:gaea-foreign-library-options descriptor add-language)
   (cond-expand
     (windows
-      (let ((glew-lib-path (jazz:jazz-pathname "../gaea/lib/gaea.opengl/foreign/windows/opengl/glew/lib")))
+      (let ((glew-lib-path (jazz:jazz-pathname "../gaea/lib/gaea/foreign/windows/opengl/glew/lib")))
         (list (string-append "-L" glew-lib-path) "-lopengl32" "-lglew32")))
     (cocoa
-      (let ((glew-lib-path (jazz:jazz-pathname "../gaea/lib/gaea.opengl/foreign/mac/opengl/glew/lib")))
+      (let ((glew-lib-path (jazz:jazz-pathname "../gaea/lib/gaea/foreign/mac/opengl/glew/lib")))
         (list (string-append "-L" glew-lib-path) "-framework" "OpenGL" "-lglew")))
     (else
      '())))

@@ -2,7 +2,7 @@
 ;;;  JazzScheme
 ;;;===============
 ;;;
-;;;; OpenGL Sample
+;;;; Gaea Sample
 ;;;
 ;;;  The contents of this file are subject to the Mozilla Public License Version
 ;;;  1.1 (the "License"); you may not use this file except in compliance with
@@ -35,7 +35,7 @@
 ;;;  See www.jazzscheme.org for details.
 
 
-(module gaea.opengl.sample jazz
+(module gaea.sample jazz
 
 
 (hub add-uniform)
@@ -78,7 +78,7 @@
         (jazz.process)
         (jazz.window)
         (gaea.opengl.glew)
-        (gaea.opengl.sample.syntax (phase syntax))
+        (gaea.sample.syntax (phase syntax))
         (gaea.window))
 
 

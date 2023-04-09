@@ -15,5 +15,4 @@
 (form
   (<Project> name: lib
     (<*>               tag-reference: {File :context "gaea" ".project"})
-    (<*>               tag-reference: {File :context "gaea.opengl" ".project"})
-    (<*>               tag-reference: {File :context "gaea.opengl.sample" ".project"}))))
+    (<*>               tag-reference: {File :context "gaea.sample" ".project"}))))

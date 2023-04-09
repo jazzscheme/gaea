@@ -53,5 +53,19 @@
             (gaea.metal   (product gaea.metal.product)
                           (update gaea.metal
                                   gaea.metal.product)
-                          (dependencies jazz)))
+                          (dependencies jazz))
+            (gaea.opengl (alias opengl)
+                         (product gaea.opengl.product)
+                         (update gaea.opengl
+                                 gaea.opengl.glew
+                                 gaea.opengl.install
+                                 gaea.opengl.platform
+                                 gaea.opengl.product
+                                 gaea.opengl.render
+                                 gaea.opengl.syntax
+                                 gaea.opengl.texture
+                                 gaea.opengl.trace)
+                         (dependencies jazz
+                                       jazz.foreign
+                                       jazz.platform)))
   (project ".project"))

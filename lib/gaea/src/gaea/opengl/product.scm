@@ -46,16 +46,16 @@
 (cond-expand
   (windows
     (define jazz:opengl-files
-      (list (cons "../gaea/lib/gaea.opengl/foreign/windows/opengl/glew/bin/glew32.dll" "glew32.dll"))))
+      (list (cons "../gaea/lib/gaea/foreign/windows/opengl/glew/bin/glew32.dll" "glew32.dll"))))
   (silicon
     (define jazz:opengl-files
-      (list (cons "../gaea/lib/gaea.opengl/foreign/silicon/opengl/glew/lib/libGLEW.dylib" "Libraries/libGLEW.dylib"))))
+      (list (cons "../gaea/lib/gaea/foreign/silicon/opengl/glew/lib/libGLEW.dylib" "Libraries/libGLEW.dylib"))))
   (cocoa
     (define jazz:opengl-files
-      (list (cons "../gaea/lib/gaea.opengl/foreign/mac/opengl/glew/lib/libGLEW.dylib" "Libraries/libGLEW.dylib"))))
+      (list (cons "../gaea/lib/gaea/foreign/mac/opengl/glew/lib/libGLEW.dylib" "Libraries/libGLEW.dylib"))))
   (else
     (define jazz:opengl-files
-      (list (cons "../gaea/lib/gaea.opengl/foreign/linux/opengl/glew/lib/libGLEW.so.1.13" "libGLEW.so.1.13")))))
+      (list (cons "../gaea/lib/gaea/foreign/linux/opengl/glew/lib/libGLEW.so.1.13" "libGLEW.so.1.13")))))
 
 
 (define (jazz:copy-opengl-files)
@@ -77,28 +77,28 @@
 (cond-expand
   (windows
     (define jazz:opengl-units
-      (let ((glew-include-path (jazz:quote-jazz-pathname "../gaea/lib/gaea.opengl/foreign/windows/opengl/glew/include"))
-            (glew-lib-path     (jazz:quote-jazz-pathname "../gaea/lib/gaea.opengl/foreign/windows/opengl/glew/lib")))
+      (let ((glew-include-path (jazz:quote-jazz-pathname "../gaea/lib/gaea/foreign/windows/opengl/glew/include"))
+            (glew-lib-path     (jazz:quote-jazz-pathname "../gaea/lib/gaea/foreign/windows/opengl/glew/lib")))
         `((gaea.opengl.glew.foreign cc-options: ,(string-append "-I" glew-include-path) ld-options: ,(string-append "-L" glew-lib-path " -lopengl32 -lglew32"))
           (gaea.opengl.glew.header cc-options: ,(string-append "-I" glew-include-path) ld-options: ,(string-append "-L" glew-lib-path " -lopengl32 -lglew32"))
           (gaea.opengl.glew.windows cc-options: ,(string-append "-I" glew-include-path) ld-options: ,(string-append "-L" glew-lib-path " -lopengl32 -lglew32"))
           (gaea.opengl.platform.windows cc-options: "-DUNICODE" ld-options: "-mwindows -lopengl32")))))
   (silicon
     (define jazz:opengl-units
-      (let ((glew-include-path (jazz:quote-jazz-pathname "../gaea/lib/gaea.opengl/foreign/silicon/opengl/glew/include"))
-            (glew-lib-path     (jazz:quote-jazz-pathname "../gaea/lib/gaea.opengl/foreign/silicon/opengl/glew/lib")))
+      (let ((glew-include-path (jazz:quote-jazz-pathname "../gaea/lib/gaea/foreign/silicon/opengl/glew/include"))
+            (glew-lib-path     (jazz:quote-jazz-pathname "../gaea/lib/gaea/foreign/silicon/opengl/glew/lib")))
         `((gaea.opengl.glew.foreign cc-options: ,(jazz:patch-mac-ld-warnings (string-append "-I" glew-include-path)) ld-options: ,(string-append "-L" glew-lib-path " -framework OpenGL -lGLEW"))
           (gaea.opengl.glew.header cc-options: ,(jazz:patch-mac-ld-warnings (string-append "-I" glew-include-path)) ld-options: ,(string-append "-L" glew-lib-path " -framework OpenGL -lGLEW"))))))
   (cocoa
     (define jazz:opengl-units
-      (let ((glew-include-path (jazz:quote-jazz-pathname "../gaea/lib/gaea.opengl/foreign/mac/opengl/glew/include"))
-            (glew-lib-path     (jazz:quote-jazz-pathname "../gaea/lib/gaea.opengl/foreign/mac/opengl/glew/lib")))
+      (let ((glew-include-path (jazz:quote-jazz-pathname "../gaea/lib/gaea/foreign/mac/opengl/glew/include"))
+            (glew-lib-path     (jazz:quote-jazz-pathname "../gaea/lib/gaea/foreign/mac/opengl/glew/lib")))
         `((gaea.opengl.glew.foreign cc-options: ,(jazz:patch-mac-ld-warnings (string-append "-I" glew-include-path)) ld-options: ,(string-append "-L" glew-lib-path " -framework OpenGL -lGLEW"))
           (gaea.opengl.glew.header cc-options: ,(jazz:patch-mac-ld-warnings (string-append "-I" glew-include-path)) ld-options: ,(string-append "-L" glew-lib-path " -framework OpenGL -lGLEW"))))))
   (x11
     (define jazz:opengl-units
-      (let ((glew-include-path (jazz:quote-jazz-pathname "../gaea/lib/gaea.opengl/foreign/linux/opengl/glew/include"))
-            (glew-lib-path     (jazz:quote-jazz-pathname "../gaea/lib/gaea.opengl/foreign/linux/opengl/glew/lib")))
+      (let ((glew-include-path (jazz:quote-jazz-pathname "../gaea/lib/gaea/foreign/linux/opengl/glew/include"))
+            (glew-lib-path     (jazz:quote-jazz-pathname "../gaea/lib/gaea/foreign/linux/opengl/glew/lib")))
         (let ((cc-options (string-append "-I" glew-include-path))
               (ld-options (string-append "-Wl,-rpath,$ORIGIN/../../../../../.." " -L" glew-lib-path " -lGLEW -lGL")))
           `((gaea.opengl.glew.foreign cc-options: ,cc-options ld-options: ,ld-options)
@@ -119,16 +119,16 @@
 (define (jazz:opengl-library-options descriptor add-language)
   (cond-expand
     (windows
-      (let ((glew-lib-path (jazz:jazz-pathname "../gaea/lib/gaea.opengl/foreign/windows/opengl/glew/lib")))
+      (let ((glew-lib-path (jazz:jazz-pathname "../gaea/lib/gaea/foreign/windows/opengl/glew/lib")))
         (list (string-append "-L" glew-lib-path) "-lopengl32" "-lglew32" "-mwindows")))
     (silicon
-      (let ((glew-lib-path (jazz:jazz-pathname "../gaea/lib/gaea.opengl/foreign/silicon/opengl/glew/lib")))
+      (let ((glew-lib-path (jazz:jazz-pathname "../gaea/lib/gaea/foreign/silicon/opengl/glew/lib")))
         (list (string-append "-L" glew-lib-path) "-framework" "OpenGL" "-lGLEW")))
     (cocoa
-      (let ((glew-lib-path (jazz:jazz-pathname "../gaea/lib/gaea.opengl/foreign/mac/opengl/glew/lib")))
+      (let ((glew-lib-path (jazz:jazz-pathname "../gaea/lib/gaea/foreign/mac/opengl/glew/lib")))
         (list (string-append "-L" glew-lib-path) "-framework" "OpenGL" "-lGLEW")))
     (x11
-      (let ((glew-lib-path (jazz:quote-jazz-pathname "../gaea/lib/gaea.opengl/foreign/linux/opengl/glew/lib")))
+      (let ((glew-lib-path (jazz:quote-jazz-pathname "../gaea/lib/gaea/foreign/linux/opengl/glew/lib")))
         (list (string-append "-L" glew-lib-path) "-lGL")))
     (else
      '())))

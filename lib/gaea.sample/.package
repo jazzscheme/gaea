@@ -1,0 +1,19 @@
+(package gaea.sample
+  
+  (title "Gaea Sample")
+  (description "Gaea Sample")
+  (authors "Guillaume Cartier")
+  (stage release)
+  (root "src")
+  (products (gaea.sample (alias shader)
+                         (title "Gaea Shader Sample")
+                         (run gaea.sample.run)
+                         (build (gaea.sample executable: "shader"))
+                         (update gaea.sample
+                                 gaea.sample.appl
+                                 gaea.sample.run
+                                 gaea.sample.syntax
+                                 gaea.sample.window)
+                         (dependencies jazz
+                                       gaea)))
+  (project ".project"))

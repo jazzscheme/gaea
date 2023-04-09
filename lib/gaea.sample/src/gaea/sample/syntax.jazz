@@ -2,7 +2,7 @@
 ;;;  JazzScheme
 ;;;===============
 ;;;
-;;;; Shader Mode Sample
+;;;; Gaea Sample Syntax
 ;;;
 ;;;  The contents of this file are subject to the Mozilla Public License Version
 ;;;  1.1 (the "License"); you may not use this file except in compliance with
@@ -35,16 +35,20 @@
 ;;;  See www.jazzscheme.org for details.
 
 
-(module gaea.opengl.sample.appl jazz
+(module gaea.sample.syntax jazz
 
 
-(import (jazz.application)
-        (gaea.opengl.sample.window)
-        (gaea.window))
+(import (scheme.syntax-rules (phase syntax)))
 
 
-(class Shader-Sample extends Application
-  
-  
-  (method override (new-toplevel self)
-    (new Shader-Showcase-Window size: {Dimension 640 360}))))
+;;;
+;;;; Types
+;;;
+
+
+(class Sample-Vertex extends F64Vector)
+(class Sample-Matrix extends F64Vector)
+
+
+(add-primitive-type 'vertex Sample-Vertex)
+(add-primitive-type 'matrix Sample-Matrix))

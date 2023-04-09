@@ -35,7 +35,7 @@
 ;;;  See www.jazzscheme.org for details.
 
 
-(module gaea.opengl.sample.window jazz
+(module gaea.sample.window jazz
 
 
 (import (jazz.cairo)
@@ -47,8 +47,8 @@
         (jazz.window)
         (gaea.opengl)
         (gaea.opengl.glew)
-        (gaea.opengl.sample)
-        (gaea.opengl.sample.syntax (phase syntax))
+        (gaea.sample)
+        (gaea.sample.syntax (phase syntax))
         (gaea.opengl.texture)
         (gaea.window))
 
