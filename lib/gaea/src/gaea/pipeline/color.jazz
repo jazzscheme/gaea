@@ -44,9 +44,6 @@
 (class Color-Pipeline extends Pipeline
   
   
-  (slot pipeline getter generate)
-  
-  
   (method override (initialize self)
     (nextmethod self)
     (let ((lib (metalMakeLibrary

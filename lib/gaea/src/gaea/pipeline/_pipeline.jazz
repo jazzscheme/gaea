@@ -43,7 +43,31 @@
 ;;;
 
 
-(class Pipeline extends Object)
+(class Pipeline extends Object
+  
+  
+  (slot pipeline getter generate)
+  (slot program  getter generate)
+  
+  
+  (method public (use self)
+    (when (opengl?)
+      (use program)))
+  
+  
+  (method public (bind-uniforms self . rest)
+    (when (opengl?)
+      (apply bind-uniforms program rest)))
+  
+  
+  (method public (unbind-uniforms self)
+    (when (opengl?)
+      (unbind-uniforms program)))
+  
+  
+  (method public (unuse self)
+    (when (opengl?)
+      (unuse program))))
 
 
 ;;;

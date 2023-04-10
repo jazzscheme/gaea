@@ -70,10 +70,8 @@
   (slot window-mode        initialize #f getter generate)
 
 
-  (method override (opengl? self)
-    (cond-expand
-      (cocoa (eq? (get-engine) 'opengl))
-      (else #t)))
+  (method override (opengl-window? self)
+    (opengl?))
 
 
   (method override (prepare self rest)
@@ -89,7 +87,7 @@
         (unwind-protect
             (begin
               (mutex-lock! context-mutex)
-              (when (opengl? self)
+              (when (opengl?)
                 (make-context-current self))
               (thunk)) 
           (mutex-unlock! context-mutex)))))
@@ -106,12 +104,12 @@
 
   
   (method package virtual (resize-scene self width <fl> height <fl>)
-    (when (opengl? self)
+    (when (opengl?)
       (gaea.engine.opengl:opengl-resize-scene self width height)))
 
   
   (method package virtual (setup-engine self)
-    (when (opengl? self)
+    (when (opengl?)
       (gaea.engine.opengl:opengl-setup)))
 
 
@@ -187,13 +185,13 @@
   
   
   (method protected virtual (clear-scene self)
-    (when (opengl? self)
+    (when (opengl?)
       (glClearColor 0.0 0.0 0.0 0.0)
       (glClear (bitwise-ior GL_COLOR_BUFFER_BIT GL_DEPTH_BUFFER_BIT))))
 
   
   (method protected virtual (draw-scene self)
-    (when (opengl? self)
+    (when (opengl?)
       (gaea.engine.opengl:opengl-draw-scene)))
 
   

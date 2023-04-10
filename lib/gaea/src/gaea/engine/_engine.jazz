@@ -57,6 +57,13 @@
   *engine*)
 
 
+(definition public (metal?)
+  (eq? (get-engine) 'metal))
+
+(definition public (opengl?)
+  (eq? (get-engine) 'opengl))
+
+
 (definition package (prepare-engine-window window)
   (case (get-engine)
     ((opengl)
