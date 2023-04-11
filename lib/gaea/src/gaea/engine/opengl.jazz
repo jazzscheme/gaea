@@ -142,6 +142,15 @@
 
 
 ;;;
+;;;; Render
+;;;
+
+
+(definition package (with-render window proc)
+  (proc #f))
+
+
+;;;
 ;;;; Window
 ;;;
 
