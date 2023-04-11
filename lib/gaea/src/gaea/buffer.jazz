@@ -55,6 +55,7 @@
 (class Buffer extends Object
   
   
+  (slot content-try    initialize #f getter generate)
   (slot buffer         initialize #f getter generate)
   (slot floats  <fx+>  initialize #f getter generate)
   (slot indices <fx+>  initialize #f getter generate)
@@ -64,11 +65,17 @@
     (nextmethod self)
     (if (metal?)
         (set! self.buffer (metalNewBufferWithFloats content (f32vector-length content)))
+      (set! self.content-try content)
+      @w
       (set! self.buffer (let ((vbo (glGenBuffers*)))
                           (glBindBuffer GL_ARRAY_BUFFER vbo)
                           (glBufferDataFloat* GL_ARRAY_BUFFER (f32vector-length content) content GL_STATIC_DRAW)
                           (glBindBuffer GL_ARRAY_BUFFER 0)
                           vbo))))
+  
+  
+  (method public (genIT self)
+    (set! self.buffer (glGenBuffers*)))
   
   
   (method public (bind-buffer self)

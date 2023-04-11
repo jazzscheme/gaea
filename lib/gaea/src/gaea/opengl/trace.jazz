@@ -42,7 +42,7 @@
 
 
 (define-setting trace-opengl?
-  #t)
+  #f)
 
 
 (define-setting trace-opengl
