@@ -51,12 +51,16 @@
 (class Pipeline extends Object
   
   
-  (slot pipeline getter generate)
-  (slot program  getter generate)
+  (slot attributes getter generate)
+  (slot layouts    getter generate)
+  (slot pipeline   getter generate)
+  (slot program    getter generate)
   
   
   (method override (initialize self sources attributes layouts)
     (nextmethod self)
+    (set! self.attributes attributes)
+    (set! self.layouts layouts)
     (bind (metal opengl) sources
       (if (metal?)
           (bind (source vs fs) metal
@@ -64,7 +68,7 @@
               (let ((desc (metalMakeVertexDescriptor)))
                 (let ((index 0))
                   (for-each (lambda (attribute)
-                              (bind (format offset buffer-index) attribute
+                              (bind (name format offset buffer-index) attribute
                                 (let ((format (case format
                                                 ((float2) MTLVertexFormatFloat2)
                                                 ((float4) MTLVertexFormatFloat4))))
@@ -89,6 +93,20 @@
       (use program)
       (thunk)
       (unuse program)))
+  
+  
+  (method public (setup-array self array)
+    @w (
+    (when (opengl?)
+      (set! vertex-attribute (add-attribute self "vertex"))
+      (set! color-attribute (add-attribute self "color")))
+    (let ((buffer (get-vertices-buffer array)))
+      (bind-buffer buffer)
+      (enable-vertex-attrib buffer vertex-attribute)
+      (set-attrib-pointer buffer vertex-attribute 3 GL_FLOAT color-vertex-stride color-vertex-offset)
+      (enable-vertex-attrib buffer color-attribute)
+      (set-attrib-pointer buffer color-attribute 3 GL_FLOAT color-vertex-stride color-color-offset)
+      (unbind-buffer buffer))))
   
   
   (method public (bind-uniforms self . rest)
