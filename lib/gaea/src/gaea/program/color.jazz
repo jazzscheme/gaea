@@ -95,16 +95,19 @@
   
   
   (method override (draw-array self)
-    (glBindVertexArray array)
-    (glDrawArrays GL_TRIANGLES 0 (get-indices vertices-buffer)))
+    (when (opengl?)
+      (glBindVertexArray array)
+      (glDrawArrays GL_TRIANGLES 0 (get-indices vertices-buffer))))
   
   
   (method public (allocate-vertices self)
-    (generate-buffer vertices-buffer))
+    (when (opengl?)
+      (generate-buffer vertices-buffer)))
   
   
   (method public (free-vertices self)
-    (free-buffer vertices-buffer))
+    (when (opengl?)
+      (free-buffer vertices-buffer)))
   
   
   (method override (free-array self)

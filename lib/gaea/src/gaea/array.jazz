@@ -45,7 +45,7 @@
 (class Array extends Object
   
   
-  (slot array <object> initialize #f accessors generate)
+  (slot array   <object> initialize #f accessors generate)
   
   
   (method override (destroy self)

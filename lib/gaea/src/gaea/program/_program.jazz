@@ -159,7 +159,7 @@
   
   
   (method public (get-uniform self name)
-    (table-ref uniforms name))
+    (glGetUniformLocation* program name))
   
   
   (method public (add-uniform self name)
@@ -174,7 +174,7 @@
   
   
   (method public (get-attribute self name)
-    (table-ref attributes name))
+    (glGetAttribLocation* program name))
   
   
   (method public (add-attribute self name)

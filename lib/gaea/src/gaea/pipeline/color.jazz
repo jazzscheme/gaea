@@ -38,7 +38,11 @@
 (module gaea.pipeline.color jazz
 
 
-(import (gaea.pipeline))
+(import (jazz.platform)
+        (gaea.engine)
+        (gaea.metal)
+        (gaea.pipeline)
+        (gaea.program))
 
 
 (class Color-Pipeline extends Pipeline
@@ -46,7 +50,8 @@
   
   (method override (initialize self)
     (nextmethod self)
-    (let ((lib (metalMakeLibrary
+    (when (metal?)
+      (let ((lib (metalMakeLibrary
 #/C/
     #include <metal_stdlib>
     
@@ -88,12 +93,14 @@
     }
 //#
 ))
-          (desc (metalMakeVertexDescriptor)))
-      (metalVertexDescriptorAttribute desc 0 MTLVertexFormatFloat4 0 0)
-      (metalVertexDescriptorAttribute desc 1 MTLVertexFormatFloat2 (* 4 float-size) 0)
-      (metalVertexDescriptorLayout desc 0 MTLVertexStepFunctionPerVertex (* 8 float-size))
-      (let ((pipeline (metalMakeRenderPipelineState lib "vertex_simple" "fragment_simple" desc)))
-        (set! self.pipeline pipeline)))))
+            (desc (metalMakeVertexDescriptor)))
+        (metalVertexDescriptorAttribute desc 0 MTLVertexFormatFloat4 0 0)
+        (metalVertexDescriptorAttribute desc 1 MTLVertexFormatFloat2 (* 4 float-size) 0)
+        (metalVertexDescriptorLayout desc 0 MTLVertexStepFunctionPerVertex (* 8 float-size))
+        (let ((pipeline (metalMakeRenderPipelineState lib "vertex_simple" "fragment_simple" desc)))
+          (set! self.pipeline pipeline))))
+    (when (opengl?)
+      (set! self.program (require-program 'color)))))
 
 
 ;;;

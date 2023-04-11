@@ -38,6 +38,9 @@
 (module gaea.pipeline jazz
 
 
+(import (gaea.engine))
+
+
 ;;;
 ;;;; Pipeline
 ;;;
@@ -58,6 +61,11 @@
   (method public (bind-uniforms self . rest)
     (when (opengl?)
       (apply bind-uniforms program rest)))
+  
+  
+  (method public (create-array self mesh)
+    (when (opengl?)
+      (create-array program mesh)))
   
   
   (method public (unbind-uniforms self)
