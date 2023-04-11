@@ -66,7 +66,6 @@
         (<Jazz-File>           name: mesher         source: {File :context "src" "gaea" "mesher.jazz"})
         (<Project-Directory>                        directory: {Directory :context "src" "gaea" "program"}
           (<Jazz-File>         name: _program       source: {File :context "src" "gaea" "program" "_program.jazz"})
-          (<Jazz-File>         name: color          source: {File :context "src" "gaea" "program" "color.jazz"})
           (<Jazz-File>         name: mesh           source: {File :context "src" "gaea" "program" "mesh.jazz"})
           (<Jazz-File>         name: model          source: {File :context "src" "gaea" "program" "model.jazz"})
           (<Jazz-File>         name: texture        source: {File :context "src" "gaea" "program" "texture.jazz"}))
@@ -95,5 +94,5 @@
           (<Jazz-File>         name: opengl         source: {File :context "src" "gaea" "engine" "opengl.jazz"})
           (<Jazz-File>         name: metal          source: {File :context "src" "gaea" "engine" "metal.jazz"}))
         (<Project-Directory>                        directory: {Directory :context "src" "gaea" "pipeline"}
-          (<Jazz-File>         name: color          source: {File :context "src" "gaea" "pipeline" "color.jazz"})
-          (<Jazz-File>         name: _pipeline      source: {File :context "src" "gaea" "pipeline" "_pipeline.jazz"})))))))
+          (<Jazz-File>         name: _pipeline      source: {File :context "src" "gaea" "pipeline" "_pipeline.jazz"}))
+        (<Jazz-File>           name: render         source: {File :context "src" "gaea" "render.jazz"}))))))
