@@ -38,8 +38,12 @@
 (module gaea.pipeline jazz
 
 
-(import (gaea.engine)
+(import (jazz.platform)
+        (gaea.array)
+        (gaea.buffer)
+        (gaea.engine)
         (gaea.metal)
+        (gaea.opengl.glew)
         (gaea.program))
 
 
@@ -82,7 +86,11 @@
                 (let ((pipeline (metalMakeRenderPipelineState lib vs fs desc)))
                   (set! self.pipeline pipeline)))))
         (bind (vs fs) opengl
-          ))))
+          (let ((program (new Program)))
+            (set-vs program vs)
+            (set-fs program fs)
+            (link program)
+            (set! self.program program))))))
   
   
   (method public (with-pipeline self encoder thunk)
@@ -96,17 +104,27 @@
   
   
   (method public (setup-array self array)
-    @w (
     (when (opengl?)
-      (set! vertex-attribute (add-attribute self "vertex"))
-      (set! color-attribute (add-attribute self "color")))
-    (let ((buffer (get-vertices-buffer array)))
-      (bind-buffer buffer)
-      (enable-vertex-attrib buffer vertex-attribute)
-      (set-attrib-pointer buffer vertex-attribute 3 GL_FLOAT color-vertex-stride color-vertex-offset)
-      (enable-vertex-attrib buffer color-attribute)
-      (set-attrib-pointer buffer color-attribute 3 GL_FLOAT color-vertex-stride color-color-offset)
-      (unbind-buffer buffer))))
+      (for-each (lambda (layout)
+                  (bind (buffer-index stride) layout
+                    ;; - 1 is a quick hack for tests
+                    (let ((buffer (element (get-buffers array) (- buffer-index 1))))
+                      (bind-buffer buffer)
+                      (let ((offset 0))
+                        (for-each (lambda (attribute)
+                                    (bind (name format offset buffer-index) attribute
+                                      (let ((location (get-attribute program name))
+                                            (size (case format
+                                                    ((float2) (* 2 float-size))
+                                                    ((float3) (* 3 float-size))
+                                                    ((float4) (* 4 float-size))))
+                                            (type GL_FLOAT))
+                                        (enable-vertex-attrib buffer location)
+                                        (set-attrib-pointer buffer location size type stride offset)
+                                        (increase! offset size))))
+                                  attributes))
+                      (unbind-buffer buffer))))
+                layouts)))
   
   
   (method public (bind-uniforms self . rest)

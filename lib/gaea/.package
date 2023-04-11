@@ -6,7 +6,7 @@
   (stage alpha)
   (root "src")
   (install gaea.install)
-  (products (script (title "Script")
+  (products #;(script (title "Script")
                     (update script
                             script.expand
                             script.syntax)

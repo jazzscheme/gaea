@@ -39,6 +39,8 @@
 
 
 (import (jazz.platform.types)
+        (gaea.engine)
+        (gaea.metal)
         (gaea.opengl.glew))
 
 
@@ -53,9 +55,20 @@
 (class Buffer extends Object
   
   
-  (slot buffer  <int+> initialize #f getter generate)
+  (slot buffer         initialize #f getter generate)
   (slot floats  <fx+>  initialize #f getter generate)
   (slot indices <fx+>  initialize #f getter generate)
+  
+  
+  (method override (initialize self content)
+    (nextmethod self)
+    (if (metal?)
+        (set! self.buffer (metalNewBufferWithFloats content (f32vector-length content)))
+      (set! self.buffer (let ((vbo (glGenBuffers*)))
+                          (glBindBuffer GL_ARRAY_BUFFER vbo)
+                          (glBufferDataFloat* GL_ARRAY_BUFFER (f32vector-length content) content GL_STATIC_DRAW)
+                          (glBindBuffer GL_ARRAY_BUFFER 0)
+                          vbo))))
   
   
   (method public (bind-buffer self)

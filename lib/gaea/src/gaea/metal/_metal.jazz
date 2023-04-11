@@ -203,7 +203,7 @@ id<MTLBuffer> metalNewBufferWithLength(int length)
     return [device newBufferWithLength:length options:MTLResourceOptionCPUCacheModeDefault];
 }
 
-id<MTLBuffer> metalNewBufferWithBytes(___SCMOBJ content, int size)
+id<MTLBuffer> metalNewBufferWithFloats(___SCMOBJ content, int size)
 {
     return [device newBufferWithBytes:___CAST(float*,___BODY(content))
                                length:size * sizeof(float)
@@ -375,7 +375,7 @@ void metalCommit(id<MTLCommandBuffer> buffer)
 (c-external (metalVertexDescriptorLayout MTLVertexDescriptor* int int int) void)
 (c-external (metalMakeRenderPipelineState id<MTLLibrary> NSString* NSString* MTLVertexDescriptor*) id<MTLRenderPipelineState>)
 (c-external (metalNewBufferWithLength int) id<MTLBuffer>)
-(c-external (metalNewBufferWithBytes scheme-object int) id<MTLBuffer>)
+(c-external (metalNewBufferWithFloats scheme-object int) id<MTLBuffer>)
 (c-external (metalNewTexture int int int void*) id<MTLTexture>)
 (c-external (metalTextureReplaceRegion id<MTLTexture> int int int void*) void)
 (c-external (metalNewSamplerState) id<MTLSamplerState>)
