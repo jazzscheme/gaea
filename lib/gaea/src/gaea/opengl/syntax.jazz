@@ -39,7 +39,7 @@
 
 
 (definition tracable?
-  #f)
+  #t)
 
 (definition checkable-errors?
   #f)

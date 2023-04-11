@@ -105,6 +105,7 @@
   
   (method public (setup-array self array)
     (when (opengl?)
+      (glBindVertexArray (get-array array))
       (for-each (lambda (layout)
                   (bind (buffer-index stride) layout
                     ;; - 1 is a quick hack for tests

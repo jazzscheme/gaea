@@ -59,6 +59,8 @@
     (set! self.index index)
     (set! self.count count)
     (set! self.buffers buffers)
+    (when (opengl?)
+      (set! self.array (glGenVertexArrays*)))
     (setup-array pipeline self))
   
   
@@ -85,7 +87,9 @@
                       (metalEncoderSetVertexBuffer encoder (get-buffer buffer) index)
                       (metalEncoderDrawPrimitives encoder count)
                       (increase! index))
-                    buffers))))
+                    buffers))
+      (glBindVertexArray array)
+      (glDrawArrays GL_TRIANGLES 0 count)))
   
   
   (method protected virtual (free-array self)
