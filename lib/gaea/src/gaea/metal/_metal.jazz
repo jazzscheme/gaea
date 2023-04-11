@@ -158,10 +158,10 @@ void metalVertexDescriptorAttribute(MTLVertexDescriptor* vertexDesc, int index, 
     vertexDesc.attributes[index].bufferIndex = bufferIndex;
 }
 
-void metalVertexDescriptorLayout(MTLVertexDescriptor* vertexDesc, int index, int stepFunction, int stride)
+void metalVertexDescriptorLayout(MTLVertexDescriptor* vertexDesc, int bufferIndex, int stepFunction, int stride)
 {
-    vertexDesc.layouts[index].stepFunction = stepFunction;
-    vertexDesc.layouts[index].stride = stride;
+    vertexDesc.layouts[bufferIndex].stepFunction = stepFunction;
+    vertexDesc.layouts[bufferIndex].stride = stride;
 }
 
 id<MTLRenderPipelineState> metalMakeRenderPipelineState(id<MTLLibrary> lib, NSString* vs_name, NSString* fs_name, MTLVertexDescriptor* vertexDesc)

@@ -38,7 +38,9 @@
 (module gaea.pipeline jazz
 
 
-(import (gaea.engine))
+(import (gaea.engine)
+        (gaea.metal)
+        (gaea.program))
 
 
 ;;;
@@ -53,9 +55,40 @@
   (slot program  getter generate)
   
   
-  (method public (use self)
-    (when (opengl?)
-      (use program)))
+  (method override (initialize self sources attributes layouts)
+    (nextmethod self)
+    (bind (metal opengl) sources
+      (if (metal?)
+          (bind (source vs fs) metal
+            (let ((lib (metalMakeLibrary source)))
+              (let ((desc (metalMakeVertexDescriptor)))
+                (let ((index 0))
+                  (for-each (lambda (attribute)
+                              (bind (format offset buffer-index) attribute
+                                (let ((format (case format
+                                                ((float2) MTLVertexFormatFloat2)
+                                                ((float4) MTLVertexFormatFloat4))))
+                                  (metalVertexDescriptorAttribute desc index format offset buffer-index)))
+                              (increase! index))
+                            attributes))
+                (for-each (lambda (layout)
+                            (bind (buffer-index stride) layout
+                              (metalVertexDescriptorLayout desc buffer-index MTLVertexStepFunctionPerVertex stride)))
+                          layouts)
+                (let ((pipeline (metalMakeRenderPipelineState lib vs fs desc)))
+                  (set! self.pipeline pipeline)))))
+        (bind (vs fs) opengl
+          ))))
+  
+  
+  (method public (with-pipeline self encoder thunk)
+    (if (metal?)
+        (begin
+          (metalEncoderSetRenderPipelineState encoder pipeline)
+          (thunk))
+      (use program)
+      (thunk)
+      (unuse program)))
   
   
   (method public (bind-uniforms self . rest)
@@ -70,12 +103,7 @@
   
   (method public (unbind-uniforms self)
     (when (opengl?)
-      (unbind-uniforms program)))
-  
-  
-  (method public (unuse self)
-    (when (opengl?)
-      (unuse program))))
+      (unbind-uniforms program))))
 
 
 ;;;

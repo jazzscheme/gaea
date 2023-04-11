@@ -38,6 +38,9 @@
 (module gaea.render jazz
 
 
+(import (gaea.engine))
+
+
 (definition public (with-render window proc)
   (if (opengl?)
       (gaea.engine.opengl:with-render window proc)

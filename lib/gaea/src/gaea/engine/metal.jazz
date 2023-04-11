@@ -53,7 +53,7 @@
   (platformGetWindowLayer (get-handle window)))
 
 
-(definition package (with-metal-render window)
+(definition package (with-render window proc)
   (let ((layer (get-window-layer window)))
     (let ((drawable (metalLayerNextDrawable layer)))
       (let ((buffer (metalMakeCommandBuffer))

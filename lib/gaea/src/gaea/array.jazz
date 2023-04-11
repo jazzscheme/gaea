@@ -38,14 +38,27 @@
 (module gaea.array jazz
 
 
-(import (gaea.opengl.glew)
+(import (gaea.engine)
+        (gaea.opengl.glew)
+        (gaea.metal)
         (gaea.program))
 
 
 (class Array extends Object
   
   
+  (slot index   <object> initialize #f accessors generate)
+  (slot count   <object> initialize #f accessors generate)
+  (slot buffers <object> initialize #f accessors generate)
   (slot array   <object> initialize #f accessors generate)
+  
+  
+  (method override (initialize self index count . buffers)
+    (nextmethod self)
+    (set! self.index index)
+    (set! self.count count)
+    (if (metal?)
+        (set! self.buffers buffers)))
   
   
   (method override (destroy self)
@@ -64,8 +77,14 @@
     (set! array (create-array program self)))
   
   
-  (method public virtual (draw-array self)
-    )
+  (method public virtual (draw-array self encoder)
+    (if (metal?)
+        (let ((index index))
+          (for-each (lambda (buffer)
+                      (metalEncoderSetVertexBuffer encoder buffer index)
+                      (metalEncoderDrawPrimitives encoder count)
+                      (increase! index))
+                    buffers))))
   
   
   (method protected virtual (free-array self)
