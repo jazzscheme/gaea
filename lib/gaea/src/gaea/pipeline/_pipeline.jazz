@@ -110,10 +110,7 @@
                   (bind (buffer-index stride) layout
                     ;; - 1 is a quick hack for tests
                     (let ((buffer (element (get-buffers array) (- buffer-index 1))))
-                      (let ((content (get-content-try buffer)))
-                        (genIT buffer)
                       (bind-buffer buffer)
-                      (glBufferDataFloat* GL_ARRAY_BUFFER (f32vector-length content) content GL_STATIC_DRAW)
                       (let ((offset 0))
                         (for-each (lambda (attribute)
                                     (bind (name format offset bufferIndex) attribute
@@ -128,7 +125,7 @@
                                           (set-attrib-pointer buffer location size type stride offset)
                                           (increase! offset size)))))
                                   attributes))
-                      (unbind-buffer buffer)))))
+                      (unbind-buffer buffer))))
                 layouts)))
   
   
