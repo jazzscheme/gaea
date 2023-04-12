@@ -41,13 +41,17 @@
 (import (jazz.cairo)
         (jazz.geometry)
         (jazz.graphic)
+        (jazz.io)
+        (jazz.jpeg)
         (jazz.math)
         (jazz.platform.types)
         (jazz.screen)
         (gaea.engine)
+        (gaea.external.targa)
         (gaea.metal)
         (gaea.opengl.glew)
-        (gaea.opengl.render))
+        (gaea.opengl.render)
+        (gaea.program))
 
 
 ;;;
@@ -65,6 +69,7 @@
   (slot depth      <fx+>     getter generate)
   (slot data       <object>  getter generate)
   (slot id         <object>  getter generate)
+  (slot uniform    <object>  getter generate)
   (slot min-filter <object>  getter generate)
   (slot mag-filter <object>  getter generate)
   (slot wrap       <object>  getter generate)
@@ -86,6 +91,7 @@
         (set! self.id (if (opengl?)
                           (gl-generate-texture)
                         (metalNewTexture self.width self.height self.stride)))
+        (set! self.uniform #f)
         (set! self.min-filter min-filter)
         (set! self.mag-filter mag-filter)
         (set! self.wrap wrap)
@@ -110,6 +116,22 @@
     (print-unreadable self output
       (lambda (output)
         (format output "{s}x{s}" width height))))
+  
+  
+  (method public (setup-uniform self pipeline name)
+    (when (opengl?)
+      (set! uniform (get-uniform (get-program pipeline) name))))
+  
+  
+  (method public (bind-texture self encoder)
+    (if (opengl?)
+        (begin
+          (glActiveTexture GL_TEXTURE0)
+          (glBindTexture GL_TEXTURE_2D id)
+          (glUniform1i uniform 0))
+      (let ((sampler (metalNewSamplerState)))
+        (metalEncoderSetFragmentTexture encoder id 0)
+        (metalEncoderSetFragmentSamplerState encoder sampler 0))))
   
   
   (method (with-texture self target proc)
@@ -243,6 +265,139 @@
         (teximage GL_TEXTURE_CUBE_MAP_NEGATIVE_Y down)
         (teximage GL_TEXTURE_CUBE_MAP_POSITIVE_Z right)
         (teximage GL_TEXTURE_CUBE_MAP_NEGATIVE_Z left)))))
+
+
+;;;
+;;;; File
+;;;
+
+
+(definition public (make-file-texture file (min-filter: min-filter #f) (mag-filter: mag-filter #f) (wrap: wrap #f) (mipmap?: mipmap? #t) (metadata: metadata #f))
+  (let ((ext (get-extension file)))
+    (cond ((extension=? ext "png")
+           (make-png-texture file min-filter: min-filter mag-filter: mag-filter wrap: wrap mipmap?: mipmap? metadata: metadata))
+          ((or (extension=? ext "jpg") (extension=? ext "jpeg"))
+           (make-jpeg-texture file min-filter: min-filter mag-filter: mag-filter wrap: wrap mipmap?: mipmap? metadata: metadata))
+          ((extension=? ext "tga")
+           (make-tga-texture file min-filter: min-filter mag-filter: mag-filter wrap: wrap mipmap?: mipmap? metadata: metadata))
+          (else
+           (error "Unsupported texture format: {a}" ext)))))
+
+
+(definition public (make-file-cairo-texture file (min-filter: min-filter #f) (mag-filter: mag-filter #f) (wrap: wrap #f) (mipmap?: mipmap? #t) (metadata: metadata #f))
+  (let ((ext (get-extension file)))
+    (cond ((extension=? ext "png")
+           (make-png-cairo-texture file min-filter: min-filter mag-filter: mag-filter wrap: wrap mipmap?: mipmap? metadata: metadata))
+          ((or (extension=? ext "jpg") (extension=? ext "jpeg"))
+           (make-jpeg-cairo-texture file min-filter: min-filter mag-filter: mag-filter wrap: wrap mipmap?: mipmap? metadata: metadata))
+          ((extension=? ext "tga")
+           (make-tga-cairo-texture file min-filter: min-filter mag-filter: mag-filter wrap: wrap mipmap?: mipmap? metadata: metadata))
+          (else
+           (error "Unsupported texture format: {a}" ext)))))
+
+
+(definition public (cairo-surface-from-file file)
+  (let ((ext (get-extension file)))
+    (cond ((extension=? ext "png")
+           (cairo-surface-from-png file))
+          ((or (extension=? ext "jpg") (extension=? ext "jpeg"))
+           (cairo-surface-from-jpeg file))
+          ((extension=? ext "tga")
+           (cairo-surface-from-tga file))
+          (else
+           (error "Unsupported texture format: {a}" ext)))))
+
+
+;;;
+;;;; PNG
+;;;
+
+
+(definition protected (make-png-texture file (min-filter: min-filter #f) (mag-filter: mag-filter #f) (wrap: wrap #f) (mipmap?: mipmap? #t) (metadata: metadata #f))
+  (assert (exists? file))
+  (bind-values (width height surf) (cairo-surface-from-png file)
+    (prog1 (let ((data (cairo_image_surface_get_data surf)))
+             (let ((ct (new Image-Texture width height data: data min-filter: min-filter mag-filter: mag-filter wrap: wrap mipmap?: mipmap? metadata: metadata file: file)))
+               (map-texture ct)
+               ct))
+      (cairo_surface_destroy surf))))
+
+
+(definition protected (make-png-cairo-texture file (min-filter: min-filter #f) (mag-filter: mag-filter #f) (wrap: wrap #f) (mipmap?: mipmap? #t) (metadata: metadata #f))
+  (assert (exists? file))
+  (bind-values (width height surf) (cairo-surface-from-png file)
+    (let ((surface (new Surface surf)))
+      (let ((ct (new Cairo-Texture width height surface: surface min-filter: min-filter mag-filter: mag-filter wrap: wrap mipmap?: mipmap? metadata: metadata file: file)))
+        (map-texture ct)
+        ct))))
+
+
+(definition protected (cairo-surface-from-png file)
+  (let ((surf (cairo_image_surface_create_from_png (parse file))))
+    (let ((width (cairo_image_surface_get_width surf))
+          (height (cairo_image_surface_get_height surf)))
+      (values width height surf))))
+
+
+;;;
+;;;; JPEG
+;;;
+
+
+(definition protected (make-jpeg-texture file (min-filter: min-filter #f) (mag-filter: mag-filter #f) (wrap: wrap #f) (mipmap?: mipmap? #t) (metadata: metadata #f))
+  (assert (exists? file))
+  (bind-values (width height surf) (cairo-surface-from-jpeg file)
+    (prog1 (let ((data (cairo_image_surface_get_data surf)))
+             (let ((ct (new Image-Texture width height data: data min-filter: min-filter mag-filter: mag-filter wrap: wrap mipmap?: mipmap? metadata: metadata file: file)))
+               (map-texture ct)
+               ct))
+      (cairo_surface_destroy surf))))
+
+
+(definition protected (make-jpeg-cairo-texture file (min-filter: min-filter #f) (mag-filter: mag-filter #f) (wrap: wrap #f) (mipmap?: mipmap? #t) (metadata: metadata #f))
+  (assert (exists? file))
+  (bind-values (width height surf) (cairo-surface-from-jpeg file)
+    (let ((surface (new Surface surf)))
+      (let ((ct (new Cairo-Texture width height surface: surface min-filter: min-filter mag-filter: mag-filter wrap: wrap mipmap?: mipmap? metadata: metadata file: file)))
+        (map-texture ct)
+        ct))))
+
+
+(definition protected (cairo-surface-from-jpeg file)
+  (let ((surf (create-cairo-surface-from-jpeg file)))
+    (let ((width (cairo_image_surface_get_width surf))
+          (height (cairo_image_surface_get_height surf)))
+      (values width height surf))))
+
+
+;;;
+;;;; TGA
+;;;
+
+
+(definition protected (make-tga-texture file (min-filter: min-filter #f) (mag-filter: mag-filter #f) (wrap: wrap #f) (mipmap?: mipmap? #t) (metadata: metadata #f))
+  (assert (exists? file))
+  (bind-values (width height bytes/pixel data) (load-tga file)
+    (let ((ct (new Image-Texture width height data: data min-filter: min-filter mag-filter: mag-filter wrap: wrap mipmap?: mipmap? metadata: metadata file: file)))
+      (map-texture ct)
+      ct)))
+
+
+(definition protected (make-tga-cairo-texture file (min-filter: min-filter #f) (mag-filter: mag-filter #f) (wrap: wrap #f) (mipmap?: mipmap? #t) (metadata: metadata #f))
+  (assert (exists? file))
+  (bind-values (width height surf) (cairo-surface-from-tga file)
+    (let ((surface (new Surface surf)))
+      (let ((ct (new Cairo-Texture width height surface: surface min-filter: min-filter mag-filter: mag-filter wrap: wrap mipmap?: mipmap? metadata: metadata file: file)))
+        (map-texture ct)
+        ct))))
+
+
+(definition protected (cairo-surface-from-tga file)
+  (bind-values (width height bytes/pixel data) (load-tga file)
+    (let ((format CAIRO_FORMAT_ARGB32))
+      (let ((stride (cairo_format_stride_for_width format width)))
+        (assert (= stride (* width bytes/pixel)))
+        (values width height (cairo_image_surface_create_for_data data format width height stride))))))
 
 
 ;;;
