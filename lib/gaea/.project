@@ -50,7 +50,6 @@
           (<Project-File>                           source: {File :context "src" "gaea" "opengl" "product.scm"})
           (<Jazz-File>         name: syntax         source: {File :context "src" "gaea" "opengl" "syntax.jazz"})
           (<Jazz-File>         name: trace          source: {File :context "src" "gaea" "opengl" "trace.jazz"})
-          (<Jazz-File>         name: texture        source: {File :context "src" "gaea" "opengl" "texture.jazz"})
           (<Jazz-File>         name: render         source: {File :context "src" "gaea" "opengl" "render.jazz"}))
         (<Project-Directory>                        directory: {Directory :context "src" "gaea" "validate"}
           (<Project-Directory>                      directory: {Directory :context "src" "gaea" "validate" "suite"}
@@ -80,7 +79,6 @@
         (<Project-Directory>                        directory: {Directory :context "src" "gaea" "metal"}
           (<Jazz-File>         name: _metal         source: {File :context "src" "gaea" "metal" "_metal.jazz"})
           (<Jazz-File>         name: product        source: {File :context "src" "gaea" "metal" "product.jazz"})
-          (<Jazz-File>         name: texture        source: {File :context "src" "gaea" "metal" "texture.jazz"})
           (<Jazz-File>         name: geometry       source: {File :context "src" "gaea" "metal" "geometry.jazz"}))
         (<Project-Directory>                        directory: {Directory :context "src" "gaea" "window"}
           (<Jazz-File>         name: _window        source: {File :context "src" "gaea" "window" "_window.jazz"})
@@ -94,6 +92,7 @@
           (<Jazz-File>         name: opengl         source: {File :context "src" "gaea" "engine" "opengl.jazz"})
           (<Jazz-File>         name: metal          source: {File :context "src" "gaea" "engine" "metal.jazz"}))
         (<Project-Directory>                        directory: {Directory :context "src" "gaea" "pipeline"}
-          (<Jazz-File>         name: _pipeline      source: {File :context "src" "gaea" "pipeline" "_pipeline.jazz"}))
+          (<Jazz-File>         name: _pipeline      source: {File :context "src" "gaea" "pipeline" "_pipeline.jazz"})
+          (<Jazz-File>         name: mesh           source: {File :context "src" "gaea" "pipeline" "mesh.jazz"}))
         (<Jazz-File>           name: render         source: {File :context "src" "gaea" "render.jazz"})
         (<Jazz-File>           name: uniform        source: {File :context "src" "gaea" "uniform.jazz"}))))))

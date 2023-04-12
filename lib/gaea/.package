@@ -58,6 +58,7 @@
                           (dependencies jazz))
             (gaea.metal   (product gaea.metal.product)
                           (update gaea.metal
+                                  gaea.metal.geometry
                                   gaea.metal.product)
                           (dependencies jazz))
             (gaea.opengl (alias opengl)
