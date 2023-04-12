@@ -75,7 +75,9 @@
                               (bind (name format offset buffer-index) attribute
                                 (let ((format (case format
                                                 ((float2) MTLVertexFormatFloat2)
-                                                ((float4) MTLVertexFormatFloat4))))
+                                                ((float3) MTLVertexFormatFloat3)
+                                                ((float4) MTLVertexFormatFloat4)
+                                                (else (error "Unknown attribute format: {s}" format)))))
                                   (metalVertexDescriptorAttribute desc index format offset buffer-index)))
                               (increase! index))
                             attributes))
@@ -119,7 +121,8 @@
                                               (size (case format
                                                       ((float2) 2)
                                                       ((float3) 3)
-                                                      ((float4) 4)))
+                                                      ((float4) 4)
+                                                      (else (error "Unknown attribute format: {s}" format))))
                                               (type GL_FLOAT))
                                           (enable-vertex-attrib buffer location)
                                           (set-attrib-pointer buffer location size type stride offset)
