@@ -39,7 +39,6 @@
                           gaea.pipeline
                           gaea.plane
                           gaea.program
-                          gaea.program.color
                           gaea.program.mesh
                           gaea.program.model
                           gaea.render
@@ -58,7 +57,6 @@
                           (dependencies jazz))
             (gaea.metal   (product gaea.metal.product)
                           (update gaea.metal
-                                  gaea.metal.geometry
                                   gaea.metal.product)
                           (dependencies jazz))
             (gaea.opengl (alias opengl)
@@ -70,7 +68,6 @@
                                  gaea.opengl.product
                                  gaea.opengl.render
                                  gaea.opengl.syntax
-                                 gaea.opengl.texture
                                  gaea.opengl.trace)
                          (dependencies jazz
                                        jazz.foreign

@@ -48,7 +48,7 @@
         (jazz.window)
         (gaea.opengl)
         (gaea.opengl.glew)
-        (gaea.opengl.texture)
+        (gaea.texture)
         (gaea.window))
 
 

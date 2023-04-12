@@ -68,6 +68,7 @@
         (gaea.geometry.syntax (phase syntax)))
 
 (import (jazz.geometry)
+        (gaea.engine)
         (gaea.geometry.base)
         (gaea.geometry.classes)
         (gaea.geometry.syntax (phase syntax))
@@ -1018,6 +1019,15 @@
                     (make-scaling-matrix& radiuses)))
 
 
+(definition opengl->metal-adjustment <matrix>
+  (matrix-multiply (make-translation-matrix (vertex 0. 0. .5))
+                   (make-scaling-matrix (vertex 1. 1. .5))))
+
+
+(definition public (opengl->metal-projection! mat <matrix>) <matrix>
+  (matrix-multiply! mat opengl->metal-adjustment mat))
+
+
 (definition public (make-perspective-matrix fov <fl> ratio <fl> near <fl> far <fl>) <matrix>
   (make-perspective-matrix! (make-matrix) fov ratio near far))
 
@@ -1031,6 +1041,8 @@
     (matrix-set! res 14 (/ (* 2. far near) (- near far)))
     (matrix-set! res 11 -1.)
     (matrix-set! res 15 0.))
+  (when (metal?)
+    (opengl->metal-projection! res))
   res)
 
 
@@ -1050,6 +1062,8 @@
     (matrix-set! res 13 (- (/ (+ top bottom) height)))
     (matrix-set! res 14 (- (/ (+ far near) depth)))
     (matrix-set! res 15 1.)
+    (when (metal?)
+      (opengl->metal-projection! res))
     res))
 
 

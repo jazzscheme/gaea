@@ -177,6 +177,7 @@
   (slot material         <Material+> accessors generate)
   
   
+  @convert
   (method override (initialize self (material: material #f))
     (nextmethod self)
     (set! self.vertices-buffer (new Buffer))

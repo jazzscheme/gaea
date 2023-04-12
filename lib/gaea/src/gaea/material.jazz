@@ -38,7 +38,7 @@
 (module gaea.material jazz
 
 
-(import (gaea.opengl.texture))
+(import (gaea.texture))
 
 
 ;;;
