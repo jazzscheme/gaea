@@ -18,6 +18,8 @@
                           gaea.camera
                           gaea.dye
                           gaea.engine
+                          gaea.engine.metal
+                          gaea.engine.opengl
                           gaea.external.targa
                           gaea.generate
                           gaea.geometry
@@ -34,17 +36,20 @@
                           gaea.mesher
                           gaea.movement
                           gaea.parallelepiped
+                          gaea.pipeline
                           gaea.plane
                           gaea.program
                           gaea.program.color
                           gaea.program.mesh
                           gaea.program.model
+                          gaea.render
                           gaea.shader
                           gaea.syntax
                           gaea.texture
                           gaea.types
                           gaea.uv
-                          gaea.window)
+                          gaea.window
+                          gaea.window.frame)
                    (dependencies jazz))
             (gaea.foreign (product gaea.foreign.product)
                           (update gaea.foreign
