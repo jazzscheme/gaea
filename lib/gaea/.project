@@ -95,4 +95,5 @@
           (<Jazz-File>         name: metal          source: {File :context "src" "gaea" "engine" "metal.jazz"}))
         (<Project-Directory>                        directory: {Directory :context "src" "gaea" "pipeline"}
           (<Jazz-File>         name: _pipeline      source: {File :context "src" "gaea" "pipeline" "_pipeline.jazz"}))
-        (<Jazz-File>           name: render         source: {File :context "src" "gaea" "render.jazz"}))))))
+        (<Jazz-File>           name: render         source: {File :context "src" "gaea" "render.jazz"})
+        (<Jazz-File>           name: uniform        source: {File :context "src" "gaea" "uniform.jazz"}))))))
