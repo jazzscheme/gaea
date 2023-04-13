@@ -49,7 +49,7 @@
         (gaea.opengl.glew)
         (gaea.sample)
         (gaea.sample.syntax (phase syntax))
-        (gaea.opengl.texture)
+        (gaea.texture)
         (gaea.window))
 
 
