@@ -38,7 +38,9 @@
 (module gaea.program jazz
 
 
-(import (gaea.opengl)
+(import (gaea.engine)
+        (gaea.metal)
+        (gaea.opengl)
         (gaea.opengl.glew)
         (gaea.shader))
 
@@ -54,21 +56,27 @@
   (slot name            <object> getter generate)
   (slot vertex-shader   <object> accessors generate)
   (slot fragment-shader <object> accessors generate)
-  (slot program         <object> accessors generate)
+  (slot library         <object> getter generate)
+  (slot program         <object> getter generate)
   (slot attributes      <object> getter generate)
   (slot uniforms        <object> getter generate)
   
   
-  (method override (initialize self (name: name #f))
+  (method override (initialize self sources)
     (nextmethod self)
-    (set! self.name name)
-    (set! vertex-shader (new Shader GL_VERTEX_SHADER))
-    (set! fragment-shader (new Shader GL_FRAGMENT_SHADER))
-    (set! program (glCreateProgram))
-    (set! attributes (make-table test: equal?))
-    (set! uniforms (make-table test: equal?))
-    (prepare self)
-    (gl-check-error))
+    (bind (metal opengl) sources
+      (if (metal?)
+          (bind (source vs fs) metal
+            (set! library (metalMakeLibrary source))
+            (set! vertex-shader vs)
+            (set! fragment-shader fs))
+        (bind (vs fs) opengl
+          (set! vertex-shader (new Shader GL_VERTEX_SHADER))
+          (set! fragment-shader (new Shader GL_FRAGMENT_SHADER))
+          (set! program (glCreateProgram))
+          (set-code vertex-shader vs)
+          (set-code fragment-shader fs)
+          (link self)))))
   
   
   (method package virtual (prepare self)
@@ -82,11 +90,11 @@
     )
   
   
-  (method public (set-fs self code)
-    (set-code fragment-shader code))
-  
   (method public (set-vs self code)
     (set-code vertex-shader code))
+  
+  (method public (set-fs self code)
+    (set-code fragment-shader code))
   
   
   (method public (link self)

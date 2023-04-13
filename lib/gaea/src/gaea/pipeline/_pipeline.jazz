@@ -55,44 +55,39 @@
 (class Pipeline extends Object
   
   
+  (slot program    getter generate)
   (slot attributes getter generate)
   (slot layouts    getter generate)
   (slot pipeline   getter generate)
-  (slot program    getter generate)
   
   
-  (method override (initialize self sources attributes layouts)
+  (method override (initialize self program attributes layouts)
     (nextmethod self)
+    (set! self.program program)
     (set! self.attributes attributes)
     (set! self.layouts layouts)
-    (bind (metal opengl) sources
-      (if (metal?)
-          (bind (source vs fs) metal
-            (let ((lib (metalMakeLibrary source)))
-              (let ((desc (metalMakeVertexDescriptor)))
-                (let ((index 0))
-                  (for-each (lambda (attribute)
-                              (bind (name format offset buffer-index) attribute
-                                (let ((format (case format
-                                                ((float2) MTLVertexFormatFloat2)
-                                                ((float3) MTLVertexFormatFloat3)
-                                                ((float4) MTLVertexFormatFloat4)
-                                                (else (error "Unknown attribute format: {s}" format)))))
-                                  (metalVertexDescriptorAttribute desc index format offset buffer-index)))
-                              (increase! index))
-                            attributes))
-                (for-each (lambda (layout)
-                            (bind (buffer-index stride) layout
-                              (metalVertexDescriptorLayout desc buffer-index MTLVertexStepFunctionPerVertex stride)))
-                          layouts)
-                (let ((pipeline (metalMakeRenderPipelineState lib vs fs desc)))
-                  (set! self.pipeline pipeline)))))
-        (bind (vs fs) opengl
-          (let ((program (new Program)))
-            (set-vs program vs)
-            (set-fs program fs)
-            (link program)
-            (set! self.program program))))))
+    (when (metal?)
+      (let ((lib (get-library program))
+            (vs (get-vertex-shader program))
+            (fs (get-fragment-shader program))
+            (desc (metalMakeVertexDescriptor)))
+        (let ((index 0))
+          (for-each (lambda (attribute)
+                      (bind (name format offset buffer-index) attribute
+                        (let ((format (case format
+                                        ((float2) MTLVertexFormatFloat2)
+                                        ((float3) MTLVertexFormatFloat3)
+                                        ((float4) MTLVertexFormatFloat4)
+                                        (else (error "Unknown attribute format: {s}" format)))))
+                          (metalVertexDescriptorAttribute desc index format offset buffer-index)))
+                      (increase! index))
+                    attributes))
+        (for-each (lambda (layout)
+                    (bind (buffer-index stride) layout
+                      (metalVertexDescriptorLayout desc buffer-index MTLVertexStepFunctionPerVertex stride)))
+                  layouts)
+        (let ((pipeline (metalMakeRenderPipelineState lib vs fs desc)))
+          (set! self.pipeline pipeline)))))
   
   
   (method public (with-pipeline self encoder thunk)
