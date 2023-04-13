@@ -113,23 +113,35 @@
       (for-each (lambda (buffer buffer-layout)
                   (bind (buffer-index stride . attributes) buffer-layout
                     (bind-buffer buffer)
-                    (let ((offset 0))
-                      (for-each (lambda (attribute)
-                                  (bind (name format offset) attribute
-                                    (let ((location (get-attribute program name))
-                                          (size (case format
-                                                  ((float2) 2)
-                                                  ((float3) 3)
-                                                  ((float4) 4)
-                                                  (else (error "Unknown attribute format: {s}" format))))
-                                          (type GL_FLOAT))
-                                      (enable-vertex-attrib buffer location)
-                                      (set-attrib-pointer buffer location size type stride offset)
-                                      (increase! offset size))))
-                                attributes))
+                    (for-each (lambda (attribute)
+                                (bind (name format offset) attribute
+                                  (let ((location (get-attribute program name))
+                                        (size (case format
+                                                ((float2) 2)
+                                                ((float3) 3)
+                                                ((float4) 4)
+                                                (else (error "Unknown attribute format: {s}" format))))
+                                        (type GL_FLOAT))
+                                    (enable-vertex-attrib buffer location)
+                                    (set-attrib-pointer buffer location size type stride offset))))
+                              attributes)
                     (unbind-buffer buffer)))
                 (get-buffers array)
                 layout)))
+  
+  
+  (method public (find-attribute self target-name)
+    (continuation-capture
+      (lambda (return)
+        (for-each (lambda (buffer-layout)
+                    (bind (buffer-index stride . attributes) buffer-layout
+                      (for-each (lambda (attribute)
+                                  (bind (name format offset) attribute
+                                    (when (equal? name target-name)
+                                      (continuation-return return (cons buffer-index (cons stride attribute))))))
+                                attributes)))
+                layout)
+        #f)))
   
   
   (method public (bind-uniforms self . rest)

@@ -68,8 +68,9 @@
   (slot context-mutex      initialize #f getter generate)
   (slot previous-placement initialize #f getter generate)
   (slot window-mode        initialize #f getter generate)
+  (slot render-thread      initialize #f getter generate)
 
-
+  
   (method override (opengl-window? self)
     (opengl?))
 
@@ -163,6 +164,27 @@
   ;;;
   ;;;; Render
   ;;;
+  
+  
+  (method (start-render self)
+    (let ((thread
+            (new-thread
+              (lambda ()
+                (declare (proper-tail-calls))
+                (let ((period (/ 1. 30.)))
+                  (let (loop)
+                    (render-scene self)
+                    (sleep period)
+                    (loop))))
+              'render)))
+      (set! render-thread thread)
+      (thread-start! thread)))
+  
+  
+  (method (stop-render self)
+    (when render-thread
+      (thread-terminate! render-thread)
+      (set! render-thread #f)))
 
   
   (method override (paint self)

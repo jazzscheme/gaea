@@ -45,11 +45,18 @@
 
 
 ;;;
-;;;; Shaders
+;;;; Source
 ;;;
 
 
-(definition (build-model-mesh-vs)
+(definition texture-sources
+  (list
+    ;; metal
+    #f
+    
+    ;; opengl
+    (list
+      ;; vertex
   (string-append glsl-version
     #/C/
 uniform mat4 projection_matrix;
@@ -76,10 +83,8 @@ void main()
     gl_Position = projection_matrix * view_matrix * vec4(fragPos, 1);
     final_texture = texture_coord;
 }
-//#))
-
-
-(definition (build-model-mesh-fs)
+//#)
+  ;; fragment
   (string-append glsl-version
     #/C/
 uniform sampler2D texture_sampler;
@@ -92,7 +97,7 @@ void main()
 {
     fragColor = texture(texture_sampler, vec2(final_texture.x, final_texture.y));
 }
-//#))
+//#))))
 
 
 ;;;
@@ -116,21 +121,11 @@ void main()
   bone-matrices)
 
 
-(class Model-Mesh-Program extends Mesh-Program
+(class Model-Program extends Program
   
   
-  (method override (use-texture? self)
-    #t)
-  
-  (method override (use-bone? self)
-    #t)
-  
-  
-  (method override (create-vertex-shader self)
-    (build-model-mesh-vs))
-  
-  (method override (create-fragment-shader self)
-    (build-model-mesh-fs))
+  (method override (initialize self)
+    (nextmethod self model-sources))
   
   
   (method override (bind-material self id) <void>
@@ -154,4 +149,4 @@ void main()
 ;;;
 
 
-(register-program 'model (lambda () (new Model-Mesh-Program))))
+(register-program 'model (lambda () (new Model-Program))))

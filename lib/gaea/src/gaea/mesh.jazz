@@ -38,7 +38,8 @@
 (module gaea.mesh jazz
 
 
-(import (gaea.array)
+(import (jazz.platform)
+        (gaea.array)
         (gaea.buffer)
         (gaea.material)
         (gaea.opengl.glew)
@@ -164,6 +165,16 @@
   48
   @wait-constant-folding
   (* 3 feedback-floats))
+
+
+(definition public mesh-layout
+  (list
+    ;; vertex
+    (list 1 (* 10 float-size)
+      (list "position" 'float3 0)
+      (list "normal"   'float3 (* 3 float-size))
+      (list "texture"  'float3 (* 6 float-size))
+      (list "bone"     'float1 (* 9 float-size)))))
 
 
 (class Mesh extends Array

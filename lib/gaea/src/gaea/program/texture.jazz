@@ -45,11 +45,62 @@
 
 
 ;;;
-;;;; Shaders
+;;;; Source
 ;;;
 
 
-(definition (build-texture-mesh-vs)
+(definition texture-sources
+  (list
+    ;; metal
+    (list
+#/C/
+    #include <metal_stdlib>
+    
+    using namespace metal;
+
+    struct vs_in
+    {
+        float4 position      [[attribute(0)]];
+        float3 texture_coord [[attribute(1)]];
+    };
+
+    struct vs_out
+    {
+        float4 position [[position]];
+        float3 texture_coord;
+    };
+
+    struct Uniforms
+    {
+        float4x4 projectionMatrix;
+        float4x4 viewMatrix;
+        float4x4 modelMatrix;
+    };
+
+    vertex vs_out vertex_simple(
+        vs_in vertexIn [[stage_in]],
+        constant Uniforms *uniforms [[buffer(0)]])
+    {
+        vs_out vertexOut;
+        vertexOut.position = uniforms->projectionMatrix * uniforms->viewMatrix * uniforms->modelMatrix * vertexIn.position;
+        vertexOut.texture_coord = vertexIn.texture_coord;
+        return vertexOut;
+    }
+    
+    fragment float4 fragment_simple(
+        vs_out vert [[stage_in]],
+        texture2d<float, access::sample> tex [[texture(0)]],
+        sampler samplr [[sampler(0)]])
+    {
+        return tex.sample(samplr, float2(vert.texture_coord.x, vert.texture_coord.y));
+    }
+//#
+      "vertex_simple"
+      "fragment_simple")
+    
+    ;; opengl
+    (list
+      ;; vertex
   (string-append glsl-version
     #/C/
 uniform mat4 projection_matrix;
@@ -65,10 +116,8 @@ void main()
     gl_Position = projection_matrix * view_matrix * vec4(vertex, 1.0);
     final_texture = texture_coord;
 }
-//#))
-
-
-(definition (build-texture-mesh-fs)
+//#)
+  ;; fragment
   (string-append glsl-version
     #/C/
 uniform sampler2D texture_sampler;
@@ -82,6 +131,10 @@ void main()
     fragColor = texture(texture_sampler, vec2(final_texture.x, final_texture.y));
 }
 //#))
+    
+    ;; attributes
+    "position"
+    "texture_coord"))
 
 
 ;;;
@@ -89,20 +142,14 @@ void main()
 ;;;
 
 
-(class Texture-Mesh-Program extends Mesh-Program
+(class Texture-Program extends Program
   
   
-  (method override (use-texture? self)
-    #t)
+  (method override (initialize self)
+    (nextmethod self texture-sources))
   
   
-  (method override (create-vertex-shader self)
-    (build-texture-mesh-vs))
-  
-  (method override (create-fragment-shader self)
-    (build-texture-mesh-fs))
-  
-  
+  @convert
   (method override (bind-material self id) <void>
     (glActiveTexture GL_TEXTURE0)
     (glBindTexture GL_TEXTURE_2D id)
@@ -114,4 +161,4 @@ void main()
 ;;;
 
 
-(register-program 'texture (lambda () (new Texture-Mesh-Program))))
+(register-program 'texture (lambda () (new Texture-Program))))

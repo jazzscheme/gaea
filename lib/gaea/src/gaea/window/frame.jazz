@@ -167,7 +167,6 @@
   (slot interface-texture   initialize #f getter generate)
   (slot interface-uniform   initialize #f getter generate)
   (slot orthographic-matrix initialize (make-matrix) getter generate)
-  (slot render-thread       initialize #f getter generate)
   
   
   (method protected virtual (default-render? self)

@@ -58,12 +58,14 @@
   (slot fragment-shader <object> accessors generate)
   (slot library         <object> getter generate)
   (slot program         <object> getter generate)
+  (slot inputs          <object> getter generate)
   (slot attributes      <object> getter generate)
   (slot uniforms        <object> getter generate)
   
   
-  (method override (initialize self sources)
+  (method override (initialize self sources . inputs)
     (nextmethod self)
+    (set! self.inputs inputs)
     (bind (metal opengl) sources
       (if (metal?)
           (bind (source vs fs) metal
