@@ -454,6 +454,25 @@
   dst)
 
 
+(definition public (matrix-transfer! src <matrix> dst <f32vector> offset <fx>)
+  (f32vector-set! dst (+ offset  0) (matrix-ref src 0))
+  (f32vector-set! dst (+ offset  1) (matrix-ref src 1))
+  (f32vector-set! dst (+ offset  2) (matrix-ref src 2))
+  (f32vector-set! dst (+ offset  3) (matrix-ref src 3))
+  (f32vector-set! dst (+ offset  4) (matrix-ref src 4))
+  (f32vector-set! dst (+ offset  5) (matrix-ref src 5))
+  (f32vector-set! dst (+ offset  6) (matrix-ref src 6))
+  (f32vector-set! dst (+ offset  7) (matrix-ref src 7))
+  (f32vector-set! dst (+ offset  8) (matrix-ref src 8))
+  (f32vector-set! dst (+ offset  9) (matrix-ref src 9))
+  (f32vector-set! dst (+ offset 10) (matrix-ref src 10))
+  (f32vector-set! dst (+ offset 11) (matrix-ref src 11))
+  (f32vector-set! dst (+ offset 12) (matrix-ref src 12))
+  (f32vector-set! dst (+ offset 13) (matrix-ref src 13))
+  (f32vector-set! dst (+ offset 14) (matrix-ref src 14))
+  (f32vector-set! dst (+ offset 15) (matrix-ref src 15)))
+
+
 (definition public (debug-matrix mat (dest :console))
   (format dest "{r precision: 3} {r precision: 3} {r precision: 3} {r precision: 3}{%}" (matrix-ref mat 0) (matrix-ref mat 4) (matrix-ref mat 8) (matrix-ref mat 12))
   (format dest "{r precision: 3} {r precision: 3} {r precision: 3} {r precision: 3}{%}" (matrix-ref mat 1) (matrix-ref mat 5) (matrix-ref mat 9) (matrix-ref mat 13))
