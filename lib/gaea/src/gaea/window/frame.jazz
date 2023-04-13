@@ -50,6 +50,7 @@
         (gaea.buffer)
         (gaea.geometry)
         (gaea.pipeline)
+        (gaea.program)
         (gaea.render)
         (gaea.shader)
         (gaea.texture)
@@ -146,14 +147,11 @@
 //#))))
 
 
-(definition interface-attributes
+(definition interface-layout
   (list
-    (list "position"      'float4 0 1)
-    (list "texture_coord" 'float2 (* 4 float-size) 1)))
-
-(definition interface-layouts
-  (list
-    (list 1 (* 8 float-size))))
+    (list 1 (* 8 float-size)
+      (list "position"      'float4 0)
+      (list "texture_coord" 'float2 (* 4 float-size)))))
 
 
 ;;;
@@ -191,7 +189,7 @@
   
   
   (method (create-pipelines self)
-    (set! interface-pipeline (new Pipeline interface-sources interface-attributes interface-layouts))
+    (set! interface-pipeline (new Pipeline (new Program interface-sources) interface-layout))
     (gaea-uniform-binding interface-pipeline interface-binding))
   
   

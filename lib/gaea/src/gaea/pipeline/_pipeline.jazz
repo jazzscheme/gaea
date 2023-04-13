@@ -101,26 +101,25 @@
   (method public (setup-array self array)
     (when (opengl?)
       (glBindVertexArray (get-array array))
-      (for-each (lambda (buffer-layout)
+      (for-each (lambda (buffer buffer-layout)
                   (bind (buffer-index stride . attributes) buffer-layout
-                    ;; - 1 is a quick hack for tests
-                    (let ((buffer (element (get-buffers array) (- buffer-index 1))))
-                      (bind-buffer buffer)
-                      (let ((offset 0))
-                        (for-each (lambda (attribute)
-                                    (bind (name format offset) attribute
-                                      (let ((location (get-attribute program name))
-                                            (size (case format
-                                                    ((float2) 2)
-                                                    ((float3) 3)
-                                                    ((float4) 4)
-                                                    (else (error "Unknown attribute format: {s}" format))))
-                                            (type GL_FLOAT))
-                                        (enable-vertex-attrib buffer location)
-                                        (set-attrib-pointer buffer location size type stride offset)
-                                        (increase! offset size))))
-                                  attributes))
-                      (unbind-buffer buffer))))
+                    (bind-buffer buffer)
+                    (let ((offset 0))
+                      (for-each (lambda (attribute)
+                                  (bind (name format offset) attribute
+                                    (let ((location (get-attribute program name))
+                                          (size (case format
+                                                  ((float2) 2)
+                                                  ((float3) 3)
+                                                  ((float4) 4)
+                                                  (else (error "Unknown attribute format: {s}" format))))
+                                          (type GL_FLOAT))
+                                      (enable-vertex-attrib buffer location)
+                                      (set-attrib-pointer buffer location size type stride offset)
+                                      (increase! offset size))))
+                                attributes))
+                    (unbind-buffer buffer)))
+                (get-buffers array)
                 layout)))
   
   
