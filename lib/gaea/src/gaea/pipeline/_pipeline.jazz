@@ -55,37 +55,35 @@
 (class Pipeline extends Object
   
   
-  (slot program    getter generate)
-  (slot attributes getter generate)
-  (slot layouts    getter generate)
-  (slot pipeline   getter generate)
+  (slot program  getter generate)
+  (slot layout   getter generate)
+  (slot pipeline getter generate)
   
   
-  (method override (initialize self program attributes layouts)
+  (method override (initialize self program layout)
     (nextmethod self)
     (set! self.program program)
-    (set! self.attributes attributes)
-    (set! self.layouts layouts)
+    (set! self.layout layout)
     (when (metal?)
       (let ((lib (get-library program))
             (vs (get-vertex-shader program))
             (fs (get-fragment-shader program))
             (desc (metalMakeVertexDescriptor)))
-        (let ((index 0))
-          (for-each (lambda (attribute)
-                      (bind (name format offset buffer-index) attribute
-                        (let ((format (case format
-                                        ((float2) MTLVertexFormatFloat2)
-                                        ((float3) MTLVertexFormatFloat3)
-                                        ((float4) MTLVertexFormatFloat4)
-                                        (else (error "Unknown attribute format: {s}" format)))))
-                          (metalVertexDescriptorAttribute desc index format offset buffer-index)))
-                      (increase! index))
-                    attributes))
-        (for-each (lambda (layout)
-                    (bind (buffer-index stride) layout
-                      (metalVertexDescriptorLayout desc buffer-index MTLVertexStepFunctionPerVertex stride)))
-                  layouts)
+        (let ((attribute-index 0))
+          (for-each (lambda (buffer-layout)
+                      (bind (buffer-index stride . attributes) buffer-layout
+                        (metalVertexDescriptorLayout desc buffer-index MTLVertexStepFunctionPerVertex stride)
+                        (for-each (lambda (attribute)
+                                    (bind (name format offset) attribute
+                                      (let ((format (case format
+                                                      ((float2) MTLVertexFormatFloat2)
+                                                      ((float3) MTLVertexFormatFloat3)
+                                                      ((float4) MTLVertexFormatFloat4)
+                                                      (else (error "Unknown attribute format: {s}" format)))))
+                                        (metalVertexDescriptorAttribute desc attribute-index format offset buffer-index)))
+                                    (increase! attribute-index))
+                                  attributes)))
+                    layout))
         (let ((pipeline (metalMakeRenderPipelineState lib vs fs desc)))
           (set! self.pipeline pipeline)))))
   
@@ -103,28 +101,27 @@
   (method public (setup-array self array)
     (when (opengl?)
       (glBindVertexArray (get-array array))
-      (for-each (lambda (layout)
-                  (bind (buffer-index stride) layout
+      (for-each (lambda (buffer-layout)
+                  (bind (buffer-index stride . attributes) buffer-layout
                     ;; - 1 is a quick hack for tests
                     (let ((buffer (element (get-buffers array) (- buffer-index 1))))
                       (bind-buffer buffer)
                       (let ((offset 0))
                         (for-each (lambda (attribute)
-                                    (bind (name format offset bufferIndex) attribute
-                                      (when (= bufferIndex buffer-index)
-                                        (let ((location (get-attribute program name))
-                                              (size (case format
-                                                      ((float2) 2)
-                                                      ((float3) 3)
-                                                      ((float4) 4)
-                                                      (else (error "Unknown attribute format: {s}" format))))
-                                              (type GL_FLOAT))
-                                          (enable-vertex-attrib buffer location)
-                                          (set-attrib-pointer buffer location size type stride offset)
-                                          (increase! offset size)))))
+                                    (bind (name format offset) attribute
+                                      (let ((location (get-attribute program name))
+                                            (size (case format
+                                                    ((float2) 2)
+                                                    ((float3) 3)
+                                                    ((float4) 4)
+                                                    (else (error "Unknown attribute format: {s}" format))))
+                                            (type GL_FLOAT))
+                                        (enable-vertex-attrib buffer location)
+                                        (set-attrib-pointer buffer location size type stride offset)
+                                        (increase! offset size))))
                                   attributes))
                       (unbind-buffer buffer))))
-                layouts)))
+                layout)))
   
   
   (method public (bind-uniforms self . rest)
