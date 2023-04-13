@@ -46,12 +46,14 @@
         (jazz.settings)
         (jazz.view)
         (jazz.window)
+        (gaea.array)
+        (gaea.buffer)
         (gaea.geometry)
-        (gaea.opengl)
-        (gaea.opengl.glew)
-        (gaea.program)
+        (gaea.pipeline)
+        (gaea.render)
         (gaea.shader)
         (gaea.texture)
+        (gaea.uniform)
         (gaea.window))
 
 
@@ -60,103 +62,98 @@
 ;;;
 
 
-(definition interface-vert
-  (string-append glsl-version
-    #/C/
-uniform mat4 projMatrix;
+(definition interface-sources
+  (list
+    ;; metal
+    (list
+#/C/
+    #include <metal_stdlib>
+    
+    using namespace metal;
 
-in vec3 position;
-in vec3 textureCoord;
+    struct vs_in
+    {
+        float4 position  [[attribute(0)]];
+        float2 texCoords [[attribute(1)]];
+    };
 
-out vec3 final_texture_coord;
+    struct vs_out
+    {
+        float4 position [[position]];
+        float2 texCoords;
+    };
 
-void main()
-{
-    gl_Position = projMatrix * vec4(position, 1.0);
-    final_texture_coord = textureCoord;
-}
-//#))
+    struct Uniforms
+    {
+        float4x4 orthographicMatrix;
+    };
 
+    vertex vs_out vertex_simple(
+        vs_in vertexIn [[stage_in]],
+        constant Uniforms *uniforms  [[buffer(0)]])
+    {
+        vs_out vertexOut;
+        vertexOut.position = uniforms->orthographicMatrix * vertexIn.position;
+        vertexOut.texCoords = vertexIn.texCoords;
+        return vertexOut;
+    }
+    
+    fragment float4 fragment_simple(
+        vs_out vert [[stage_in]],
+        texture2d<float, access::sample> tex [[texture(0)]],
+        sampler samplr [[sampler(0)]])
+    {
+        return tex.sample(samplr, vert.texCoords);
+    }
+//#
+      "vertex_simple"
+      "fragment_simple")
+    
+    ;; opengl
+    (list
+      ;; vertex
+      (string-append glsl-version
+#/C/
+    layout (std140) uniform Matrices
+    {
+        mat4 orthographic_matrix;
+    };
 
-(definition interface-frag
-  (string-append glsl-version
-    #/C/
-uniform sampler2D textureSampler;
+    in vec4 position;
+    in vec3 texture_coord;
 
-in vec3 final_texture_coord;
+    out vec3 final_texture;
 
-out vec4 fragColor;
+    void main()
+    {
+        gl_Position = orthographic_matrix * position;
+        final_texture = texture_coord;
+    }
+//#)
+      ;; fragment
+      (string-append glsl-version
+#/C/
+    uniform sampler2D textureSampler;
 
-void main()
-{
-    fragColor = texture(textureSampler, vec2(final_texture_coord.x, final_texture_coord.y));
-}
-//#))
+    in vec3 final_texture;
 
+    out vec4 fragColor;
 
-(class Interface-Program extends Program
-  
-  
-  ;; Attribute Locations
-  (slot vertex-attribute       initialize #f getter generate)
-  (slot textureCoord-attribute initialize #f getter generate)
- 
-  ;; Uniform Locations
-  (slot projMatrix-uniform     initialize #f getter generate)
-  (slot textureSampler-uniform initialize #f getter generate)
-  
-  
-  (method override (prepare self)
-    (set-vs self interface-vert)
-    (set-fs self interface-frag)
-    (link self)
-    (set! vertex-attribute (add-attribute self "position"))
-    (set! textureCoord-attribute (add-attribute self "textureCoord"))
-    (set! projMatrix-uniform (add-uniform self "projMatrix"))
-    (set! textureSampler-uniform (add-uniform self "textureSampler")))
-  
-  
-  (method package (create-vertex-buffer self vertices)
-    (let ((vbo (glGenBuffers*)))
-      (glBindBuffer GL_ARRAY_BUFFER vbo)
-      (glBufferDataFloat* GL_ARRAY_BUFFER (f32vector-length vertices) vertices GL_STATIC_DRAW)
-      (glEnableVertexAttribArray vertex-attribute)
-      (glVertexAttribPointer* vertex-attribute 3 GL_FLOAT GL_FALSE (* 6 float-size) 0)
-      (glEnableVertexAttribArray textureCoord-attribute)
-      (glVertexAttribPointer* textureCoord-attribute 3 GL_FLOAT GL_FALSE (* 6 float-size) (* 3 float-size))
-      (glBindBuffer GL_ARRAY_BUFFER 0)
-      vbo))
-  
-  
-  (method package (bind-uniforms self projection-matrix texture-id)
-    (glUniformMatrix4dv* projMatrix-uniform 1 #f projection-matrix)
-    (glActiveTexture GL_TEXTURE0)
-    (glBindTexture GL_TEXTURE_2D texture-id)
-    (glUniform1i textureSampler-uniform 0))
-  
-  
-  (method package (unbind-uniforms self)
-    (glActiveTexture GL_TEXTURE0)
-    (glBindTexture GL_TEXTURE_2D 0)))
-
-
-;;;
-;;;; Array
-;;;
+    void main()
+    {
+        fragColor = texture(textureSampler, vec2(final_texture.x, final_texture.y));
+    }
+//#))))
 
 
-(class Interface-Array extends Object
-  
-  
-  (slot array getter generate)
-  (slot vertex-buffer)
-  
-  
-  (method override (initialize self program vertices)
-    (set! array (glGenVertexArrays*))
-    (glBindVertexArray array)
-    (set! vertex-buffer (create-vertex-buffer program vertices))
-    (glBindVertexArray 0)))
+(definition interface-attributes
+  (list
+    (list "position"      'float4 0 1)
+    (list "texture_coord" 'float2 (* 4 float-size) 1)))
+
+(definition interface-layouts
+  (list
+    (list 1 (* 8 float-size))))
 
 
 ;;;
@@ -167,10 +164,13 @@ void main()
 (class Gaea-Frame extends Gaea-Window
   
   
-  (slot interface-program   initialize #f getter generate)
+  (slot interface-pipeline  initialize #f getter generate)
   (slot interface-array     initialize #f getter generate)
   (slot interface-texture   initialize #f getter generate)
+  (slot interface-binding   initialize 0  getter generate)
+  (slot interface-uniform   initialize #f getter generate)
   (slot orthographic-matrix initialize (make-matrix) getter generate)
+  (slot render-thread       initialize #f getter generate)
   
   
   (method protected virtual (default-render? self)
@@ -180,23 +180,19 @@ void main()
   (method override (setup-engine self)
     (nextmethod self)
     (when (default-render? self)
-      (create-programs self)
+      (create-pipelines self)
       (initialize-arrays self)
       (setup-textures self)))
   
   
   ;;;
-  ;;;; Programs
+  ;;;; Pipelines
   ;;;
   
   
-  (method (create-programs self)
-    (set! interface-program (new Interface-Program)))
-  
-  
-  (method (release-programs self)
-    (glDeleteProgram (get-program Interface-Program))
-    (set! interface-program #f))
+  (method (create-pipelines self)
+    (set! interface-pipeline (new Pipeline interface-sources interface-attributes interface-layouts))
+    (gaea-uniform-binding interface-pipeline interface-binding))
   
   
   ;;;
@@ -205,17 +201,14 @@ void main()
   
   
   (method (initialize-arrays self)
-    (set! interface-array (create-interface self)))
-  
-  
-  (method (create-interface self)
-    (let ((vertices #f32(  0.0 10.0 0.0 0.0 0.0 0.0
-                          10.0 10.0 0.0 1.0 0.0 0.0
-                           0.0  0.0 0.0 0.0 1.0 0.0
-                          10.0  0.0 0.0 1.0 1.0 0.0
-                           0.0  0.0 0.0 0.0 1.0 0.0
-                          10.0 10.0 0.0 1.0 0.0 0.0)))
-      (new Interface-Array interface-program vertices)))
+    (let ((content #f32(  0.0 10.0 0.0 1.0   0.0 0.0 0.0 0.0
+                         10.0 10.0 0.0 1.0   1.0 0.0 0.0 0.0
+                          0.0  0.0 0.0 1.0   0.0 1.0 0.0 0.0
+                         10.0  0.0 0.0 1.0   1.0 1.0 0.0 0.0
+                          0.0  0.0 0.0 1.0   0.0 1.0 0.0 0.0
+                         10.0 10.0 0.0 1.0   1.0 0.0 0.0 0.0 )))
+      (let ((buffer (new Buffer content)))
+        (set! interface-array (new Array interface-pipeline 1 6 buffer)))))
   
   
   ;;;
@@ -224,7 +217,8 @@ void main()
   
   
   (method (setup-textures self)
-    (set! interface-texture (make-cairo-texture (get-width self) (get-height self) scale?: #t)))
+    (set! interface-texture (make-cairo-texture (get-width self) (get-height self) scale?: #t))
+    (setup-uniform interface-texture interface-pipeline "texture_sampler"))
   
   
   ;;;
@@ -237,10 +231,32 @@ void main()
     (when (default-render? self)
       ;; Orthographic
       (make-orthographic-matrix! orthographic-matrix 0.0 10.0 0.0 10.0 0.0 10.0)
-      ;; Textures
+      ;; Texture
       (when interface-texture
         (close interface-texture)
-        (setup-textures self))))
+        (setup-textures self))
+      ;; Uniform
+      (let ((content (make-f32vector 16)))
+        (define (transfer! offset mat)
+          (f32vector-set! content (+ offset  0) (matrix-ref mat 0))
+          (f32vector-set! content (+ offset  1) (matrix-ref mat 1))
+          (f32vector-set! content (+ offset  2) (matrix-ref mat 2))
+          (f32vector-set! content (+ offset  3) (matrix-ref mat 3))
+          (f32vector-set! content (+ offset  4) (matrix-ref mat 4))
+          (f32vector-set! content (+ offset  5) (matrix-ref mat 5))
+          (f32vector-set! content (+ offset  6) (matrix-ref mat 6))
+          (f32vector-set! content (+ offset  7) (matrix-ref mat 7))
+          (f32vector-set! content (+ offset  8) (matrix-ref mat 8))
+          (f32vector-set! content (+ offset  9) (matrix-ref mat 9))
+          (f32vector-set! content (+ offset 10) (matrix-ref mat 10))
+          (f32vector-set! content (+ offset 11) (matrix-ref mat 11))
+          (f32vector-set! content (+ offset 12) (matrix-ref mat 12))
+          (f32vector-set! content (+ offset 13) (matrix-ref mat 13))
+          (f32vector-set! content (+ offset 14) (matrix-ref mat 14))
+          (f32vector-set! content (+ offset 15) (matrix-ref mat 15)))
+        
+        (transfer! 0 orthographic-matrix)
+        (set! interface-uniform (new Uniform-Buffer interface-binding content)))))
   
   
   ;;;
@@ -283,17 +299,15 @@ void main()
   
   
   (method public (render-interface self)
-    (glEnable GL_BLEND)
-    (glDisable GL_DEPTH_TEST)
-    (use interface-program)
-    (bind-uniforms interface-program orthographic-matrix (get-id interface-texture))
-    (glBindVertexArray (get-array interface-array))
-    (glDrawArrays GL_TRIANGLES 0 6)
-    (glBindVertexArray 0)
-    (unbind-uniforms interface-program)
-    (unuse interface-program)
-    (glEnable GL_DEPTH_TEST)
-    (glDisable GL_BLEND))
+    ;; (glEnable GL_BLEND)
+    ;; (glDisable GL_DEPTH_TEST)
+    (with-render self
+      (lambda (encoder)
+        (gaea-bind-uniform encoder interface-uniform 0)
+        (with-pipeline interface-pipeline encoder
+          (lambda ()
+            (bind-texture interface-texture encoder)
+            (draw-array interface-array encoder))))))
   
   
   ;;;

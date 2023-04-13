@@ -193,7 +193,7 @@
   
   
   (method public (map-subtexture self rect (repeat?: repeat? #t))
-    (if (not created?)
+    (if (or (not created?) (metal?)) ;; metal quicky
         (begin
           (map-texture self repeat?: repeat?)
           (set! created? #t))

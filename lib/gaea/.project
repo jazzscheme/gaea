@@ -78,8 +78,7 @@
         (<Jazz-File>           name: camera         source: {File :context "src" "gaea" "camera.jazz"})
         (<Project-Directory>                        directory: {Directory :context "src" "gaea" "metal"}
           (<Jazz-File>         name: _metal         source: {File :context "src" "gaea" "metal" "_metal.jazz"})
-          (<Jazz-File>         name: product        source: {File :context "src" "gaea" "metal" "product.jazz"})
-          (<Jazz-File>         name: geometry       source: {File :context "src" "gaea" "metal" "geometry.jazz"}))
+          (<Jazz-File>         name: product        source: {File :context "src" "gaea" "metal" "product.jazz"}))
         (<Project-Directory>                        directory: {Directory :context "src" "gaea" "window"}
           (<Jazz-File>         name: _window        source: {File :context "src" "gaea" "window" "_window.jazz"})
           (<Jazz-File>         name: frame          source: {File :context "src" "gaea" "window" "frame.jazz"})
