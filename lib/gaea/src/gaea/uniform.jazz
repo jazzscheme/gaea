@@ -44,10 +44,10 @@
         (gaea.program))
 
 
-(definition public (gaea-uniform-binding pipeline binding)
+(definition public (gaea-uniform-binding pipeline name binding)
   (when (opengl?)
     (let ((programid (get-program (get-program pipeline))))
-      (let ((block-index (glGetUniformBlockIndex programid "Matrices")))
+      (let ((block-index (glGetUniformBlockIndex programid name)))
         (glUniformBlockBinding programid block-index binding)))))
 
 

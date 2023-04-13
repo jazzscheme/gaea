@@ -190,7 +190,7 @@
   
   (method (create-pipelines self)
     (set! interface-pipeline (new Pipeline (new Program interface-sources) interface-layout))
-    (gaea-uniform-binding interface-pipeline interface-binding))
+    (gaea-uniform-binding interface-pipeline "Matrices" interface-binding))
   
   
   ;;;
