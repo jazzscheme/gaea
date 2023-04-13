@@ -65,7 +65,7 @@ uniform mat4 model_matrix;
 uniform mat4 bone_matrices[200];
 
 in vec3 vertex;
-in vec3 texture_coord;
+in vec3 texture;
 in float bone_id;
 
 out vec3 final_texture;
@@ -81,7 +81,7 @@ void main()
     vec3 fragPos = vec3(model_matrix * skeletal_pos);
 
     gl_Position = projection_matrix * view_matrix * vec4(fragPos, 1);
-    final_texture = texture_coord;
+    final_texture = texture;
 }
 //#)
   ;; fragment

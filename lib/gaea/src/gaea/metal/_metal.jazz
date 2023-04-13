@@ -91,6 +91,7 @@
 ;;;
 
 
+(c-enumerant MTLVertexFormatFloat)
 (c-enumerant MTLVertexFormatFloat2)
 (c-enumerant MTLVertexFormatFloat3)
 (c-enumerant MTLVertexFormatFloat4)

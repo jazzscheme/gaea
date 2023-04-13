@@ -121,14 +121,14 @@
     };
 
     in vec4 position;
-    in vec3 texture_coord;
+    in vec3 texture;
 
     out vec3 final_texture;
 
     void main()
     {
         gl_Position = orthographic_matrix * position;
-        final_texture = texture_coord;
+        final_texture = texture;
     }
 //#)
       ;; fragment
@@ -150,8 +150,8 @@
 (definition interface-layout
   (list
     (list 1 (* 8 float-size)
-      (list "position"      'float4 0)
-      (list "texture_coord" 'float2 (* 4 float-size)))))
+      (list "position" 'float4 0)
+      (list "texture"  'float2 (* 4 float-size)))))
 
 
 ;;;

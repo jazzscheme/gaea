@@ -76,6 +76,7 @@
                         (for-each (lambda (attribute)
                                     (bind (name format offset) attribute
                                       (let ((format (case format
+                                                      ((float1) MTLVertexFormatFloat)
                                                       ((float2) MTLVertexFormatFloat2)
                                                       ((float3) MTLVertexFormatFloat3)
                                                       ((float4) MTLVertexFormatFloat4)
@@ -117,6 +118,7 @@
                                 (bind (name format offset) attribute
                                   (let ((location (get-attribute program name))
                                         (size (case format
+                                                ((float1) 1)
                                                 ((float2) 2)
                                                 ((float3) 3)
                                                 ((float4) 4)
