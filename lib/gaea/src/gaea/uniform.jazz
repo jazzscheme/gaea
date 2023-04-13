@@ -44,14 +44,7 @@
         (gaea.program))
 
 
-(definition public (gaea-uniform-binding pipeline name binding)
-  (when (opengl?)
-    (let ((programid (get-program (get-program pipeline))))
-      (let ((block-index (glGetUniformBlockIndex programid name)))
-        (glUniformBlockBinding programid block-index binding)))))
-
-
-(definition public (gaea-bind-uniform encoder uniform-buffer index)
+(definition public (bind-uniform encoder uniform-buffer index)
   (when (metal?)
     (let ((buffer (get-buffer uniform-buffer)))
       (metalEncoderSetVertexBuffer encoder buffer index))))
@@ -60,13 +53,17 @@
 (class Uniform-Buffer extends Object
   
   
-  (slot buffer initialize #f getter generate)
+  (slot name    initialize #f getter generate)
+  (slot binding initialize #f getter generate)
+  (slot buffer  initialize #f getter generate)
   
   
-  (method override (initialize self binding content)
+  (method override (initialize self name binding content)
     (nextmethod self)
     (if (metal?)
         (set! self.buffer (metalNewBufferWithFloats content (f32vector-length content)))
+      (set! self.name name)
+      (set! self.binding binding)
       (set! self.buffer (let ((ubo (glGenBuffers*)))
                           (glBindBuffer GL_UNIFORM_BUFFER ubo)
                           (glBufferDataFloat* GL_UNIFORM_BUFFER (f32vector-length content) content GL_DYNAMIC_DRAW)

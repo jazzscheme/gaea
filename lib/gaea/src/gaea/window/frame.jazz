@@ -165,7 +165,6 @@
   (slot interface-pipeline  initialize #f getter generate)
   (slot interface-array     initialize #f getter generate)
   (slot interface-texture   initialize #f getter generate)
-  (slot interface-binding   initialize 0  getter generate)
   (slot interface-uniform   initialize #f getter generate)
   (slot orthographic-matrix initialize (make-matrix) getter generate)
   (slot render-thread       initialize #f getter generate)
@@ -189,8 +188,7 @@
   
   
   (method (create-pipelines self)
-    (set! interface-pipeline (new Pipeline (new Program interface-sources) interface-layout))
-    (gaea-uniform-binding interface-pipeline "Matrices" interface-binding))
+    (set! interface-pipeline (new Pipeline (new Program interface-sources) interface-layout)))
   
   
   ;;;
@@ -236,7 +234,8 @@
       ;; Uniform
       (let ((content (make-f32vector 16)))
         (matrix-transfer! orthographic-matrix content 0)
-        (set! interface-uniform (new Uniform-Buffer interface-binding content)))))
+        (set! interface-uniform (new Uniform-Buffer "Matrices" 0 content))
+        (uniform-binding interface-pipeline interface-uniform))))
   
   
   ;;;
@@ -283,7 +282,7 @@
     ;; (glDisable GL_DEPTH_TEST)
     (with-render self
       (lambda (encoder)
-        (gaea-bind-uniform encoder interface-uniform 0)
+        (bind-uniform encoder interface-uniform 0)
         (with-pipeline interface-pipeline encoder
           (lambda ()
             (bind-texture interface-texture encoder)

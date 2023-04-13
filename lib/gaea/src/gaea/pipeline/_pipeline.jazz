@@ -96,6 +96,15 @@
       (use program)
       (thunk)
       (unuse program)))
+
+
+  (method public (uniform-binding self uniform)
+    (when (opengl?)
+      (let ((name (get-name uniform))
+            (binding (get-binding uniform))
+            (programid (get-program program)))
+        (let ((block-index (glGetUniformBlockIndex programid name)))
+          (glUniformBlockBinding programid block-index binding)))))
   
   
   (method public (setup-array self array)
