@@ -199,10 +199,12 @@
     (set! self.material material))
   
   
+  @convert
   (method override (empty? self)
     (empty? vertices-buffer))
   
   
+  @convert
   (method override (count-floats self)
     (+ (or (get-floats vertices-buffer) 0)
        @need-to-adjust-debug-info-calculations
@@ -211,6 +213,7 @@
        (or (get-floats lightmap-buffer) 0)))
   
   
+  @convert
   (method override (draw-array self)
     (define (draw)
       (glBindVertexArray array)
@@ -259,6 +262,7 @@
     (free-buffer feedback-buffer))
   
   
+  @convert
   (method override (free-array self)
     (free-vertices self)
     (free-neighbors self)
