@@ -102,37 +102,41 @@
     (list
       ;; vertex
   (string-append glsl-version
-    #/C/
-uniform mat4 projection_matrix;
-uniform mat4 view_matrix;
+#/C/
+    layout (std140) uniform Matrices
+    {
+        mat4 projection_matrix;
+        mat4 view_matrix;
+        mat4 model_matrix;
+    };
 
-in vec3 vertex;
-in vec3 texture;
+    in vec3 position;
+    in vec3 texture;
 
-out vec3 final_texture;
+    out vec3 final_texture;
 
-void main()
-{
-    gl_Position = projection_matrix * view_matrix * vec4(vertex, 1.0);
-    final_texture = texture;
-}
+    void main()
+    {
+        gl_Position = projection_matrix * view_matrix * model_matrix * vec4(position, 1.0);
+        final_texture = texture;
+    }
 //#)
   ;; fragment
   (string-append glsl-version
-    #/C/
-uniform sampler2D texture_sampler;
+#/C/
+    uniform sampler2D texture_sampler;
 
-in vec3 final_texture;
+    in vec3 final_texture;
 
-out vec4 fragColor;
+    out vec4 fragColor;
 
-void main()
-{
-    fragColor = texture(texture_sampler, vec2(final_texture.x, final_texture.y));
-}
+    void main()
+    {
+        fragColor = texture(texture_sampler, vec2(final_texture.x, final_texture.y));
+    }
 //#))
     
-    ;; attributes
+    ;; inputs
     "position"
     "texture"))
 

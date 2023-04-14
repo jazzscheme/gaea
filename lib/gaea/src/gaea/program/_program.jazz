@@ -65,8 +65,8 @@
   
   (method override (initialize self sources . inputs)
     (nextmethod self)
-    (set! self.inputs inputs)
-    (bind (metal opengl) sources
+    (bind (metal opengl . inputs) sources
+      (set! self.inputs inputs)
       (if (metal?)
           (bind (source vs fs) metal
             (set! library (metalMakeLibrary source))
