@@ -124,6 +124,7 @@ void main()
 (class Model-Program extends Program
   
   
+  @metal (
   (method override (initialize self)
     (nextmethod self model-sources))
   
@@ -141,7 +142,7 @@ void main()
   (method override (bind-uniforms self projection-matrix view-matrix model-matrix)
     (nextmethod self projection-matrix view-matrix)
     ;; Model matrix
-    (glUniformMatrix4dv* model_matrix-uniform 1 #f model-matrix)))
+    (glUniformMatrix4dv* model_matrix-uniform 1 #f model-matrix))))
 
 
 ;;;

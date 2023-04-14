@@ -188,7 +188,7 @@
   (slot material         <Material+> accessors generate)
   
   
-  @convert
+  @metal
   (method override (initialize self (material: material #f))
     (nextmethod self)
     (set! self.vertices-buffer (new Buffer))
@@ -199,12 +199,12 @@
     (set! self.material material))
   
   
-  @convert
+  @metal
   (method override (empty? self)
     (empty? vertices-buffer))
   
   
-  @convert
+  @metal
   (method override (count-floats self)
     (+ (or (get-floats vertices-buffer) 0)
        @need-to-adjust-debug-info-calculations
@@ -213,7 +213,7 @@
        (or (get-floats lightmap-buffer) 0)))
   
   
-  @convert
+  @metal
   (method override (draw-array self)
     (define (draw)
       (glBindVertexArray array)
@@ -262,7 +262,7 @@
     (free-buffer feedback-buffer))
   
   
-  @convert
+  @metal
   (method override (free-array self)
     (free-vertices self)
     (free-neighbors self)

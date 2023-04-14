@@ -153,7 +153,7 @@
     (nextmethod self texture-sources))
   
   
-  @convert
+  @metal
   (method override (bind-material self id) <void>
     (glActiveTexture GL_TEXTURE0)
     (glBindTexture GL_TEXTURE_2D id)
