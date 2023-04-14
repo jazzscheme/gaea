@@ -79,18 +79,18 @@
   (slot file       <object>  accessors generate)
   
   
-  (method override (initialize self width height stride (scale?: scale? #f) (data: data #f) (min-filter: min-filter #f) (mag-filter: mag-filter #f) (wrap: wrap #f) (mipmap?: mipmap? #f) (metadata: metadata #f) (file: file #f))
+  (method override (initialize self width height (scale?: scale? #f) (data: data #f) (min-filter: min-filter #f) (mag-filter: mag-filter #f) (wrap: wrap #f) (mipmap?: mipmap? #f) (metadata: metadata #f) (file: file #f))
     (with-reentrant-render-mutex
       (lambda ()
         (set! self.scale (if scale? (main-screen-scale-factor) 1))
         (set! self.width (scale->device width self.scale))
         (set! self.height (scale->device height self.scale))
-        (set! self.stride stride)
+        (set! self.stride (* width 4))
         (set! self.depth #f)
         (set! self.data data)
         (set! self.id (if (opengl?)
                           (gl-generate-texture)
-                        (metalNewTexture self.width self.height self.stride)))
+                        (metalNewTexture self.width self.height)))
         (set! self.uniform #f)
         (set! self.min-filter min-filter)
         (set! self.mag-filter mag-filter)
@@ -414,9 +414,8 @@
   (method override (initialize self width height . rest)
     (bind-keywords ((surface #f) (scale? #f) . others) rest
       (let ((surface (or surface (new Image-Surface (new Dimension width height) scale?: scale?))))
-        (let ((stride (cairo_image_surface_get_stride (get-handle surface)))
-              (data (cairo_image_surface_get_data (get-handle surface))))
-          (apply nextmethod self width height stride scale?: scale? data: data others)
+        (let ((data (cairo_image_surface_get_data (get-handle surface))))
+          (apply nextmethod self width height scale?: scale? data: data others)
           (set! self.surface surface)))))
   
   

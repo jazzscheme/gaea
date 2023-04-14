@@ -221,7 +221,7 @@ id<MTLBuffer> metalNewBufferWithFloats(___SCMOBJ content, int size)
 
 (c-declare cocoa #/Objective-C/
 
-id<MTLTexture> metalNewTexture(int width, int height, int stride)
+id<MTLTexture> metalNewTexture(int width, int height)
 {
     MTLTextureDescriptor *textureDescriptor = [[MTLTextureDescriptor alloc] init];
     textureDescriptor.pixelFormat = MTLPixelFormatBGRA8Unorm;
@@ -374,7 +374,7 @@ void metalCommit(id<MTLCommandBuffer> buffer)
 (c-external (metalMakeRenderPipelineState id<MTLLibrary> NSString* NSString* MTLVertexDescriptor*) id<MTLRenderPipelineState>)
 (c-external (metalNewBufferWithLength int) id<MTLBuffer>)
 (c-external (metalNewBufferWithFloats scheme-object int) id<MTLBuffer>)
-(c-external (metalNewTexture int int int) id<MTLTexture>)
+(c-external (metalNewTexture int int) id<MTLTexture>)
 (c-external (metalTextureReplaceRegion id<MTLTexture> int int int void*) void)
 (c-external (metalNewSamplerState) id<MTLSamplerState>)
 (c-external (metalStartRender) void)

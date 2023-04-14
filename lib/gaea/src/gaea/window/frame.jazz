@@ -144,7 +144,11 @@
     {
         fragColor = texture(textureSampler, vec2(final_texture.x, final_texture.y));
     }
-//#))))
+//#))
+    
+    ;; inputs
+    "position"
+    "texture"))
 
 
 (definition interface-layout
