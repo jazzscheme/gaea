@@ -46,7 +46,7 @@
 
 (definition default-engine
   (cond-expand
-    (cocoa (symbol-argument "engine" 'opengl))
+    (cocoa (symbol-parameter "engine" 'gaea.engine 'metal))
     (else 'opengl)))
 
 
