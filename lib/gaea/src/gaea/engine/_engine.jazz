@@ -70,4 +70,9 @@
      (gaea.engine.opengl:prepare-opengl-window window))
     ((metal)
      (gaea.engine.metal:prepare-metal-window window)
-     (setup-engine window)))))
+     (setup-engine window))))
+
+
+(definition public (check-engine-error)
+  (when (opengl?)
+    (gaea.opengl.glew:gl-check-error))))
