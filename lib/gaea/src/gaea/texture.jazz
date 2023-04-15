@@ -135,7 +135,8 @@
   
   
   (method (with-texture self target proc)
-    (assert (opengl?))
+    ;; gaoo
+    (when (opengl?)
     (with-reentrant-render-mutex
       (lambda ()
         (glBindTexture target id)
@@ -147,17 +148,18 @@
         (when mipmap?
           (glGenerateMipmap target))
         (glBindTexture target 0)
-        (gl-check-error))))
+        (gl-check-error)))))
   
   
   (method (with-subtexture self target proc)
-    (assert (opengl?))
+    ;; gaoo
+    (when (opengl?)
     (with-reentrant-render-mutex
       (lambda ()
         (glBindTexture target id)
         (proc target)
         (glBindTexture target 0)
-        (gl-check-error))))
+        (gl-check-error)))))
   
   
   (method public (map-texture self (repeat?: repeat? #t))

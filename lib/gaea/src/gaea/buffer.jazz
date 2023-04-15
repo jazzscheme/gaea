@@ -56,19 +56,21 @@
   
   
   (slot buffer         initialize #f getter generate)
-  (slot floats  <fx+>  initialize #f getter generate)
+  (slot size    <fx+>  initialize #f getter generate)
   (slot indices <fx+>  initialize #f getter generate)
   
   
-  (method override (initialize self content)
+  ;; not sure about content optional
+  (method override (initialize self (content #f))
     (nextmethod self)
-    (if (metal?)
-        (set! self.buffer (metalNewBufferWithFloats content (f32vector-length content)))
-      (set! self.buffer (let ((vbo (glGenBuffers*)))
-                          (glBindBuffer GL_ARRAY_BUFFER vbo)
-                          (glBufferDataFloat* GL_ARRAY_BUFFER (f32vector-length content) content GL_STATIC_DRAW)
-                          (glBindBuffer GL_ARRAY_BUFFER 0)
-                          vbo))))
+    (when content
+      (if (metal?)
+          (set! self.buffer (metalNewBufferWithFloats content (f32vector-length content)))
+        (set! self.buffer (let ((vbo (glGenBuffers*)))
+                            (glBindBuffer GL_ARRAY_BUFFER vbo)
+                            (glBufferDataFloat* GL_ARRAY_BUFFER (f32vector-length content) content GL_STATIC_DRAW)
+                            (glBindBuffer GL_ARRAY_BUFFER 0)
+                            vbo)))))
   
   
   (method public (bind-buffer self)
@@ -91,36 +93,47 @@
   
   
   ;; Upload data to video card
-  (method public (set-data self content size <fx> floats-per-indice <fx>)
-    (set! floats size)
-    (set! indices (fxround/ floats floats-per-indice))
+  (method public (set-data self content sz <fx> floats-per-indice <fx>)
+    (set! size sz)
+    (set! indices (fxround/ size floats-per-indice))
     (glBindBuffer GL_ARRAY_BUFFER buffer)
     (glBufferDataFloat* GL_ARRAY_BUFFER size content GL_STATIC_DRAW)
     (glBindBuffer GL_ARRAY_BUFFER 0))
   
   
   ;; Setup data in video card
-  (method public (setup-feedback-data self size <fx> floats-per-indice <fx>)
-    (set! floats size)
-    (set! indices (fxround/ floats floats-per-indice))
+  (method public (setup-feedback-data self sz <fx> floats-per-indice <fx>)
+    (set! size sz)
+    (set! indices (fxround/ size floats-per-indice))
     (glBindBuffer GL_ARRAY_BUFFER buffer)
     (glBufferData GL_ARRAY_BUFFER (* size float-size) #f GL_STATIC_READ)
     (glBindBuffer GL_ARRAY_BUFFER 0))
   
   
   ;; Upload data to video card
-  (method public (set-stream-data self content size <fx> floats-per-indice <fx>)
-    (set! floats size)
-    (set! indices (fxround/ floats floats-per-indice))
+  (method public (set-stream-data self content sz <fx> floats-per-indice <fx>)
+    (set! size sz)
+    (set! indices (fxround/ size floats-per-indice))
     (glBindBuffer GL_ARRAY_BUFFER buffer)
     (glBufferDataFloat* GL_ARRAY_BUFFER size content GL_STREAM_DRAW)
     (glBindBuffer GL_ARRAY_BUFFER 0))
   
   
-  (method public (update-stream-data self offset content size <fx>)
+  (method public (download-stream-data self offset content size <fx>)
+    ;; gaoo
+    (when (opengl?)
+    (glBindBuffer GL_ARRAY_BUFFER buffer)
+    (glGetBufferSubDataFloat* GL_ARRAY_BUFFER offset size content)
+    (glBindBuffer GL_ARRAY_BUFFER 0)))
+  
+  
+  ;; Upload data to video card
+  (method public (upload-stream-data self offset content size <fx>)
+    ;; gaoo
+    (when (opengl?)
     (glBindBuffer GL_ARRAY_BUFFER buffer)
     (glBufferSubDataFloat* GL_ARRAY_BUFFER offset size content)
-    (glBindBuffer GL_ARRAY_BUFFER 0))
+    (glBindBuffer GL_ARRAY_BUFFER 0)))
   
   
   ;; Enable vertex attrib array before passing values to a shader
@@ -154,7 +167,7 @@
     (when buffer
       (glDeleteBuffers* buffer)
       (set! indices #f)
-      (set! floats #f)
+      (set! size #f)
       (set! buffer #f)))
   
   
