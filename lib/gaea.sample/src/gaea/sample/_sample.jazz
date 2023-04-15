@@ -40,7 +40,6 @@
 
 (hub add-uniform)
 (hub bind-uniforms)
-(hub compile-shader)
 (hub create-color-buffer)
 (hub create-shader)
 (hub create-vertex-buffer)

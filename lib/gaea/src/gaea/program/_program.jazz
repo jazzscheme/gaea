@@ -113,9 +113,7 @@
   
   (method public (create-shaders self)
     (create-shader vertex-shader)
-    (create-shader fragment-shader)
-    (compile-shader vertex-shader)
-    (compile-shader fragment-shader))
+    (create-shader fragment-shader))
   
   
   (method public (attach-shaders self)

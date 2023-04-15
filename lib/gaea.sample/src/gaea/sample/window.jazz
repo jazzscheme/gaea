@@ -49,6 +49,7 @@
         (gaea.opengl.glew)
         (gaea.sample)
         (gaea.sample.syntax (phase syntax))
+        (gaea.shader)
         (gaea.texture)
         (gaea.window))
 
@@ -56,20 +57,6 @@
 ;;;
 ;;;; Shader
 ;;;
-
-
-(definition glsl-version
-  (cond-expand
-    (mac
-     #/C/
-#version 140
-
-//#)
-    (else
-     #/C/
-#version 130
-
-//#)))
 
 
 (class Sample-Shader extends Object
@@ -85,16 +72,14 @@
   
   
   (method public (create-shader self)
-    (set! shaderid (glCreateShader type))
-    (glShaderSource shaderid 1 (list code) #f))
-  
-  
-  (method public (compile-shader self)
-    (glCompileShader shaderid)
-    (when (/= (glGetShaderiv* shaderid GL_COMPILE_STATUS) GL_TRUE)
-      (let ((loglength (glGetShaderiv* shaderid GL_INFO_LOG_LENGTH)))
-        (when (> loglength 0)
-          (error "{a}" (glGetShaderInfoLog* shaderid loglength)))))))
+    (let ((id (glCreateShader type)))
+      (glShaderSource id 1 (list code) #f)
+      (glCompileShader id)
+      (when (/= (glGetShaderiv* id GL_COMPILE_STATUS) GL_TRUE)
+        (let ((loglength (glGetShaderiv* id GL_INFO_LOG_LENGTH)))
+          (when (> loglength 0)
+            (error "{a}" (glGetShaderInfoLog* id loglength)))))
+      (set! shaderid id))))
 
 
 ;;;
@@ -161,9 +146,7 @@
   
   (method public (create-shaders self)
     (create-shader vertex-shader)
-    (create-shader fragment-shader)
-    (compile-shader vertex-shader)
-    (compile-shader fragment-shader))
+    (create-shader fragment-shader))
   
   
   (method public (attach-shaders self)
