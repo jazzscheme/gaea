@@ -73,8 +73,8 @@
   
   
   (method override (prepare self)
-    (set-vs self (create-vertex-shader self))
-    (set-fs self (create-fragment-shader self))
+    (set-vs self (default-vertex-shader self))
+    (set-fs self (default-fragment-shader self))
     (link self)
     (set! projection_matrix-uniform (add-uniform self "projection_matrix"))
     (set! view_matrix-uniform (add-uniform self "view_matrix"))

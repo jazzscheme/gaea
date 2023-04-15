@@ -38,11 +38,16 @@
 (module gaea.program jazz
 
 
-(import (gaea.engine)
+(import (jazz.settings)
+        (gaea.engine)
         (gaea.metal)
         (gaea.opengl)
         (gaea.opengl.glew)
         (gaea.shader))
+
+
+(definition public validate-shaders?
+  (find-setting 'gaea.validate-shaders? #t))
 
 
 ;;;
@@ -58,13 +63,29 @@
   (slot fragment-shader <object> accessors generate)
   (slot library         <object> getter generate)
   (slot program         <object> getter generate)
+  ;; gaoo obsolete field from world
+  (slot vao             <object> accessors generate)
   (slot inputs          <object> getter generate)
   (slot attributes      <object> getter generate)
   (slot uniforms        <object> getter generate)
   
   
-  (method override (initialize self sources . inputs)
+  ;; gaoo quicky compat for world to make sources optional
+  ;; (method override (initialize self sources)
+  (method override (initialize self (sources #f))
     (nextmethod self)
+    ;; gaoo quicky compat for world
+    (if (not sources)
+        (when (opengl?)
+          ;(set! self.name name)
+          (set! vertex-shader (new Shader GL_VERTEX_SHADER))
+          (set! fragment-shader (new Shader GL_FRAGMENT_SHADER))
+          (set! program (glCreateProgram))
+          (set! vao (glGenVertexArrays*))
+          (set! attributes (make-table test: equal?))
+          (set! uniforms (make-table test: equal?))
+          (prepare self)
+          (check-engine-error))
     (bind (metal opengl . inputs) sources
       (set! self.inputs inputs)
       (if (metal?)
@@ -78,17 +99,17 @@
           (set! program (glCreateProgram))
           (set-code vertex-shader vs)
           (set-code fragment-shader fs)
-          (link self)))))
+          (link self))))))
   
   
   (method package virtual (prepare self)
     )
   
   
-  (method protected virtual (create-vertex-shader self)
+  (method protected virtual (default-vertex-shader self)
     )
   
-  (method protected virtual (create-fragment-shader self)
+  (method protected virtual (default-fragment-shader self)
     )
   
   
@@ -106,8 +127,8 @@
   
   (method public (relink self)
     (detach-shaders self)
-    (set-vs self (create-vertex-shader self))
-    (set-fs self (create-fragment-shader self))
+    (set-vs self (default-vertex-shader self))
+    (set-fs self (default-fragment-shader self))
     (prepare self))
   
   
@@ -121,6 +142,7 @@
                (get-shaderid fragment-shader))
       (glAttachShader program (get-shaderid vertex-shader))
       (glAttachShader program (get-shaderid fragment-shader))
+      (setup-transform-feedback self)
       (glLinkProgram program)
       (when (/= (glGetProgramiv* program GL_LINK_STATUS) GL_TRUE)
         (let ((loglength (glGetProgramiv* program GL_INFO_LOG_LENGTH)))
@@ -133,6 +155,7 @@
                (get-shaderid fragment-shader))
       (glDetachShader program (get-shaderid vertex-shader))
       (glDetachShader program (get-shaderid fragment-shader))
+      ;; need to investigate why the world is destroyed twice when exiting so this gets called twice
       (set-shaderid vertex-shader #f)
       (set-shaderid fragment-shader #f)))
   
@@ -172,6 +195,9 @@
   
   (method public (add-uniform self name)
     (let ((location (glGetUniformLocation* program name)))
+      (when validate-shaders?
+        (when (= location -1)
+          (error "Unable to add uniform: {a}" name)))
       (table-set! uniforms name location)
       location))
   
@@ -187,6 +213,9 @@
   
   (method public (add-attribute self name)
     (let ((location (glGetAttribLocation* program name)))
+      (when validate-shaders?
+        (when (= location -1)
+          (error "Unable to add attribute: {a}" name)))
       (table-set! attributes name location)
       location)))
 
