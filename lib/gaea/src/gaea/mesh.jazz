@@ -177,7 +177,7 @@
       (list "bone"     'float1 (* 9 float-size)))))
 
 
-(class Mesh extends Array
+(class Mesh extends Object
   
   
   (slot vertices-buffer  <Buffer>    getter generate)
@@ -185,36 +185,73 @@
   (slot lightmap-buffer  <Buffer>    getter generate)
   (slot instance-buffer  <Buffer>    getter generate)
   (slot feedback-buffer  <Buffer>    getter generate)
+  (slot array            <object>    accessors generate)
   (slot material         <Material+> accessors generate)
   
   
-  @metal
-  (method override (initialize self (material: material #f))
-    (nextmethod self)
-    (set! self.vertices-buffer (new Buffer))
-    (set! self.neighbors-buffer (new Buffer))
-    (set! self.lightmap-buffer (new Buffer))
-    (set! self.instance-buffer (new Buffer))
-    (set! self.feedback-buffer (new Buffer))
+  (method override (initialize self
+                               (vertices-buffer: vertices-buffer #f)
+                               (neighbors-buffer: neighbors-buffer #f)
+                               (lightmap-buffer: lightmap-buffer #f)
+                               (instance-buffer: instance-buffer #f)
+                               (feedback-buffer: feedback-buffer #f)
+                               (material: material #f))
+    (set! self.vertices-buffer (or vertices-buffer (new Buffer)))
+    (set! self.neighbors-buffer (or neighbors-buffer (new Buffer)))
+    (set! self.lightmap-buffer (or lightmap-buffer (new Buffer)))
+    (set! self.instance-buffer (or instance-buffer (new Buffer)))
+    (set! self.feedback-buffer (or feedback-buffer (new Buffer)))
+    (set! self.array #f)
     (set! self.material material))
   
   
-  @metal
-  (method override (empty? self)
+  (method public (empty? self)
     (empty? vertices-buffer))
   
   
-  @metal
-  (method override (count-floats self)
-    (+ (or (get-floats vertices-buffer) 0)
+  (method public (count-floats self)
+    (+ (or (get-size vertices-buffer) 0)
        @need-to-adjust-debug-info-calculations
-       (or (get-floats neighbors-buffer) 0)
+       (or (get-size neighbors-buffer) 0)
        @need-to-adjust-debug-info-calculations
-       (or (get-floats lightmap-buffer) 0)))
+       (or (get-size lightmap-buffer) 0)))
   
   
-  @metal
-  (method override (draw-array self)
+  (method public (setup-array self (program #f))
+    (define (warn msg)
+      @w
+      (terminal msg))
+    
+    (define (determine-program)
+      ;; quick hack
+      (if (not material)
+          (begin
+            (warn "No material")
+            #f)
+        (let ((renderer (get-renderer material)))
+          ;; quick hack
+          (if (not renderer)
+              (begin
+                (warn (format "No renderer in {s}" material))
+                #f)
+            (let ((program (get-program renderer)))
+              ;; quick hack
+              (if (not program)
+                  (begin
+                    (warn "No program")
+                    #f)
+                program))))))
+    
+    (let ((program (or program (determine-program))))
+      (when program
+        (set! array (create-array program self)))))
+
+  
+  (method public (draw self)
+    (draw vertices-buffer))
+  
+  
+  (method public (draw-array self)
     (define (draw)
       (glBindVertexArray array)
       (glDrawArrays GL_TRIANGLES 0 (get-indices vertices-buffer)))
@@ -262,11 +299,16 @@
     (free-buffer feedback-buffer))
   
   
-  @metal
-  (method override (free-array self)
+  (method public (free-resources self)
     (free-vertices self)
     (free-neighbors self)
     (free-lightmap self)
     (free-instance self)
     (free-feedback self)
-    (nextmethod self))))
+    (when array
+      (glDeleteVertexArrays* array)
+      (set! array #f)))
+  
+  
+  (method override (destroy self)
+    (free-resources self))))
