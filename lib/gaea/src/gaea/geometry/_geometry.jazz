@@ -1299,6 +1299,13 @@
           (present-vertex (get-right lookat))))
 
 
+(definition public (present-lookat-code lookat <LookAt>) <void>
+  (format "(lookat {a} {a} {a})"
+          (present-vertex-code (get-sight lookat))
+          (present-vertex-code (get-up lookat))
+          (present-vertex-code (get-right lookat))))
+
+
 ;;;
 ;;;; Pitch
 ;;;
