@@ -1105,6 +1105,12 @@
                 (matrix-transform& mat (vertex& 1. 0. 0.))))
 
 
+(definition public (matrix-scaling mat <matrix>) <fl>
+  (vertex-norm (vertex& (matrix-ref mat 0)
+                        (matrix-ref mat 4)
+                        (matrix-ref mat 8))))
+
+
 ;;;
 ;;;; LookAt
 ;;;
