@@ -1159,6 +1159,10 @@
            right))
 
 
+(definition public (horizon-sight sight <vertex>) <vertex>
+  (vertex-normalize-safe (vertex (vertex-x sight) 0. (vertex-z sight))))
+
+
 (definition public (horizon-lookat sight <vertex>) <LookAt>
   (horizon-lookat! (make-lookat) sight))
 
