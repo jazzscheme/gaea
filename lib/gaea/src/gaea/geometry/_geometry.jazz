@@ -723,6 +723,12 @@
   res)
 
 
+(definition public (matrix+-transform mat <matrix+> vert <vertex>) <vertex>
+  (if mat
+      (matrix-transform mat vert)
+    vert))
+
+
 (definition public (matrix-transform-3x4 mat <matrix> vert <vertex>) <vertex>
   (matrix-transform-3x4! (make-vertex) mat vert))
 
