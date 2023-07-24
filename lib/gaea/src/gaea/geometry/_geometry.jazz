@@ -1607,6 +1607,11 @@
 ;;;
 
 
+(definition public (random-ring min max)
+  (let ((dir (vertex-normalize (rotate-vertex-upon (* (random-real) PI*2) (vertex 0. 1. 0.) (vertex 0. 0. 1.)))))
+    (vertex-scalar* dir (random-between min max))))
+
+
 (definition public (random-horizon)
   (let ((x (random-between -1. 1.))
         (y 0.)
