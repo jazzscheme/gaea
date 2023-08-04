@@ -818,6 +818,12 @@
     res))
 
 
+(definition public (matrix-transform-lookat mat <matrix> l <LookAt>) <LookAt>
+  (lookat (matrix-transform mat (get-sight l))
+          (matrix-transform mat (get-up l))
+          (matrix-transform mat (get-right l))))
+
+
 (definition public (make-translation-matrix t <vertex>) <matrix>
   (make-translation-matrix! (make-matrix) t))
 
