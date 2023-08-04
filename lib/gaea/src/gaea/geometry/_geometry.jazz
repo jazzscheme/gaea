@@ -1137,9 +1137,11 @@
 
 
 ;; a try that seems a lot more consistent with opengl
-(definition public (make-standard-lookat2) <LookAt>
+;; and has the property that make-lookat-matrix applied
+;; to it returns the identity matrix
+(definition public (make-identity-lookat) <LookAt>
   (let ((lookat (make-lookat)))
-    (standardize-lookat2! lookat)
+    (standardize-identity-lookat! lookat)
     lookat))
 
 
@@ -1217,10 +1219,10 @@
   (vertex! (get-right lookat)  1.0  0.0  0.0))
 
 
-(definition public (standardize-lookat2! lookat <LookAt>) <void>
+(definition public (standardize-identity-lookat! lookat <LookAt>) <void>
   (vertex! (get-sight lookat)  0.0  0.0  1.0)
   (vertex! (get-up lookat)     0.0  1.0  0.0)
-  (vertex! (get-right lookat)  1.0  0.0  0.0))
+  (vertex! (get-right lookat) -1.0  0.0  0.0))
 
 
 (definition public (direction-lookat sight <vertex>) <LookAt>
