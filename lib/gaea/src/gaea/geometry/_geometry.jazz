@@ -1437,7 +1437,7 @@
 ;;;
 
 
-(definition public (parallelepiped left/bottom/back <vertex> left/bottom/front <vertex> left/top/back <vertex> left/top/front <vertex> right/bottom/back <vertex> right/bottom/front <vertex> right/top/back <vertex> right/top/front <vertex>) <Parallelepiped>
+(definition public (parallelepiped left/bottom/back <vertex> left/bottom/front <vertex> left/top/back <vertex> left/top/front <vertex> right/bottom/back <vertex> right/bottom/front <vertex> right/top/back <vertex> right/top/front <vertex> quads) <Parallelepiped>
   (let ((para (new Parallelepiped)))
     (set-left/bottom/back para left/bottom/back)
     (set-left/bottom/front para left/bottom/front)
@@ -1447,11 +1447,30 @@
     (set-right/bottom/front para right/bottom/front)
     (set-right/top/back para right/top/back)
     (set-right/top/front para right/top/front)
+    (set-quads para quads)
     para))
 
 
-(definition public (make-parallelepiped) <Parallelepiped>
-  (new Parallelepiped))
+(definition public (make-parallelepiped matrix <matrix+> left <fl> right <fl> bottom <fl> top <fl> back <fl> front <fl>) <Parallelepiped>
+  (let ((left/bottom/back (matrix+-transform-3x4& matrix (vertex& left bottom back)))
+        (left/bottom/front (matrix+-transform-3x4& matrix (vertex& left bottom front)))
+        (left/top/back (matrix+-transform-3x4& matrix (vertex& left top back)))
+        (left/top/front (matrix+-transform-3x4& matrix (vertex& left top front)))
+        (right/bottom/back (matrix+-transform-3x4& matrix (vertex& right bottom back)))
+        (right/bottom/front (matrix+-transform-3x4& matrix (vertex& right bottom front)))
+        (right/top/back (matrix+-transform-3x4& matrix (vertex& right top back)))
+        (right/top/front (matrix+-transform-3x4& matrix (vertex& right top front))))
+    (let ((top-quad (vector right/top/back left/top/back left/top/front right/top/front))
+          (bottom-quad (vector right/bottom/front left/bottom/front left/bottom/back right/bottom/back))
+          (front-quad (vector left/bottom/front right/bottom/front right/top/front left/top/front))
+          (back-quad (vector right/bottom/back left/bottom/back left/top/back right/top/back))
+          (left-quad (vector left/top/front left/top/back left/bottom/back left/bottom/front))
+          (right-quad (vector right/top/back right/top/front right/bottom/front right/bottom/back)))
+      (let ((quads (cond ((= left right) (list left-quad right-quad))
+                         ((= bottom top) (list top-quad bottom-quad))
+                         ((= back front) (list front-quad back-quad))
+                         (else (list top-quad bottom-quad front-quad back-quad left-quad right-quad)))))
+        (parallelepiped left/bottom/back left/bottom/front left/top/back left/top/front right/bottom/back right/bottom/front right/top/back right/top/front quads)))))
 
 
 ;;;

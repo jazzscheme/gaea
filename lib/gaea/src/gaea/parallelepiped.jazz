@@ -57,6 +57,7 @@
   (slot right/bottom/front <vertex> initialize (make-vertex) getter generate)
   (slot right/top/back     <vertex> initialize (make-vertex) getter generate)
   (slot right/top/front    <vertex> initialize (make-vertex) getter generate)
+  (slot quads                       initialize '()           accessors generate)
   
   
   (method public (set-left/bottom/back self vert <vertex>) <void>
