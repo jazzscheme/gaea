@@ -659,8 +659,10 @@
   (matrix-multiply! (make-matrix) a b))
 
 
-(definition public (matrix-multiply! res <matrix> . matrices) <matrix>
-  (matrix-multiply*! res matrices))
+(definition public (matrix-multiply! res a <matrix> b <matrix> . matrices) <matrix>
+  (if (null? matrices)
+      (matrix-multiply2! res a b)
+    (matrix-multiply*! res (cons a (cons b matrices)))))
 
 
 (definition public (matrix-multiply* . matrices) <matrix>
