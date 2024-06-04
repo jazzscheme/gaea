@@ -782,7 +782,7 @@
     (vertex-copy! res vert)))
 
 
-(definition public (matrix-transform-3x4-offset! res <f64vector> mat <matrix> vec <f64vector> offset <fx>) <f64vector>
+(definition public (matrix-transform-3x4-offset! res <vertex> mat <matrix> vec <f64vector> offset <fx>) <f64vector>
   (let ((x (f64vector-ref vec offset))
         (y (f64vector-ref vec (+ offset 1)))
         (z (f64vector-ref vec (+ offset 2))))
@@ -792,7 +792,7 @@
   res)
 
 
-(definition public (matrix+-transform-3x4-offset! res <f64vector> mat <matrix+> vec <f64vector> offset <fx>) <f64vector>
+(definition public (matrix+-transform-3x4-offset! res <vertex> mat <matrix+> vec <f64vector> offset <fx>) <f64vector>
   (if mat
       (matrix-transform-3x4-offset! res mat vec offset)
     (vertex! res
