@@ -70,6 +70,10 @@
   (vertex 0. 0. 0.))
 
 
+(definition public inline (make-nan-vertex) <vertex>
+  (vertex +nan.0 +nan.0 +nan.0))
+
+
 (definition public (copy-vertex vert <vertex>) <vertex>
   (let ((copy (make-vertex)))
     (vertex-copy! copy vert)
