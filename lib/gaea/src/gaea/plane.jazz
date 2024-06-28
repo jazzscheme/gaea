@@ -39,7 +39,9 @@
 (module gaea.plane jazz
 
 
-(import (gaea.geometry.base)
+(import (jazz.math)
+        (jazz.syntax (phase syntax))
+        (gaea.geometry.base)
         (gaea.geometry.classes))
 
 
@@ -133,37 +135,11 @@
 ;;;
 
 
-(constant planes-cardinality <fx>
-  4096)
-
-(definition protected planes-pool <vector>
-  (make-vector planes-cardinality #f))
-
-(definition protected planes-allocated <fx>
-  0)
-
-(definition protected planes-available <fx>
-  0)
-
-
-(definition protected (alloc-plane$) <Plane>
-  (if (= planes-available 0)
-      (assert (< planes-allocated planes-cardinality)
-        (increase! planes-allocated)
-        (allocate-plane))
-    (decrease! planes-available)
-    (let ((plane (vector-ref planes-pool planes-available)))
-      (vector-set! planes-pool planes-available #f)
-      plane)))
+(define-pool plane$
+  allocate-plane Plane)
 
 
 (definition protected (make-plane$ origin normal) <Plane>
-  (let ((plane (alloc-plane$)))
+  (let ((plane (need-plane$)))
     (assemble plane origin normal)
-    plane))
-
-
-(definition protected (free-plane$ plane <Plane>) <void>
-  (assert (< planes-available planes-cardinality))
-  (vector-set! planes-pool planes-available plane)
-  (increase! planes-available)))
+    plane)))
