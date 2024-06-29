@@ -71,7 +71,7 @@
 
 
 (definition public inline (make-nan-vertex) <vertex>
-  (vertex +nan.0 +nan.0 +nan.0))
+  (f64vector +nan.0 +nan.0 +nan.0))
 
 
 (definition public (copy-vertex vert <vertex>) <vertex>
