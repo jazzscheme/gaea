@@ -110,6 +110,13 @@
       form-src)))
 
 
+(syntax public make-f64^
+  (lambda (form-src usage-environment macro-environment)
+    (sourcify-deep-if
+      `(stack <f64>)
+      form-src)))
+
+
 (syntax public f64&
   (lambda (form-src usage-environment macro-environment)
     (let ((rest (cdr (source-code form-src))))
@@ -259,6 +266,13 @@
       form-src)))
 
 
+(syntax public make-vertex^
+  (lambda (form-src usage-environment macro-environment)
+    (sourcify-deep-if
+      `(stack <vertex>)
+      form-src)))
+
+
 (syntax public vertex&
   (lambda (form-src usage-environment macro-environment)
     (let ((rest (cdr (source-code form-src))))
@@ -287,7 +301,7 @@
   (lambda (form-src usage-environment macro-environment)
     (let ((rest (cdr (source-code form-src))))
       (sourcify-deep-if
-        `(vertex+! (stack <vertex>) ,@rest)
+        `(vertex+! (make-vertex^) ,@rest)
         form-src))))
 
 
@@ -311,7 +325,7 @@
   (lambda (form-src usage-environment macro-environment)
     (let ((rest (cdr (source-code form-src))))
       (sourcify-deep-if
-        `(vertex-! (stack <vertex>) ,@rest)
+        `(vertex-! (make-vertex^) ,@rest)
         form-src))))
 
 
@@ -335,7 +349,7 @@
   (lambda (form-src usage-environment macro-environment)
     (let ((rest (cdr (source-code form-src))))
       (sourcify-deep-if
-        `(vertex*! (stack <vertex>) ,@rest)
+        `(vertex*! (make-vertex^) ,@rest)
         form-src))))
 
 
@@ -383,7 +397,7 @@
   (lambda (form-src usage-environment macro-environment)
     (let ((rest (cdr (source-code form-src))))
       (sourcify-deep-if
-        `(vertex-norm! (stack <f64>) ,@rest)
+        `(vertex-norm! (make-f64^) ,@rest)
         form-src))))
 
 
