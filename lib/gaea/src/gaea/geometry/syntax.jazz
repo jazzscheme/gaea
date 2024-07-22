@@ -70,11 +70,26 @@
       form-src)))
 
 
+(syntax public make-fl^
+  (lambda (form-src usage-environment macro-environment)
+    (sourcify-deep-if
+      `(stack <fl>)
+      form-src)))
+
+
 (syntax public fl&
   (lambda (form-src usage-environment macro-environment)
     (let ((rest (cdr (source-code form-src))))
       (sourcify-deep-if
         `(fl! (make-fl&) ,@rest)
+        form-src))))
+
+
+(syntax public fl^
+  (lambda (form-src usage-environment macro-environment)
+    (let ((rest (cdr (source-code form-src))))
+      (sourcify-deep-if
+        `(fl! (make-fl^) ,@rest)
         form-src))))
 
 
@@ -717,11 +732,26 @@
       form-src)))
 
 
+(syntax public make-lookat^
+  (lambda (form-src usage-environment macro-environment)
+    (sourcify-deep-if
+      `(stack <LookAt> LookAt (make-vertex^) (make-vertex^) (make-vertex^))
+      form-src)))
+
+
 (syntax public lookat&
   (lambda (form-src usage-environment macro-environment)
     (let ((rest (cdr (source-code form-src))))
       (sourcify-deep-if
         `(lookat! (make-lookat&) ,@rest)
+        form-src))))
+
+
+(syntax public lookat^
+  (lambda (form-src usage-environment macro-environment)
+    (let ((rest (cdr (source-code form-src))))
+      (sourcify-deep-if
+        `(lookat! (make-lookat^) ,@rest)
         form-src))))
 
 
@@ -733,6 +763,14 @@
         form-src))))
 
 
+(syntax public lookat-copy^
+  (lambda (form-src usage-environment macro-environment)
+    (let ((rest (cdr (source-code form-src))))
+      (sourcify-deep-if
+        `(lookat-copy! (make-lookat^) ,@rest)
+        form-src))))
+
+
 (syntax public direction-lookat&
   (lambda (form-src usage-environment macro-environment)
     (let ((rest (cdr (source-code form-src))))
@@ -741,11 +779,27 @@
         form-src))))
 
 
+(syntax public direction-lookat^
+  (lambda (form-src usage-environment macro-environment)
+    (let ((rest (cdr (source-code form-src))))
+      (sourcify-deep-if
+        `(direction-lookat! (make-lookat^) ,@rest)
+        form-src))))
+
+
 (syntax public horizon-lookat&
   (lambda (form-src usage-environment macro-environment)
     (let ((rest (cdr (source-code form-src))))
       (sourcify-deep-if
         `(horizon-lookat! (make-lookat&) ,@rest)
+        form-src))))
+
+
+(syntax public horizon-lookat^
+  (lambda (form-src usage-environment macro-environment)
+    (let ((rest (cdr (source-code form-src))))
+      (sourcify-deep-if
+        `(horizon-lookat! (make-lookat^) ,@rest)
         form-src))))
 
 
@@ -765,11 +819,27 @@
         form-src))))
 
 
+(syntax public realign-lookat^
+  (lambda (form-src usage-environment macro-environment)
+    (let ((rest (cdr (source-code form-src))))
+      (sourcify-deep-if
+        `(realign-lookat! (make-lookat^) ,@rest)
+        form-src))))
+
+
 (syntax public realign-lookat-horizon&
   (lambda (form-src usage-environment macro-environment)
     (let ((rest (cdr (source-code form-src))))
       (sourcify-deep-if
         `(realign-lookat-horizon! (make-lookat&) ,@rest)
+        form-src))))
+
+
+(syntax public realign-lookat-horizon^
+  (lambda (form-src usage-environment macro-environment)
+    (let ((rest (cdr (source-code form-src))))
+      (sourcify-deep-if
+        `(realign-lookat-horizon! (make-lookat^) ,@rest)
         form-src))))
 
 
@@ -781,11 +851,27 @@
         form-src))))
 
 
+(syntax public rotate-lookat^
+  (lambda (form-src usage-environment macro-environment)
+    (let ((rest (cdr (source-code form-src))))
+      (sourcify-deep-if
+        `(rotate-lookat! (make-lookat^) ,@rest)
+        form-src))))
+
+
 (syntax public rotate-lookat-vertical&
   (lambda (form-src usage-environment macro-environment)
     (let ((rest (cdr (source-code form-src))))
       (sourcify-deep-if
         `(rotate-lookat-vertical! (make-lookat&) ,@rest)
+        form-src))))
+
+
+(syntax public rotate-lookat-vertical^
+  (lambda (form-src usage-environment macro-environment)
+    (let ((rest (cdr (source-code form-src))))
+      (sourcify-deep-if
+        `(rotate-lookat-vertical! (make-lookat^) ,@rest)
         form-src))))
 
 
@@ -797,11 +883,27 @@
         form-src))))
 
 
+(syntax public rotate-lookat-vertical-up^
+  (lambda (form-src usage-environment macro-environment)
+    (let ((rest (cdr (source-code form-src))))
+      (sourcify-deep-if
+        `(rotate-lookat-vertical-up! (make-lookat^) ,@rest)
+        form-src))))
+
+
 (syntax public pop-lookat&
   (lambda (form-src usage-environment macro-environment)
     (let ((rest (cdr (source-code form-src))))
       (sourcify-deep-if
         `(pop-lookat! (make-lookat&) ,@rest)
+        form-src))))
+
+
+(syntax public pop-lookat^
+  (lambda (form-src usage-environment macro-environment)
+    (let ((rest (cdr (source-code form-src))))
+      (sourcify-deep-if
+        `(pop-lookat! (make-lookat^) ,@rest)
         form-src))))
 
 
@@ -1250,6 +1352,18 @@
 
 
 ;;;
+;;;; UV
+;;;
+
+
+(syntax public make-uv^
+  (lambda (form-src usage-environment macro-environment)
+    (sourcify-deep-if
+      `(stack <uv>)
+      form-src)))
+
+
+;;;
 ;;;; Gravity
 ;;;
 
@@ -1288,11 +1402,16 @@
         form-src))))
 
 
-(syntax public copy-movement&
+(syntax public make-movement^
   (lambda (form-src usage-environment macro-environment)
-    (let ((rest (cdr (source-code form-src))))
+    (let ((origin (cadr (source-code form-src)))
+          (vector (caddr (source-code form-src)))
+          (mvt (generate-symbol "mvt")))
       (sourcify-deep-if
-        `(copy-movement! (static (new Movement (vertex 0. 0. 0.) (vertex 0. 0. 1.))) ,@rest)
+        `(let ((,mvt (stack <Movement> Movement (make-vertex^) (make-vertex^) (make-vertex^) (make-fl^))))
+           (set-origin ,mvt ,origin)
+           (set-vector ,mvt ,vector)
+           ,mvt)
         form-src))))
 
 
