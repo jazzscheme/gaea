@@ -281,11 +281,27 @@
         form-src))))
 
 
+(syntax public vertex^
+  (lambda (form-src usage-environment macro-environment)
+    (let ((rest (cdr (source-code form-src))))
+      (sourcify-deep-if
+        `(vertex! (make-vertex^) ,@rest)
+        form-src))))
+
+
 (syntax public vertex-copy&
   (lambda (form-src usage-environment macro-environment)
     (let ((rest (cdr (source-code form-src))))
       (sourcify-deep-if
         `(vertex-copy! (make-vertex&) ,@rest)
+        form-src))))
+
+
+(syntax public vertex-copy^
+  (lambda (form-src usage-environment macro-environment)
+    (let ((rest (cdr (source-code form-src))))
+      (sourcify-deep-if
+        `(vertex-copy! (make-vertex^) ,@rest)
         form-src))))
 
 
@@ -313,6 +329,14 @@
         form-src))))
 
 
+(syntax public vertex+xyz^
+  (lambda (form-src usage-environment macro-environment)
+    (let ((rest (cdr (source-code form-src))))
+      (sourcify-deep-if
+        `(vertex+xyz! (make-vertex^) ,@rest)
+        form-src))))
+
+
 (syntax public vertex-&
   (lambda (form-src usage-environment macro-environment)
     (let ((rest (cdr (source-code form-src))))
@@ -334,6 +358,14 @@
     (let ((rest (cdr (source-code form-src))))
       (sourcify-deep-if
         `(vertex-negate! (make-vertex&) ,@rest)
+        form-src))))
+
+
+(syntax public vertex-negate^
+  (lambda (form-src usage-environment macro-environment)
+    (let ((rest (cdr (source-code form-src))))
+      (sourcify-deep-if
+        `(vertex-negate! (make-vertex^) ,@rest)
         form-src))))
 
 
@@ -361,11 +393,27 @@
         form-src))))
 
 
+(syntax public vertex/^
+  (lambda (form-src usage-environment macro-environment)
+    (let ((rest (cdr (source-code form-src))))
+      (sourcify-deep-if
+        `(vertex/! (make-vertex^) ,@rest)
+        form-src))))
+
+
 (syntax public vertex-inverse&
   (lambda (form-src usage-environment macro-environment)
     (let ((rest (cdr (source-code form-src))))
       (sourcify-deep-if
         `(vertex-inverse! (make-vertex&) ,@rest)
+        form-src))))
+
+
+(syntax public vertex-inverse^
+  (lambda (form-src usage-environment macro-environment)
+    (let ((rest (cdr (source-code form-src))))
+      (sourcify-deep-if
+        `(vertex-inverse! (make-vertex^) ,@rest)
         form-src))))
 
 
@@ -377,11 +425,27 @@
         form-src))))
 
 
+(syntax public vertex-scalar*^
+  (lambda (form-src usage-environment macro-environment)
+    (let ((rest (cdr (source-code form-src))))
+      (sourcify-deep-if
+        `(vertex-scalar*! (make-vertex^) ,@rest)
+        form-src))))
+
+
 (syntax public vertex-scalar/&
   (lambda (form-src usage-environment macro-environment)
     (let ((rest (cdr (source-code form-src))))
       (sourcify-deep-if
         `(vertex-scalar/! (make-vertex&) ,@rest)
+        form-src))))
+
+
+(syntax public vertex-scalar/^
+  (lambda (form-src usage-environment macro-environment)
+    (let ((rest (cdr (source-code form-src))))
+      (sourcify-deep-if
+        `(vertex-scalar/! (make-vertex^) ,@rest)
         form-src))))
 
 
@@ -409,11 +473,27 @@
         form-src))))
 
 
+(syntax public vertex-normalize^
+  (lambda (form-src usage-environment macro-environment)
+    (let ((rest (cdr (source-code form-src))))
+      (sourcify-deep-if
+        `(vertex-normalize! (make-vertex^) ,@rest)
+        form-src))))
+
+
 (syntax public vertex-normalize-safe&
   (lambda (form-src usage-environment macro-environment)
     (let ((rest (cdr (source-code form-src))))
       (sourcify-deep-if
         `(vertex-normalize-safe! (make-vertex&) ,@rest)
+        form-src))))
+
+
+(syntax public vertex-normalize-safe^
+  (lambda (form-src usage-environment macro-environment)
+    (let ((rest (cdr (source-code form-src))))
+      (sourcify-deep-if
+        `(vertex-normalize-safe! (make-vertex^) ,@rest)
         form-src))))
 
 
@@ -425,11 +505,27 @@
         form-src))))
 
 
+(syntax public vertex-abs^
+  (lambda (form-src usage-environment macro-environment)
+    (let ((rest (cdr (source-code form-src))))
+      (sourcify-deep-if
+        `(vertex-abs! (make-vertex^) ,@rest)
+        form-src))))
+
+
 (syntax public vertex-distance&
   (lambda (form-src usage-environment macro-environment)
     (let ((rest (cdr (source-code form-src))))
       (sourcify-deep-if
         `(vertex-distance! (make-f64&) ,@rest)
+        form-src))))
+
+
+(syntax public vertex-distance^
+  (lambda (form-src usage-environment macro-environment)
+    (let ((rest (cdr (source-code form-src))))
+      (sourcify-deep-if
+        `(vertex-distance! (make-f64^) ,@rest)
         form-src))))
 
 
@@ -441,11 +537,27 @@
         form-src))))
 
 
+(syntax public rotate-vertex-upon^
+  (lambda (form-src usage-environment macro-environment)
+    (let ((rest (cdr (source-code form-src))))
+      (sourcify-deep-if
+        `(rotate-vertex-upon! (make-vertex^) ,@rest)
+        form-src))))
+
+
 (syntax public dot-product&
   (lambda (form-src usage-environment macro-environment)
     (let ((rest (cdr (source-code form-src))))
       (sourcify-deep-if
         `(dot-product! (make-f64&) ,@rest)
+        form-src))))
+
+
+(syntax public dot-product^
+  (lambda (form-src usage-environment macro-environment)
+    (let ((rest (cdr (source-code form-src))))
+      (sourcify-deep-if
+        `(dot-product! (make-f64^) ,@rest)
         form-src))))
 
 
@@ -457,11 +569,27 @@
         form-src))))
 
 
+(syntax public cross-product^
+  (lambda (form-src usage-environment macro-environment)
+    (let ((rest (cdr (source-code form-src))))
+      (sourcify-deep-if
+        `(cross-product! (make-vertex^) ,@rest)
+        form-src))))
+
+
 (syntax public cross-normal&
   (lambda (form-src usage-environment macro-environment)
     (let ((rest (cdr (source-code form-src))))
       (sourcify-deep-if
         `(cross-normal! (make-vertex&) ,@rest)
+        form-src))))
+
+
+(syntax public cross-normal^
+  (lambda (form-src usage-environment macro-environment)
+    (let ((rest (cdr (source-code form-src))))
+      (sourcify-deep-if
+        `(cross-normal! (make-vertex^) ,@rest)
         form-src))))
 
 
@@ -473,11 +601,27 @@
         form-src))))
 
 
+(syntax public cross-normal-safe^
+  (lambda (form-src usage-environment macro-environment)
+    (let ((rest (cdr (source-code form-src))))
+      (sourcify-deep-if
+        `(cross-normal-safe! (make-vertex^) ,@rest)
+        form-src))))
+
+
 (syntax public plane-normal&
   (lambda (form-src usage-environment macro-environment)
     (let ((rest (cdr (source-code form-src))))
       (sourcify-deep-if
         `(plane-normal! (make-vertex&) ,@rest)
+        form-src))))
+
+
+(syntax public plane-normal^
+  (lambda (form-src usage-environment macro-environment)
+    (let ((rest (cdr (source-code form-src))))
+      (sourcify-deep-if
+        `(plane-normal! (make-vertex^) ,@rest)
         form-src))))
 
 
@@ -489,11 +633,27 @@
         form-src))))
 
 
+(syntax public polygon-normal^
+  (lambda (form-src usage-environment macro-environment)
+    (let ((rest (cdr (source-code form-src))))
+      (sourcify-deep-if
+        `(polygon-normal! (make-vertex^) ,@rest)
+        form-src))))
+
+
 (syntax public polygon-radius&
   (lambda (form-src usage-environment macro-environment)
     (let ((rest (cdr (source-code form-src))))
       (sourcify-deep-if
         `(polygon-radius! (make-f64&) ,@rest)
+        form-src))))
+
+
+(syntax public polygon-radius^
+  (lambda (form-src usage-environment macro-environment)
+    (let ((rest (cdr (source-code form-src))))
+      (sourcify-deep-if
+        `(polygon-radius! (make-f64^) ,@rest)
         form-src))))
 
 
@@ -505,6 +665,14 @@
         form-src))))
 
 
+(syntax public center-of-mass^
+  (lambda (form-src usage-environment macro-environment)
+    (let ((rest (cdr (source-code form-src))))
+      (sourcify-deep-if
+        `(center-of-mass! (make-vertex^) ,@rest)
+        form-src))))
+
+
 (syntax public roll-free-up&
   (lambda (form-src usage-environment macro-environment)
     (let ((rest (cdr (source-code form-src))))
@@ -513,11 +681,27 @@
         form-src))))
 
 
+(syntax public roll-free-up^
+  (lambda (form-src usage-environment macro-environment)
+    (let ((rest (cdr (source-code form-src))))
+      (sourcify-deep-if
+        `(roll-free-up! (make-vertex^) ,@rest)
+        form-src))))
+
+
 (syntax public pop-vertex&
   (lambda (form-src usage-environment macro-environment)
     (let ((rest (cdr (source-code form-src))))
       (sourcify-deep-if
         `(pop-vertex! (make-vertex&) ,@rest)
+        form-src))))
+
+
+(syntax public pop-vertex^
+  (lambda (form-src usage-environment macro-environment)
+    (let ((rest (cdr (source-code form-src))))
+      (sourcify-deep-if
+        `(pop-vertex! (make-vertex^) ,@rest)
         form-src))))
 
 
@@ -633,6 +817,13 @@
       form-src)))
 
 
+(syntax public make-quaternion^
+  (lambda (form-src usage-environment macro-environment)
+    (sourcify-deep-if
+      `(stack <quaternion>)
+      form-src)))
+
+
 (syntax public quaternion&
   (lambda (form-src usage-environment macro-environment)
     (let ((rest (cdr (source-code form-src))))
@@ -641,11 +832,27 @@
         form-src))))
 
 
+(syntax public quaternion^
+  (lambda (form-src usage-environment macro-environment)
+    (let ((rest (cdr (source-code form-src))))
+      (sourcify-deep-if
+        `(quaternion! (make-quaternion^) ,@rest)
+        form-src))))
+
+
 (syntax public quaternion-copy&
   (lambda (form-src usage-environment macro-environment)
     (let ((rest (cdr (source-code form-src))))
       (sourcify-deep-if
         `(quaternion-copy! (make-quaternion&) ,@rest)
+        form-src))))
+
+
+(syntax public quaternion-copy^
+  (lambda (form-src usage-environment macro-environment)
+    (let ((rest (cdr (source-code form-src))))
+      (sourcify-deep-if
+        `(quaternion-copy! (make-quaternion^) ,@rest)
         form-src))))
 
 
@@ -658,6 +865,13 @@
   (lambda (form-src usage-environment macro-environment)
     (sourcify-deep-if
       `(static (make-cuboid))
+      form-src)))
+
+
+(syntax public make-cuboid^
+  (lambda (form-src usage-environment macro-environment)
+    (sourcify-deep-if
+      `(stack <cuboid>)
       form-src)))
 
 
@@ -689,11 +903,26 @@
       form-src)))
 
 
+(syntax public make-matrix^
+  (lambda (form-src usage-environment macro-environment)
+    (sourcify-deep-if
+      `(stack <matrix>)
+      form-src)))
+
+
 (syntax public make-identity-matrix&
   (lambda (form-src usage-environment macro-environment)
     (let ((rest (cdr (source-code form-src))))
       (sourcify-deep-if
         `(make-identity-matrix! (make-matrix&) ,@rest)
+        form-src))))
+
+
+(syntax public make-identity-matrix^
+  (lambda (form-src usage-environment macro-environment)
+    (let ((rest (cdr (source-code form-src))))
+      (sourcify-deep-if
+        `(make-identity-matrix! (make-matrix^) ,@rest)
         form-src))))
 
 
@@ -705,11 +934,27 @@
         form-src))))
 
 
+(syntax public matrix-multiply^
+  (lambda (form-src usage-environment macro-environment)
+    (let ((rest (cdr (source-code form-src))))
+      (sourcify-deep-if
+        `(matrix-multiply! (make-matrix^) ,@rest)
+        form-src))))
+
+
 (syntax public matrix-multiply*&
   (lambda (form-src usage-environment macro-environment)
     (let ((matrices (cadr (source-code form-src))))
       (sourcify-deep-if
         `(matrix-multiply*! (make-matrix&) ,matrices)
+        form-src))))
+
+
+(syntax public matrix-multiply*^
+  (lambda (form-src usage-environment macro-environment)
+    (let ((matrices (cadr (source-code form-src))))
+      (sourcify-deep-if
+        `(matrix-multiply*! (make-matrix^) ,matrices)
         form-src))))
 
 
@@ -721,11 +966,27 @@
         form-src))))
 
 
+(syntax public matrix-transform^
+  (lambda (form-src usage-environment macro-environment)
+    (let ((rest (cdr (source-code form-src))))
+      (sourcify-deep-if
+        `(matrix-transform! (make-vertex^) ,@rest)
+        form-src))))
+
+
 (syntax public matrix-transform-3x4&
   (lambda (form-src usage-environment macro-environment)
     (let ((rest (cdr (source-code form-src))))
       (sourcify-deep-if
         `(matrix-transform-3x4! (make-vertex&) ,@rest)
+        form-src))))
+
+
+(syntax public matrix-transform-3x4^
+  (lambda (form-src usage-environment macro-environment)
+    (let ((rest (cdr (source-code form-src))))
+      (sourcify-deep-if
+        `(matrix-transform-3x4! (make-vertex^) ,@rest)
         form-src))))
 
 
@@ -737,11 +998,27 @@
         form-src))))
 
 
+(syntax public matrix+-transform-3x4^
+  (lambda (form-src usage-environment macro-environment)
+    (let ((rest (cdr (source-code form-src))))
+      (sourcify-deep-if
+        `(matrix+-transform-3x4! (make-vertex^) ,@rest)
+        form-src))))
+
+
 (syntax public matrix-transform-normal&
   (lambda (form-src usage-environment macro-environment)
     (let ((rest (cdr (source-code form-src))))
       (sourcify-deep-if
         `(matrix-transform-normal! (make-vertex&) ,@rest)
+        form-src))))
+
+
+(syntax public matrix-transform-normal^
+  (lambda (form-src usage-environment macro-environment)
+    (let ((rest (cdr (source-code form-src))))
+      (sourcify-deep-if
+        `(matrix-transform-normal! (make-vertex^) ,@rest)
         form-src))))
 
 
@@ -753,11 +1030,27 @@
         form-src))))
 
 
+(syntax public make-translation-matrix^
+  (lambda (form-src usage-environment macro-environment)
+    (let ((rest (cdr (source-code form-src))))
+      (sourcify-deep-if
+        `(make-translation-matrix! (make-matrix^) ,@rest)
+        form-src))))
+
+
 (syntax public make-rotation-matrix&
   (lambda (form-src usage-environment macro-environment)
     (let ((rest (cdr (source-code form-src))))
       (sourcify-deep-if
         `(make-rotation-matrix! (make-matrix&) ,@rest)
+        form-src))))
+
+
+(syntax public make-rotation-matrix^
+  (lambda (form-src usage-environment macro-environment)
+    (let ((rest (cdr (source-code form-src))))
+      (sourcify-deep-if
+        `(make-rotation-matrix! (make-matrix^) ,@rest)
         form-src))))
 
 
@@ -769,11 +1062,27 @@
         form-src))))
 
 
+(syntax public make-x-rotation-matrix^
+  (lambda (form-src usage-environment macro-environment)
+    (let ((rest (cdr (source-code form-src))))
+      (sourcify-deep-if
+        `(make-x-rotation-matrix! (make-matrix^) ,@rest)
+        form-src))))
+
+
 (syntax public make-y-rotation-matrix&
   (lambda (form-src usage-environment macro-environment)
     (let ((rest (cdr (source-code form-src))))
       (sourcify-deep-if
         `(make-y-rotation-matrix! (make-matrix&) ,@rest)
+        form-src))))
+
+
+(syntax public make-y-rotation-matrix^
+  (lambda (form-src usage-environment macro-environment)
+    (let ((rest (cdr (source-code form-src))))
+      (sourcify-deep-if
+        `(make-y-rotation-matrix! (make-matrix^) ,@rest)
         form-src))))
 
 
@@ -785,11 +1094,27 @@
         form-src))))
 
 
+(syntax public make-z-rotation-matrix^
+  (lambda (form-src usage-environment macro-environment)
+    (let ((rest (cdr (source-code form-src))))
+      (sourcify-deep-if
+        `(make-z-rotation-matrix! (make-matrix^) ,@rest)
+        form-src))))
+
+
 (syntax public make-euler-matrix&
   (lambda (form-src usage-environment macro-environment)
     (let ((rest (cdr (source-code form-src))))
       (sourcify-deep-if
         `(make-euler-matrix! (make-matrix&) ,@rest)
+        form-src))))
+
+
+(syntax public make-euler-matrix^
+  (lambda (form-src usage-environment macro-environment)
+    (let ((rest (cdr (source-code form-src))))
+      (sourcify-deep-if
+        `(make-euler-matrix! (make-matrix^) ,@rest)
         form-src))))
 
 
@@ -801,11 +1126,27 @@
         form-src))))
 
 
+(syntax public make-quaternion-matrix^
+  (lambda (form-src usage-environment macro-environment)
+    (let ((rest (cdr (source-code form-src))))
+      (sourcify-deep-if
+        `(make-quaternion-matrix! (make-matrix^) ,@rest)
+        form-src))))
+
+
 (syntax public make-scaling-matrix&
   (lambda (form-src usage-environment macro-environment)
     (let ((rest (cdr (source-code form-src))))
       (sourcify-deep-if
         `(make-scaling-matrix! (make-matrix&) ,@rest)
+        form-src))))
+
+
+(syntax public make-scaling-matrix^
+  (lambda (form-src usage-environment macro-environment)
+    (let ((rest (cdr (source-code form-src))))
+      (sourcify-deep-if
+        `(make-scaling-matrix! (make-matrix^) ,@rest)
         form-src))))
 
 
@@ -817,11 +1158,27 @@
         form-src))))
 
 
+(syntax public make-lookat-matrix^
+  (lambda (form-src usage-environment macro-environment)
+    (let ((rest (cdr (source-code form-src))))
+      (sourcify-deep-if
+        `(make-lookat-matrix! (make-matrix^) ,@rest)
+        form-src))))
+
+
 (syntax public make-inverse-lookat-matrix&
   (lambda (form-src usage-environment macro-environment)
     (let ((rest (cdr (source-code form-src))))
       (sourcify-deep-if
         `(make-inverse-lookat-matrix! (make-matrix&) ,@rest)
+        form-src))))
+
+
+(syntax public make-inverse-lookat-matrix^
+  (lambda (form-src usage-environment macro-environment)
+    (let ((rest (cdr (source-code form-src))))
+      (sourcify-deep-if
+        `(make-inverse-lookat-matrix! (make-matrix^) ,@rest)
         form-src))))
 
 
@@ -833,11 +1190,27 @@
         form-src))))
 
 
+(syntax public make-perspective-matrix^
+  (lambda (form-src usage-environment macro-environment)
+    (let ((rest (cdr (source-code form-src))))
+      (sourcify-deep-if
+        `(make-perspective-matrix! (make-matrix^) ,@rest)
+        form-src))))
+
+
 (syntax public make-view-matrix&
   (lambda (form-src usage-environment macro-environment)
     (let ((rest (cdr (source-code form-src))))
       (sourcify-deep-if
         `(make-view-matrix! (make-matrix&) ,@rest)
+        form-src))))
+
+
+(syntax public make-view-matrix^
+  (lambda (form-src usage-environment macro-environment)
+    (let ((rest (cdr (source-code form-src))))
+      (sourcify-deep-if
+        `(make-view-matrix! (make-matrix^) ,@rest)
         form-src))))
 
 
@@ -853,11 +1226,26 @@
       form-src)))
 
 
+(syntax public make-dye^
+  (lambda (form-src usage-environment macro-environment)
+    (sourcify-deep-if
+      `(stack <dye>)
+      form-src)))
+
+
 (syntax public dye&
   (lambda (form-src usage-environment macro-environment)
     (let ((rest (cdr (source-code form-src))))
       (sourcify-deep-if
         `(dye! (make-dye&) ,@rest)
+        form-src))))
+
+
+(syntax public dye^
+  (lambda (form-src usage-environment macro-environment)
+    (let ((rest (cdr (source-code form-src))))
+      (sourcify-deep-if
+        `(dye! (make-dye^) ,@rest)
         form-src))))
 
 
@@ -871,6 +1259,14 @@
     (let ((rest (cdr (source-code form-src))))
       (sourcify-deep-if
         `(gravity-up! (make-vertex&) ,@rest)
+        form-src))))
+
+
+(syntax public gravity-up^
+  (lambda (form-src usage-environment macro-environment)
+    (let ((rest (cdr (source-code form-src))))
+      (sourcify-deep-if
+        `(gravity-up! (make-vertex^) ,@rest)
         form-src))))
 
 
@@ -908,11 +1304,27 @@
         form-src))))
 
 
+(syntax public movement-end^
+  (lambda (form-src usage-environment macro-environment)
+    (let ((rest (cdr (source-code form-src))))
+      (sourcify-deep-if
+        `(movement-end! (make-vertex^) ,@rest)
+        form-src))))
+
+
 (syntax public movement-end-to&
   (lambda (form-src usage-environment macro-environment)
     (let ((rest (cdr (source-code form-src))))
       (sourcify-deep-if
         `(movement-end-to! (make-vertex&) ,@rest)
+        form-src))))
+
+
+(syntax public movement-end-to^
+  (lambda (form-src usage-environment macro-environment)
+    (let ((rest (cdr (source-code form-src))))
+      (sourcify-deep-if
+        `(movement-end-to! (make-vertex^) ,@rest)
         form-src))))
 
 
@@ -958,6 +1370,14 @@
         form-src))))
 
 
+(syntax public plane-closest^
+  (lambda (form-src usage-environment macro-environment)
+    (let ((rest (cdr (source-code form-src))))
+      (sourcify-deep-if
+        `(plane-closest! (make-vertex^) ,@rest)
+        form-src))))
+
+
 ;;;
 ;;;; Polygon
 ;;;
@@ -968,4 +1388,12 @@
     (let ((rest (cdr (source-code form-src))))
       (sourcify-deep-if
         `(closest-point-on-line! (make-vertex&) ,@rest)
+        form-src))))
+
+
+(syntax public closest-point-on-line^
+  (lambda (form-src usage-environment macro-environment)
+    (let ((rest (cdr (source-code form-src))))
+      (sourcify-deep-if
+        `(closest-point-on-line! (make-vertex^) ,@rest)
         form-src)))))
