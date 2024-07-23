@@ -189,14 +189,14 @@
 ;; - the returned angle is always positive so we do not
 ;;   have the nice property (angle a b) = - (angle b a)
 (definition public (vector-angle v1 <vertex> v2 <vertex>) <fl>
-  (let ((dot (dot-product& v1 v2)))
+  (let ((dot (dot-product^ v1 v2)))
     (cond ((< dot -1.) PI)
           ((> dot 1.) 0.)
           (else (acos dot)))))
 
 
 (definition public (vector-signed-angle v1 <vertex> v2 <vertex> n <vertex>) <fl>
-  (let ((perp (cross-product& v1 v2)))
+  (let ((perp (cross-product^ v1 v2)))
     (* (atan (vertex-norm perp) (dot-product v1 v2))
        (flsign (dot-product perp n)))))
 
@@ -285,11 +285,11 @@
 
 
 (definition public (ray-point-distance p <vertex> d <vertex> vert <vertex>) <fl>
-  (vertex-norm (cross-product& d (vertex-^ vert p))))
+  (vertex-norm (cross-product^ d (vertex-^ vert p))))
 
 
 (definition public (ray-point-distance! res <f64> p <vertex> d <vertex> vert <vertex>) <f64>
-  (vertex-norm! res (cross-product& d (vertex-^ vert p))))
+  (vertex-norm! res (cross-product^ d (vertex-^ vert p))))
 
 
 (definition public (ray-point-horizontal-distance p <vertex> d <vertex> v <vertex>) <fl>
@@ -311,24 +311,24 @@
 (definition public (ray-triangle-distance! res <f64> p <vertex> d <vertex> v0 <vertex> v1 <vertex> v2 <vertex>) <f64>
   (let ((e1 (vertex-^ v1 v0))
         (e2 (vertex-^ v2 v0)))
-    (let ((h (cross-product& d e2)))
-      (let ((a (dot-product& e1 h)))
+    (let ((h (cross-product^ d e2)))
+      (let ((a (dot-product^ e1 h)))
         (if (and (> a -0.00001) (< a 0.00001))
             (f64-set! res -1.)
           (let ((f (f64& (/ 1. a)))
                 (s (vertex-^ p v0)))
-            (let ((b (dot-product& s h)))
+            (let ((b (dot-product^ s h)))
               (let ((u (f64& (* f b))))
                 (if (or (< u 0.0) (> u 1.0))
                     (f64-set! res -1.)
-                  (let ((q (cross-product& s e1)))
-                    (let ((c (dot-product& d q)))
+                  (let ((q (cross-product^ s e1)))
+                    (let ((c (dot-product^ d q)))
                       (let ((v (f64& (* f c))))
                         (if (or (< v 0.0) (> (+ u v) 1.0))
                             (f64-set! res -1.)
                           ;; at this stage we can compute t to find out where
                           ;; the intersection point is on the line
-                          (let ((d (dot-product& e2 q)))
+                          (let ((d (dot-product^ e2 q)))
                             (let ((t (f64& (* f d))))
                               (if (> t 0.00001) ;; ray intersection
                                   (f64-set! res t)
@@ -346,9 +346,9 @@
 
 (definition public (ray-intersects-sphere? p <vertex> d <vertex> s <vertex> r <fv>) <bool>
   (let ((t (vertex-^ p s)))
-    (let ((i (dot-product& t d)))
+    (let ((i (dot-product^ t d)))
       (let ((b (f64& (- i))))
-        (let ((j (dot-product& t t)))
+        (let ((j (dot-product^ t t)))
           (let ((det (f64& (+ (- (* b b) j) (* r r)))))
             (if (< det 0.)
                 #f
@@ -1185,13 +1185,13 @@
 
 (definition public (horizon-lookat! lookat <LookAt> sight <vertex>) <LookAt>
   (let ((up (vertex& 0. 1. 0.)))
-    (let ((right (cross-product& sight up)))
+    (let ((right (cross-product^ sight up)))
       (lookat! lookat sight up right))))
 
 
 (definition public (horizon-lookat!^ lookat <LookAt> sight <vertex>) <LookAt>
   (let ((up (vertex& 0. 1. 0.)))
-    (let ((right (cross-product& sight up)))
+    (let ((right (cross-product^ sight up)))
       (lookat! lookat sight up right))))
 
 
@@ -1239,15 +1239,15 @@
 
 (definition public (direction-lookat! res <LookAt> sight <vertex>) <LookAt>
   (let ((up (vertex& 0. 1. 0.)))
-    (let ((right (cross-normal& sight up)))
-      (let ((up (cross-normal& right sight)))
+    (let ((right (cross-normal^ sight up)))
+      (let ((up (cross-normal^ right sight)))
         (lookat! res sight up right)))))
 
 
 (definition public (realign-lookat! res <LookAt> lookat <LookAt> new-up <vertex>) <LookAt>
   (let ((old-sight (get-sight lookat)))
-    (let ((new-right (cross-product& old-sight new-up)))
-      (let ((new-sight (cross-product& new-up new-right)))
+    (let ((new-right (cross-product^ old-sight new-up)))
+      (let ((new-sight (cross-product^ new-up new-right)))
         (lookat! res
                  (vertex-normalize^ new-sight)
                  (vertex-normalize^ new-up)
@@ -1256,21 +1256,21 @@
 
 (definition public (realign-lookat-horizon! res <LookAt> lookat <LookAt> up <vertex> initial-gravity <vertex> final-gravity <vertex>) <LookAt>
   (let ((old-sight (get-sight lookat)))
-    (let ((new-right (cross-normal& old-sight up)))
+    (let ((new-right (cross-normal^ old-sight up)))
       ;; calculate plane rotation
-      (let ((angle (vector-angle (cross-normal& final-gravity new-right)
-                                 (cross-normal& initial-gravity new-right))))
-        (let ((new-up (vertex-normalize^ (rotate-vertex-upon& (- angle) new-right (cross-normal& new-right old-sight)))))
+      (let ((angle (vector-angle (cross-normal^ final-gravity new-right)
+                                 (cross-normal^ initial-gravity new-right))))
+        (let ((new-up (vertex-normalize^ (rotate-vertex-upon^ (- angle) new-right (cross-normal^ new-right old-sight)))))
           (lookat! res
-                   (cross-normal& new-up new-right)
+                   (cross-normal^ new-up new-right)
                    new-up
                    new-right))))))
 
 
 (definition public (rotate-lookat-vertical! res <LookAt> lookat <LookAt> angle <fl>) <void>
   (let ((right (get-right lookat)))
-    (let ((sight (vertex-normalize^ (rotate-vertex-upon& angle right (get-sight lookat)))))
-      (let ((up (vertex-normalize^ (rotate-vertex-upon& angle right (get-up lookat)))))
+    (let ((sight (vertex-normalize^ (rotate-vertex-upon^ angle right (get-sight lookat)))))
+      (let ((up (vertex-normalize^ (rotate-vertex-upon^ angle right (get-up lookat)))))
         (lookat! res
                  sight
                  up
@@ -1281,7 +1281,7 @@
   (let ((sight-angle (vertical-angle (get-sight lookat) up))
         (epsilon -.001))
     (let ((angle (min (max angle (- sight-angle PI/2 epsilon)) (+ sight-angle PI/2 epsilon)))
-          (roll-free-right (cross-normal& (get-sight lookat) up)))
+          (roll-free-right (cross-normal^ (get-sight lookat) up)))
       (rotate-lookat! res lookat angle roll-free-right))))
 
 
@@ -1290,9 +1290,9 @@
 
 
 (definition public (rotate-lookat! res <LookAt> lookat <LookAt> angle <fl> axis <vertex>) <LookAt>
-  (let ((sight (vertex-normalize^ (rotate-vertex-upon& angle axis (get-sight lookat)))))
-    (let ((up (vertex-normalize^ (rotate-vertex-upon& angle axis (get-up lookat)))))
-      (let ((right (cross-normal& sight up)))
+  (let ((sight (vertex-normalize^ (rotate-vertex-upon^ angle axis (get-sight lookat)))))
+    (let ((up (vertex-normalize^ (rotate-vertex-upon^ angle axis (get-up lookat)))))
+      (let ((right (cross-normal^ sight up)))
         (lookat! res
                  sight
                  up
@@ -1338,7 +1338,7 @@
 
 
 (definition public (pitch-free? lookat <LookAt> world-up <vertex>)
-  (near? (dot-product& (get-sight lookat) world-up) 0. .001))
+  (near? (dot-product^ (get-sight lookat) world-up) 0. .001))
 
 
 (definition public (pitched? lookat <LookAt> world-up <vertex>)
@@ -1360,7 +1360,7 @@
 
 (definition public (remove-pitch dir <vertex> lookat <LookAt>) <vertex>
   (let ((sight (get-sight lookat)))
-    (vertex-normalize (vertex-^ dir (vertex-scalar*^ sight (dot-product& sight dir))))))
+    (vertex-normalize (vertex-^ dir (vertex-scalar*^ sight (dot-product^ sight dir))))))
 
 
 (definition public (remove-up-pitch dir <LookAt> lookat <LookAt>) <LookAt>
@@ -1369,8 +1369,8 @@
 
 (definition public (remove-up-pitch! res <LookAt> dir <LookAt> lookat <LookAt>) <LookAt>
   (let ((up (remove-pitch dir lookat)))
-    (let ((sight (cross-normal& up (get-right lookat))))
-      (let ((right (cross-normal& sight up)))
+    (let ((sight (cross-normal^ up (get-right lookat))))
+      (let ((right (cross-normal^ sight up)))
         (lookat! res
                  sight
                  up
@@ -1383,7 +1383,7 @@
 
 
 (definition public (roll-free? lookat <LookAt> world-up <vertex>)
-  (near? (dot-product& (get-right lookat) world-up) 0. .001))
+  (near? (dot-product^ (get-right lookat) world-up) 0. .001))
 
 
 (definition public (rolled? lookat <LookAt> world-up <vertex>)
@@ -1400,7 +1400,7 @@
 
 (definition public (remove-roll dir <vertex> lookat <LookAt>) <vertex>
   (let ((right (get-right lookat)))
-    (vertex-normalize (vertex-^ dir (vertex-scalar*^ right (dot-product& right dir))))))
+    (vertex-normalize (vertex-^ dir (vertex-scalar*^ right (dot-product^ right dir))))))
 
 
 (definition public (remove-up-roll dir <LookAt> lookat <LookAt>) <LookAt>
@@ -1409,8 +1409,8 @@
 
 (definition public (remove-up-roll! res <LookAt> dir <vertex> lookat <LookAt>) <LookAt>
   (let ((up (remove-roll dir lookat)))
-    (let ((sight (cross-normal& up (get-right lookat))))
-      (let ((right (cross-normal& sight up)))
+    (let ((sight (cross-normal^ up (get-right lookat))))
+      (let ((right (cross-normal^ sight up)))
         (lookat! res
                  sight
                  up
@@ -1568,13 +1568,13 @@
 (definition public (intersect-plane! res <f64> plane <Plane> r <Movement>) <bool>
   (let ((origin (get-origin plane))
         (normal (get-normal plane)))
-    (let ((denom (dot-product& normal (get-normal r))))
+    (let ((denom (dot-product^ normal (get-normal r))))
       (if (= denom 0.)
           (begin
             (f64-set! res 0.)
             #f)
-        (let ((numer (dot-product& normal (get-origin r)))
-              (distance (- (dot-product& origin normal))))
+        (let ((numer (dot-product^ normal (get-origin r)))
+              (distance (- (dot-product^ origin normal))))
           (f64-set! res (- (/ (+ numer distance) denom)))
           #t)))))
 
@@ -1604,7 +1604,7 @@
   (let ((on-edge #t)
         (c (vertex-^ p a))
         (v (vertex-normalize^ (vertex-^ b a))))
-    (let ((t (dot-product& v c)))
+    (let ((t (dot-product^ v c)))
       (if (< t 0.)
           (begin
             (vertex-copy! res a)
@@ -1625,7 +1625,7 @@
 (definition public (closest-point-on-line! res <vertex> a <vertex> b <vertex> p <vertex>) <vertex>
   (let ((c (vertex-^ p a))
         (v (vertex-normalize^ (vertex-^ b a))))
-    (let ((t (dot-product& v c))
+    (let ((t (dot-product^ v c))
           (d (vertex-distance^ b a)))
       (vertex+! res a (vertex-scalar*^ v t))))
   res)

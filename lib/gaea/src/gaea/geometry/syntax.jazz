@@ -432,27 +432,11 @@
         form-src))))
 
 
-(syntax public rotate-vertex-upon&
-  (lambda (form-src usage-environment macro-environment)
-    (let ((rest (cdr (source-code form-src))))
-      (sourcify-deep-if
-        `(rotate-vertex-upon! (make-vertex&) ,@rest)
-        form-src))))
-
-
 (syntax public rotate-vertex-upon^
   (lambda (form-src usage-environment macro-environment)
     (let ((rest (cdr (source-code form-src))))
       (sourcify-deep-if
         `(rotate-vertex-upon! (make-vertex^) ,@rest)
-        form-src))))
-
-
-(syntax public dot-product&
-  (lambda (form-src usage-environment macro-environment)
-    (let ((rest (cdr (source-code form-src))))
-      (sourcify-deep-if
-        `(dot-product! (make-f64&) ,@rest)
         form-src))))
 
 
@@ -464,14 +448,6 @@
         form-src))))
 
 
-(syntax public cross-product&
-  (lambda (form-src usage-environment macro-environment)
-    (let ((rest (cdr (source-code form-src))))
-      (sourcify-deep-if
-        `(cross-product! (make-vertex&) ,@rest)
-        form-src))))
-
-
 (syntax public cross-product^
   (lambda (form-src usage-environment macro-environment)
     (let ((rest (cdr (source-code form-src))))
@@ -480,27 +456,11 @@
         form-src))))
 
 
-(syntax public cross-normal&
-  (lambda (form-src usage-environment macro-environment)
-    (let ((rest (cdr (source-code form-src))))
-      (sourcify-deep-if
-        `(cross-normal! (make-vertex&) ,@rest)
-        form-src))))
-
-
 (syntax public cross-normal^
   (lambda (form-src usage-environment macro-environment)
     (let ((rest (cdr (source-code form-src))))
       (sourcify-deep-if
         `(cross-normal! (make-vertex^) ,@rest)
-        form-src))))
-
-
-(syntax public cross-normal-safe&
-  (lambda (form-src usage-environment macro-environment)
-    (let ((rest (cdr (source-code form-src))))
-      (sourcify-deep-if
-        `(cross-normal-safe! (make-vertex&) ,@rest)
         form-src))))
 
 
