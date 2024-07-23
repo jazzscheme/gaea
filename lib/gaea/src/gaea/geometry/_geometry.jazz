@@ -638,7 +638,7 @@
 
 
 (definition public (identity-matrix? mat <matrix>) <bool>
-  (matrix=? mat (make-identity-matrix&)))
+  (matrix=? mat (make-identity-matrix^)))
 
 
 (definition public (matrix-transpose-3x3! dst <matrix> src <matrix>) <matrix>
