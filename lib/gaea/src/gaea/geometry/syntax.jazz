@@ -1100,27 +1100,11 @@
         form-src))))
 
 
-(syntax public make-perspective-matrix&
-  (lambda (form-src usage-environment macro-environment)
-    (let ((rest (cdr (source-code form-src))))
-      (sourcify-deep-if
-        `(make-perspective-matrix! (make-matrix&) ,@rest)
-        form-src))))
-
-
 (syntax public make-perspective-matrix^
   (lambda (form-src usage-environment macro-environment)
     (let ((rest (cdr (source-code form-src))))
       (sourcify-deep-if
         `(make-perspective-matrix! (make-matrix^) ,@rest)
-        form-src))))
-
-
-(syntax public make-view-matrix&
-  (lambda (form-src usage-environment macro-environment)
-    (let ((rest (cdr (source-code form-src))))
-      (sourcify-deep-if
-        `(make-view-matrix! (make-matrix&) ,@rest)
         form-src))))
 
 
@@ -1182,14 +1166,6 @@
 ;;;
 ;;;; Gravity
 ;;;
-
-
-(syntax public gravity-up&
-  (lambda (form-src usage-environment macro-environment)
-    (let ((rest (cdr (source-code form-src))))
-      (sourcify-deep-if
-        `(gravity-up! (make-vertex&) ,@rest)
-        form-src))))
 
 
 (syntax public gravity-up^
