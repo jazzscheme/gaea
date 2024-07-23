@@ -416,27 +416,11 @@
         form-src))))
 
 
-(syntax public vertex-inverse&
-  (lambda (form-src usage-environment macro-environment)
-    (let ((rest (cdr (source-code form-src))))
-      (sourcify-deep-if
-        `(vertex-inverse! (make-vertex&) ,@rest)
-        form-src))))
-
-
 (syntax public vertex-inverse^
   (lambda (form-src usage-environment macro-environment)
     (let ((rest (cdr (source-code form-src))))
       (sourcify-deep-if
         `(vertex-inverse! (make-vertex^) ,@rest)
-        form-src))))
-
-
-(syntax public vertex-scalar*&
-  (lambda (form-src usage-environment macro-environment)
-    (let ((rest (cdr (source-code form-src))))
-      (sourcify-deep-if
-        `(vertex-scalar*! (make-vertex&) ,@rest)
         form-src))))
 
 

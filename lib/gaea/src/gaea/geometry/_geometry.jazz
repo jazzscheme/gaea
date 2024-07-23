@@ -1023,7 +1023,7 @@
 
 (definition public (sphere-matrices! sphere-matrix <matrix> inverse-matrix <matrix> origin <vertex> lookat <LookAt> radiuses <vertex>) <void>
   (matrix-multiply! sphere-matrix
-                    (make-scaling-matrix& (vertex-inverse& radiuses))
+                    (make-scaling-matrix& (vertex-inverse^ radiuses))
                     (make-inverse-lookat-matrix& lookat)
                     (make-translation-matrix& (vertex-negate& origin)))
   (matrix-multiply! inverse-matrix
@@ -1360,7 +1360,7 @@
 
 (definition public (remove-pitch dir <vertex> lookat <LookAt>) <vertex>
   (let ((sight (get-sight lookat)))
-    (vertex-normalize (vertex-^ dir (vertex-scalar*& sight (dot-product& sight dir))))))
+    (vertex-normalize (vertex-^ dir (vertex-scalar*^ sight (dot-product& sight dir))))))
 
 
 (definition public (remove-up-pitch dir <LookAt> lookat <LookAt>) <LookAt>
@@ -1400,7 +1400,7 @@
 
 (definition public (remove-roll dir <vertex> lookat <LookAt>) <vertex>
   (let ((right (get-right lookat)))
-    (vertex-normalize (vertex-^ dir (vertex-scalar*& right (dot-product& right dir))))))
+    (vertex-normalize (vertex-^ dir (vertex-scalar*^ right (dot-product& right dir))))))
 
 
 (definition public (remove-up-roll dir <LookAt> lookat <LookAt>) <LookAt>
@@ -1512,11 +1512,11 @@
 
 
 (definition public (movement-end-to mvt <Movement> d <fv>) <vertex>
-  (vertex+ (get-origin mvt) (vertex-scalar*& (get-normal mvt) d)))
+  (vertex+ (get-origin mvt) (vertex-scalar*^ (get-normal mvt) d)))
 
 
 (definition public (movement-end-to! res <vertex> mvt <Movement> d <fv>) <vertex>
-  (vertex+! res (get-origin mvt) (vertex-scalar*& (get-normal mvt) d)))
+  (vertex+! res (get-origin mvt) (vertex-scalar*^ (get-normal mvt) d)))
 
 
 (definition public (movement-transform-3x4 mvt <Movement> matrix <matrix>) <void>
@@ -1585,7 +1585,7 @@
 
 (definition public (plane-closest! res <vertex> plane <Plane> point <vertex>) <vertex>
   (let ((t (plane-to-point-distance& plane point)))
-    (vertex-! res point (vertex-scalar*& (get-normal plane) t)))
+    (vertex-! res point (vertex-scalar*^ (get-normal plane) t)))
   res)
 
 
@@ -1614,7 +1614,7 @@
               (begin
                 (vertex-copy! res b)
                 (not on-edge))
-            (vertex+! res a (vertex-scalar*& v t))
+            (vertex+! res a (vertex-scalar*^ v t))
             on-edge))))))
 
 
@@ -1627,7 +1627,7 @@
         (v (vertex-normalize& (vertex-^ b a))))
     (let ((t (dot-product& v c))
           (d (vertex-distance& b a)))
-      (vertex+! res a (vertex-scalar*& v t))))
+      (vertex+! res a (vertex-scalar*^ v t))))
   res)
 
 

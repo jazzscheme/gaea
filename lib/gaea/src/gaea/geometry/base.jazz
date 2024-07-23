@@ -272,7 +272,7 @@
 
 
 (definition public inline (vertex-lerp! res <vertex> p <vertex> q <vertex> t <fv>) <vertex>
-  (vertex+! res (vertex-scalar*& p (f64& (- 1. t))) (vertex-scalar*& q t))
+  (vertex+! res (vertex-scalar*^ p (f64& (- 1. t))) (vertex-scalar*^ q t))
   res)
 
 
