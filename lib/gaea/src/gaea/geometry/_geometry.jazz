@@ -104,7 +104,7 @@
 
 
 (definition public inline (vertex-near-zero? vert <vertex>) <bool>
-  (vertex-near? vert (vertex& 0. 0. 0.)))
+  (vertex-near? vert (vertex^ 0. 0. 0.)))
 
 
 (definition public (vertex-64->32 vert)
@@ -293,14 +293,14 @@
 
 
 (definition public (ray-point-horizontal-distance p <vertex> d <vertex> v <vertex>) <fl>
-  (let ((d (vertex-normalize^ (vertex& (vertex-x d) 0. (vertex-z d))))
-        (v (vertex& (vertex-x v) (vertex-y p) (vertex-z v))))
+  (let ((d (vertex-normalize^ (vertex^ (vertex-x d) 0. (vertex-z d))))
+        (v (vertex^ (vertex-x v) (vertex-y p) (vertex-z v))))
     (ray-point-distance p d v)))
 
 
 (definition public (ray-point-horizontal-distance! res <f64> p <vertex> d <vertex> v <vertex>) <fv>
-  (let ((d (vertex-normalize^ (vertex& (vertex-x d) 0. (vertex-z d))))
-        (v (vertex& (vertex-x v) (vertex-y p) (vertex-z v))))
+  (let ((d (vertex-normalize^ (vertex^ (vertex-x d) 0. (vertex-z d))))
+        (v (vertex^ (vertex-x v) (vertex-y p) (vertex-z v))))
     (ray-point-distance! res p d v)))
 
 
@@ -1114,13 +1114,13 @@
 
 
 (definition public (matrix-direction mat <matrix>) <vertex>
-  (plane-normal (matrix-transform& mat (vertex& 0. 0. 0.))
-                (matrix-transform& mat (vertex& 0. 1. 0.))
-                (matrix-transform& mat (vertex& 1. 0. 0.))))
+  (plane-normal (matrix-transform& mat (vertex^ 0. 0. 0.))
+                (matrix-transform& mat (vertex^ 0. 1. 0.))
+                (matrix-transform& mat (vertex^ 1. 0. 0.))))
 
 
 (definition public (matrix-scaling mat <matrix>) <fl>
-  (vertex-norm (vertex& (matrix-ref mat 0)
+  (vertex-norm (vertex^ (matrix-ref mat 0)
                         (matrix-ref mat 4)
                         (matrix-ref mat 8))))
 
@@ -1184,13 +1184,13 @@
 
 
 (definition public (horizon-lookat! lookat <LookAt> sight <vertex>) <LookAt>
-  (let ((up (vertex& 0. 1. 0.)))
+  (let ((up (vertex^ 0. 1. 0.)))
     (let ((right (cross-product^ sight up)))
       (lookat! lookat sight up right))))
 
 
 (definition public (horizon-lookat!^ lookat <LookAt> sight <vertex>) <LookAt>
-  (let ((up (vertex& 0. 1. 0.)))
+  (let ((up (vertex^ 0. 1. 0.)))
     (let ((right (cross-product^ sight up)))
       (lookat! lookat sight up right))))
 
@@ -1238,7 +1238,7 @@
 
 
 (definition public (direction-lookat! res <LookAt> sight <vertex>) <LookAt>
-  (let ((up (vertex& 0. 1. 0.)))
+  (let ((up (vertex^ 0. 1. 0.)))
     (let ((right (cross-normal^ sight up)))
       (let ((up (cross-normal^ right sight)))
         (lookat! res sight up right)))))
@@ -1355,7 +1355,7 @@
 
 ;; todo correctly with alain
 (definition public (remove-pitch-quick-hack dir <vertex>)
-  (vertex-normalize (vertex& (vertex-x dir) 0. (vertex-z dir))))
+  (vertex-normalize (vertex^ (vertex-x dir) 0. (vertex-z dir))))
 
 
 (definition public (remove-pitch dir <vertex> lookat <LookAt>) <vertex>
@@ -1454,14 +1454,14 @@
 
 
 (definition public (make-parallelepiped matrix <matrix+> left <fl> right <fl> bottom <fl> top <fl> back <fl> front <fl>) <Parallelepiped>
-  (let ((left/bottom/back (matrix+-transform-3x4& matrix (vertex& left bottom back)))
-        (left/bottom/front (matrix+-transform-3x4& matrix (vertex& left bottom front)))
-        (left/top/back (matrix+-transform-3x4& matrix (vertex& left top back)))
-        (left/top/front (matrix+-transform-3x4& matrix (vertex& left top front)))
-        (right/bottom/back (matrix+-transform-3x4& matrix (vertex& right bottom back)))
-        (right/bottom/front (matrix+-transform-3x4& matrix (vertex& right bottom front)))
-        (right/top/back (matrix+-transform-3x4& matrix (vertex& right top back)))
-        (right/top/front (matrix+-transform-3x4& matrix (vertex& right top front))))
+  (let ((left/bottom/back (matrix+-transform-3x4& matrix (vertex^ left bottom back)))
+        (left/bottom/front (matrix+-transform-3x4& matrix (vertex^ left bottom front)))
+        (left/top/back (matrix+-transform-3x4& matrix (vertex^ left top back)))
+        (left/top/front (matrix+-transform-3x4& matrix (vertex^ left top front)))
+        (right/bottom/back (matrix+-transform-3x4& matrix (vertex^ right bottom back)))
+        (right/bottom/front (matrix+-transform-3x4& matrix (vertex^ right bottom front)))
+        (right/top/back (matrix+-transform-3x4& matrix (vertex^ right top back)))
+        (right/top/front (matrix+-transform-3x4& matrix (vertex^ right top front))))
     (let ((top-quad (vector right/top/back left/top/back left/top/front right/top/front))
           (bottom-quad (vector right/bottom/front left/bottom/front left/bottom/back right/bottom/back))
           (front-quad (vector left/bottom/front right/bottom/front right/top/front left/top/front))
