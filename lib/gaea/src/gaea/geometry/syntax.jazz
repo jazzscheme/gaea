@@ -392,27 +392,11 @@
         form-src))))
 
 
-(syntax public vertex-norm&
-  (lambda (form-src usage-environment macro-environment)
-    (let ((rest (cdr (source-code form-src))))
-      (sourcify-deep-if
-        `(vertex-norm! (make-f64&) ,@rest)
-        form-src))))
-
-
 (syntax public vertex-norm^
   (lambda (form-src usage-environment macro-environment)
     (let ((rest (cdr (source-code form-src))))
       (sourcify-deep-if
         `(vertex-norm! (make-f64^) ,@rest)
-        form-src))))
-
-
-(syntax public vertex-normalize&
-  (lambda (form-src usage-environment macro-environment)
-    (let ((rest (cdr (source-code form-src))))
-      (sourcify-deep-if
-        `(vertex-normalize! (make-vertex&) ,@rest)
         form-src))))
 
 
@@ -424,14 +408,6 @@
         form-src))))
 
 
-(syntax public vertex-normalize-safe&
-  (lambda (form-src usage-environment macro-environment)
-    (let ((rest (cdr (source-code form-src))))
-      (sourcify-deep-if
-        `(vertex-normalize-safe! (make-vertex&) ,@rest)
-        form-src))))
-
-
 (syntax public vertex-normalize-safe^
   (lambda (form-src usage-environment macro-environment)
     (let ((rest (cdr (source-code form-src))))
@@ -440,27 +416,11 @@
         form-src))))
 
 
-(syntax public vertex-abs&
-  (lambda (form-src usage-environment macro-environment)
-    (let ((rest (cdr (source-code form-src))))
-      (sourcify-deep-if
-        `(vertex-abs! (make-vertex&) ,@rest)
-        form-src))))
-
-
 (syntax public vertex-abs^
   (lambda (form-src usage-environment macro-environment)
     (let ((rest (cdr (source-code form-src))))
       (sourcify-deep-if
         `(vertex-abs! (make-vertex^) ,@rest)
-        form-src))))
-
-
-(syntax public vertex-distance&
-  (lambda (form-src usage-environment macro-environment)
-    (let ((rest (cdr (source-code form-src))))
-      (sourcify-deep-if
-        `(vertex-distance! (make-f64&) ,@rest)
         form-src))))
 
 

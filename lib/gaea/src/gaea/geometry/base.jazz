@@ -238,27 +238,27 @@
 
 
 (definition public inline (vertex-normalize v <vertex>) <vertex>
-  (vertex-scalar* v (f64& (/ (vertex-norm& v)))))
+  (vertex-scalar* v (f64& (/ (vertex-norm^ v)))))
 
 
 (definition public inline (vertex-normalize! res <vertex> v <vertex>) <vertex>
-  (vertex-scalar*! res v (f64& (/ (vertex-norm& v)))))
+  (vertex-scalar*! res v (f64& (/ (vertex-norm^ v)))))
 
 
 ;; hack around an unsafe warning in generate-mesh that I do not understand
 (definition public (vertex-normalize-onsite! res <vertex> v <vertex>) <vertex>
-  (vertex-scalar*! res v (f64& (/ (vertex-norm& v)))))
+  (vertex-scalar*! res v (f64& (/ (vertex-norm^ v)))))
 
 
 (definition public inline (vertex-normalize-safe v <vertex>) <vertex>
-  (let ((norm (vertex-norm& v)))
+  (let ((norm (vertex-norm^ v)))
     (if (= norm 0.)
         v
       (vertex-scalar* v (/ norm)))))
 
 
 (definition public inline (vertex-normalize-safe! res <vertex> v <vertex>) <vertex>
-  (let ((norm (vertex-norm& v)))
+  (let ((norm (vertex-norm^ v)))
     (if (= norm 0.)
         (vertex-copy! res v)
       (vertex-scalar*! res v (f64& (/ norm)))))
@@ -281,5 +281,5 @@
 
 
 (definition public (validate-vertex-normalized vert)
-  (unless (float-near? (vertex-norm& vert) 1.)
+  (unless (float-near? (vertex-norm^ vert) 1.)
     (error "Vertex {s} is not normalized" vert))))

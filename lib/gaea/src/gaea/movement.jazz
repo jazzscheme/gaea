@@ -83,4 +83,4 @@
     (assert (not (vertex-zero? vec)))
     (vertex-copy! vector vec)
     (vertex-normalize-safe! normal vec)
-    (fl! length (f64-ref (vertex-norm& vec))))))
+    (fl! length (f64-ref (vertex-norm^ vec))))))

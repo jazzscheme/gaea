@@ -100,7 +100,7 @@
 
 
 (definition public inline (vertex-near? v1 <vertex> v2 <vertex>) <bool>
-  (< (vertex-distance& v1 v2) EPSILON))
+  (< (vertex-distance^ v1 v2) EPSILON))
 
 
 (definition public inline (vertex-near-zero? vert <vertex>) <bool>
@@ -254,7 +254,7 @@
 (definition public (polygon-radius center <vertex> vertices <vector>) <fl>
   (let ((radius (f64& -1.)))
     (loop (for vertex in-vector vertices)
-          (let ((dist (vertex-distance& center vertex)))
+          (let ((dist (vertex-distance^ center vertex)))
             (when (> dist radius)
               (f64-copy! radius dist))))
     (f64-ref radius)))
@@ -263,7 +263,7 @@
 (definition public (polygon-radius! res <f64> center <vertex> vertices <vector>) <f64>
   (let ((radius (f64& -1.)))
     (loop (for vertex in-vector vertices)
-          (let ((dist (vertex-distance& center vertex)))
+          (let ((dist (vertex-distance^ center vertex)))
             (when (> dist radius)
               (f64-copy! radius dist))))
     (f64-copy! res radius)
@@ -293,13 +293,13 @@
 
 
 (definition public (ray-point-horizontal-distance p <vertex> d <vertex> v <vertex>) <fl>
-  (let ((d (vertex-normalize& (vertex& (vertex-x d) 0. (vertex-z d))))
+  (let ((d (vertex-normalize^ (vertex& (vertex-x d) 0. (vertex-z d))))
         (v (vertex& (vertex-x v) (vertex-y p) (vertex-z v))))
     (ray-point-distance p d v)))
 
 
 (definition public (ray-point-horizontal-distance! res <f64> p <vertex> d <vertex> v <vertex>) <fv>
-  (let ((d (vertex-normalize& (vertex& (vertex-x d) 0. (vertex-z d))))
+  (let ((d (vertex-normalize^ (vertex& (vertex-x d) 0. (vertex-z d))))
         (v (vertex& (vertex-x v) (vertex-y p) (vertex-z v))))
     (ray-point-distance! res p d v)))
 
@@ -1249,9 +1249,9 @@
     (let ((new-right (cross-product& old-sight new-up)))
       (let ((new-sight (cross-product& new-up new-right)))
         (lookat! res
-                 (vertex-normalize& new-sight)
-                 (vertex-normalize& new-up)
-                 (vertex-normalize& new-right))))))
+                 (vertex-normalize^ new-sight)
+                 (vertex-normalize^ new-up)
+                 (vertex-normalize^ new-right))))))
 
 
 (definition public (realign-lookat-horizon! res <LookAt> lookat <LookAt> up <vertex> initial-gravity <vertex> final-gravity <vertex>) <LookAt>
@@ -1260,7 +1260,7 @@
       ;; calculate plane rotation
       (let ((angle (vector-angle (cross-normal& final-gravity new-right)
                                  (cross-normal& initial-gravity new-right))))
-        (let ((new-up (vertex-normalize& (rotate-vertex-upon& (- angle) new-right (cross-normal& new-right old-sight)))))
+        (let ((new-up (vertex-normalize^ (rotate-vertex-upon& (- angle) new-right (cross-normal& new-right old-sight)))))
           (lookat! res
                    (cross-normal& new-up new-right)
                    new-up
@@ -1269,8 +1269,8 @@
 
 (definition public (rotate-lookat-vertical! res <LookAt> lookat <LookAt> angle <fl>) <void>
   (let ((right (get-right lookat)))
-    (let ((sight (vertex-normalize& (rotate-vertex-upon& angle right (get-sight lookat)))))
-      (let ((up (vertex-normalize& (rotate-vertex-upon& angle right (get-up lookat)))))
+    (let ((sight (vertex-normalize^ (rotate-vertex-upon& angle right (get-sight lookat)))))
+      (let ((up (vertex-normalize^ (rotate-vertex-upon& angle right (get-up lookat)))))
         (lookat! res
                  sight
                  up
@@ -1290,8 +1290,8 @@
 
 
 (definition public (rotate-lookat! res <LookAt> lookat <LookAt> angle <fl> axis <vertex>) <LookAt>
-  (let ((sight (vertex-normalize& (rotate-vertex-upon& angle axis (get-sight lookat)))))
-    (let ((up (vertex-normalize& (rotate-vertex-upon& angle axis (get-up lookat)))))
+  (let ((sight (vertex-normalize^ (rotate-vertex-upon& angle axis (get-sight lookat)))))
+    (let ((up (vertex-normalize^ (rotate-vertex-upon& angle axis (get-up lookat)))))
       (let ((right (cross-normal& sight up)))
         (lookat! res
                  sight
@@ -1485,7 +1485,7 @@
 
 
 (definition public (gravity-up! res <vertex> gravity <vertex>) <vertex>
-  (vertex-scalar*! res (vertex-normalize& gravity) -1.))
+  (vertex-scalar*! res (vertex-normalize^ gravity) -1.))
 
 
 ;;;
@@ -1603,13 +1603,13 @@
 (definition public (closest-point-on-line-segment! res <vertex> a <vertex> b <vertex> p <vertex>) <bool>
   (let ((on-edge #t)
         (c (vertex-^ p a))
-        (v (vertex-normalize& (vertex-^ b a))))
+        (v (vertex-normalize^ (vertex-^ b a))))
     (let ((t (dot-product& v c)))
       (if (< t 0.)
           (begin
             (vertex-copy! res a)
             (not on-edge))
-        (let ((d (vertex-distance& b a)))
+        (let ((d (vertex-distance^ b a)))
           (if (> t d)
               (begin
                 (vertex-copy! res b)
@@ -1624,9 +1624,9 @@
 
 (definition public (closest-point-on-line! res <vertex> a <vertex> b <vertex> p <vertex>) <vertex>
   (let ((c (vertex-^ p a))
-        (v (vertex-normalize& (vertex-^ b a))))
+        (v (vertex-normalize^ (vertex-^ b a))))
     (let ((t (dot-product& v c))
-          (d (vertex-distance& b a)))
+          (d (vertex-distance^ b a)))
       (vertex+! res a (vertex-scalar*^ v t))))
   res)
 
