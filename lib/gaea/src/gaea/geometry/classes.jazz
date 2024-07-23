@@ -71,7 +71,11 @@
 
 
 (definition public inline (make-nan-vertex) <vertex>
-  (f64vector +nan.0 +nan.0 +nan.0))
+  (cond-expand
+    (finite
+     (f64vector 1e308 1e308 1e308))
+    (else
+     (f64vector +nan.0 +nan.0 +nan.0))))
 
 
 (definition public (copy-vertex vert <vertex>) <vertex>
