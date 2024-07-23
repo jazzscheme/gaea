@@ -91,11 +91,11 @@
 
 
 (definition public inline (vertex-distance v1 <vertex> v2 <vertex>) <fl>
-  (vertex-norm (vertex-& v2 v1)))
+  (vertex-norm (vertex-^ v2 v1)))
 
 
 (definition public inline (vertex-distance! res <f64> v1 <vertex> v2 <vertex>) <f64>
-  (vertex-norm! res (vertex-& v2 v1))
+  (vertex-norm! res (vertex-^ v2 v1))
   res)
 
 
@@ -170,8 +170,8 @@
 
 (definition public (plane-normal! res <vertex> v1 <vertex> v2 <vertex> v3 <vertex>) <vertex>
   (cross-normal! res
-                 (vertex-& v2 v1)
-                 (vertex-& v3 v1)))
+                 (vertex-^ v2 v1)
+                 (vertex-^ v3 v1)))
 
 
 (definition public (plane-normal-safe v1 <vertex> v2 <vertex> v3 <vertex>) <vertex>
@@ -180,8 +180,8 @@
 
 (definition public (plane-normal-safe! res <vertex> v1 <vertex> v2 <vertex> v3 <vertex>) <vertex>
   (cross-normal-safe! res
-                      (vertex-& v2 v1)
-                      (vertex-& v3 v1)))
+                      (vertex-^ v2 v1)
+                      (vertex-^ v3 v1)))
 
 
 ;; this function suffers from several drawbacks vs its signed equivalent
@@ -280,16 +280,16 @@
   (let ((new-origin (matrix-transform-3x4& matrix origin))
         (new-dest (matrix-transform-3x4& matrix (vertex+^ origin dir))))
     (vertex-copy! (values-ref values 0) new-origin)
-    (vertex-normalize! (values-ref values 1) (vertex-& new-dest new-origin))
+    (vertex-normalize! (values-ref values 1) (vertex-^ new-dest new-origin))
     values))
 
 
 (definition public (ray-point-distance p <vertex> d <vertex> vert <vertex>) <fl>
-  (vertex-norm (cross-product& d (vertex-& vert p))))
+  (vertex-norm (cross-product& d (vertex-^ vert p))))
 
 
 (definition public (ray-point-distance! res <f64> p <vertex> d <vertex> vert <vertex>) <f64>
-  (vertex-norm! res (cross-product& d (vertex-& vert p))))
+  (vertex-norm! res (cross-product& d (vertex-^ vert p))))
 
 
 (definition public (ray-point-horizontal-distance p <vertex> d <vertex> v <vertex>) <fl>
@@ -309,14 +309,14 @@
 
 
 (definition public (ray-triangle-distance! res <f64> p <vertex> d <vertex> v0 <vertex> v1 <vertex> v2 <vertex>) <f64>
-  (let ((e1 (vertex-& v1 v0))
-        (e2 (vertex-& v2 v0)))
+  (let ((e1 (vertex-^ v1 v0))
+        (e2 (vertex-^ v2 v0)))
     (let ((h (cross-product& d e2)))
       (let ((a (dot-product& e1 h)))
         (if (and (> a -0.00001) (< a 0.00001))
             (f64-set! res -1.)
           (let ((f (f64& (/ 1. a)))
-                (s (vertex-& p v0)))
+                (s (vertex-^ p v0)))
             (let ((b (dot-product& s h)))
               (let ((u (f64& (* f b))))
                 (if (or (< u 0.0) (> u 1.0))
@@ -345,7 +345,7 @@
 
 
 (definition public (ray-intersects-sphere? p <vertex> d <vertex> s <vertex> r <fv>) <bool>
-  (let ((t (vertex-& p s)))
+  (let ((t (vertex-^ p s)))
     (let ((i (dot-product& t d)))
       (let ((b (f64& (- i))))
         (let ((j (dot-product& t t)))
@@ -1360,7 +1360,7 @@
 
 (definition public (remove-pitch dir <vertex> lookat <LookAt>) <vertex>
   (let ((sight (get-sight lookat)))
-    (vertex-normalize (vertex-& dir (vertex-scalar*& sight (dot-product& sight dir))))))
+    (vertex-normalize (vertex-^ dir (vertex-scalar*& sight (dot-product& sight dir))))))
 
 
 (definition public (remove-up-pitch dir <LookAt> lookat <LookAt>) <LookAt>
@@ -1400,7 +1400,7 @@
 
 (definition public (remove-roll dir <vertex> lookat <LookAt>) <vertex>
   (let ((right (get-right lookat)))
-    (vertex-normalize (vertex-& dir (vertex-scalar*& right (dot-product& right dir))))))
+    (vertex-normalize (vertex-^ dir (vertex-scalar*& right (dot-product& right dir))))))
 
 
 (definition public (remove-up-roll dir <LookAt> lookat <LookAt>) <LookAt>
@@ -1523,7 +1523,7 @@
   (let ((origin (get-origin mvt))
         (vector (get-vector mvt)))
     (let ((new-origin (matrix-transform-3x4& matrix origin)))
-      (let ((new-vector (vertex-& (matrix-transform-3x4& matrix (vertex+^ vector origin)) new-origin)))
+      (let ((new-vector (vertex-^ (matrix-transform-3x4& matrix (vertex+^ vector origin)) new-origin)))
         (new Movement new-origin new-vector)))))
 
 
@@ -1531,7 +1531,7 @@
   (let ((origin (get-origin mvt))
         (vector (get-vector mvt)))
     (let ((new-origin (matrix-transform-3x4& matrix origin)))
-      (let ((new-vector (vertex-& (matrix-transform-3x4& matrix (vertex+^ vector origin)) new-origin)))
+      (let ((new-vector (vertex-^ (matrix-transform-3x4& matrix (vertex+^ vector origin)) new-origin)))
         (set-origin mvt new-origin)
         (set-vector mvt new-vector)))))
 
@@ -1556,7 +1556,7 @@
 
 
 (definition public (plane-to-point-distance& plane <Plane> point <vertex>) <fv>
-  (dot-product& (get-normal plane) (vertex-& point (get-origin plane))))
+  (dot-product& (get-normal plane) (vertex-^ point (get-origin plane))))
 
 
 (definition public (intersect-plane plane <Plane> r <Movement>) <values>
@@ -1602,8 +1602,8 @@
 
 (definition public (closest-point-on-line-segment! res <vertex> a <vertex> b <vertex> p <vertex>) <bool>
   (let ((on-edge #t)
-        (c (vertex-& p a))
-        (v (vertex-normalize& (vertex-& b a))))
+        (c (vertex-^ p a))
+        (v (vertex-normalize& (vertex-^ b a))))
     (let ((t (dot-product& v c)))
       (if (< t 0.)
           (begin
@@ -1623,8 +1623,8 @@
 
 
 (definition public (closest-point-on-line! res <vertex> a <vertex> b <vertex> p <vertex>) <vertex>
-  (let ((c (vertex-& p a))
-        (v (vertex-normalize& (vertex-& b a))))
+  (let ((c (vertex-^ p a))
+        (v (vertex-normalize& (vertex-^ b a))))
     (let ((t (dot-product& v c))
           (d (vertex-distance& b a)))
       (vertex+! res a (vertex-scalar*& v t))))
