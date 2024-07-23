@@ -272,13 +272,13 @@
 
 (definition public (transform-ray origin <vertex> dir <vertex> matrix <matrix>) <values>
   (let ((new-origin (matrix-transform-3x4 matrix origin))
-        (new-dest (matrix-transform-3x4& matrix (vertex+& origin dir))))
+        (new-dest (matrix-transform-3x4& matrix (vertex+^ origin dir))))
     (values new-origin (vertex- new-dest new-origin))))
 
 
 (definition public (transform-ray! values <values> origin <vertex> dir <vertex> matrix <matrix>) <values>
   (let ((new-origin (matrix-transform-3x4& matrix origin))
-        (new-dest (matrix-transform-3x4& matrix (vertex+& origin dir))))
+        (new-dest (matrix-transform-3x4& matrix (vertex+^ origin dir))))
     (vertex-copy! (values-ref values 0) new-origin)
     (vertex-normalize! (values-ref values 1) (vertex-& new-dest new-origin))
     values))
@@ -1523,7 +1523,7 @@
   (let ((origin (get-origin mvt))
         (vector (get-vector mvt)))
     (let ((new-origin (matrix-transform-3x4& matrix origin)))
-      (let ((new-vector (vertex-& (matrix-transform-3x4& matrix (vertex+& vector origin)) new-origin)))
+      (let ((new-vector (vertex-& (matrix-transform-3x4& matrix (vertex+^ vector origin)) new-origin)))
         (new Movement new-origin new-vector)))))
 
 
@@ -1531,7 +1531,7 @@
   (let ((origin (get-origin mvt))
         (vector (get-vector mvt)))
     (let ((new-origin (matrix-transform-3x4& matrix origin)))
-      (let ((new-vector (vertex-& (matrix-transform-3x4& matrix (vertex+& vector origin)) new-origin)))
+      (let ((new-vector (vertex-& (matrix-transform-3x4& matrix (vertex+^ vector origin)) new-origin)))
         (set-origin mvt new-origin)
         (set-vector mvt new-vector)))))
 
