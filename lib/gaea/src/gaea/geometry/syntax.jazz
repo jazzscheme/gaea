@@ -1020,14 +1020,6 @@
         form-src))))
 
 
-(syntax public make-euler-matrix&
-  (lambda (form-src usage-environment macro-environment)
-    (let ((rest (cdr (source-code form-src))))
-      (sourcify-deep-if
-        `(make-euler-matrix! (make-matrix&) ,@rest)
-        form-src))))
-
-
 (syntax public make-euler-matrix^
   (lambda (form-src usage-environment macro-environment)
     (let ((rest (cdr (source-code form-src))))
@@ -1036,27 +1028,11 @@
         form-src))))
 
 
-(syntax public make-quaternion-matrix&
-  (lambda (form-src usage-environment macro-environment)
-    (let ((rest (cdr (source-code form-src))))
-      (sourcify-deep-if
-        `(make-quaternion-matrix! (make-matrix&) ,@rest)
-        form-src))))
-
-
 (syntax public make-quaternion-matrix^
   (lambda (form-src usage-environment macro-environment)
     (let ((rest (cdr (source-code form-src))))
       (sourcify-deep-if
         `(make-quaternion-matrix! (make-matrix^) ,@rest)
-        form-src))))
-
-
-(syntax public make-scaling-matrix&
-  (lambda (form-src usage-environment macro-environment)
-    (let ((rest (cdr (source-code form-src))))
-      (sourcify-deep-if
-        `(make-scaling-matrix! (make-matrix&) ,@rest)
         form-src))))
 
 
@@ -1081,14 +1057,6 @@
     (let ((rest (cdr (source-code form-src))))
       (sourcify-deep-if
         `(make-lookat-matrix! (make-matrix^) ,@rest)
-        form-src))))
-
-
-(syntax public make-inverse-lookat-matrix&
-  (lambda (form-src usage-environment macro-environment)
-    (let ((rest (cdr (source-code form-src))))
-      (sourcify-deep-if
-        `(make-inverse-lookat-matrix! (make-matrix&) ,@rest)
         form-src))))
 
 

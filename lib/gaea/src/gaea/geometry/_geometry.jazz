@@ -1023,13 +1023,13 @@
 
 (definition public (sphere-matrices! sphere-matrix <matrix> inverse-matrix <matrix> origin <vertex> lookat <LookAt> radiuses <vertex>) <void>
   (matrix-multiply! sphere-matrix
-                    (make-scaling-matrix& (vertex-inverse^ radiuses))
-                    (make-inverse-lookat-matrix& lookat)
+                    (make-scaling-matrix^ (vertex-inverse^ radiuses))
+                    (make-inverse-lookat-matrix^ lookat)
                     (make-translation-matrix& (vertex-negate^ origin)))
   (matrix-multiply! inverse-matrix
                     (make-translation-matrix& origin)
-                    (make-lookat-matrix& lookat)
-                    (make-scaling-matrix& radiuses)))
+                    (make-lookat-matrix^ lookat)
+                    (make-scaling-matrix^ radiuses)))
 
 
 (definition public (make-perspective-matrix fov <fl> ratio <fl> near <fl> far <fl>) <matrix>
