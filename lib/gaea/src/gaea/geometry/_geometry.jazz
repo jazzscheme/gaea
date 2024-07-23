@@ -679,7 +679,7 @@
                          ;; optimizes a copy
                          (if (null? (cdr others))
                              (car others)
-                           (matrix-multiply*& others))))))
+                           (matrix-multiply*^ others))))))
 
 
 (definition public (matrix-multiply2! res <matrix> a <matrix> b <matrix>) <matrix>
