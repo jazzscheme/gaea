@@ -956,27 +956,11 @@
         form-src))))
 
 
-(syntax public make-rotation-matrix&
-  (lambda (form-src usage-environment macro-environment)
-    (let ((rest (cdr (source-code form-src))))
-      (sourcify-deep-if
-        `(make-rotation-matrix! (make-matrix&) ,@rest)
-        form-src))))
-
-
 (syntax public make-rotation-matrix^
   (lambda (form-src usage-environment macro-environment)
     (let ((rest (cdr (source-code form-src))))
       (sourcify-deep-if
         `(make-rotation-matrix! (make-matrix^) ,@rest)
-        form-src))))
-
-
-(syntax public make-x-rotation-matrix&
-  (lambda (form-src usage-environment macro-environment)
-    (let ((rest (cdr (source-code form-src))))
-      (sourcify-deep-if
-        `(make-x-rotation-matrix! (make-matrix&) ,@rest)
         form-src))))
 
 
@@ -988,27 +972,11 @@
         form-src))))
 
 
-(syntax public make-y-rotation-matrix&
-  (lambda (form-src usage-environment macro-environment)
-    (let ((rest (cdr (source-code form-src))))
-      (sourcify-deep-if
-        `(make-y-rotation-matrix! (make-matrix&) ,@rest)
-        form-src))))
-
-
 (syntax public make-y-rotation-matrix^
   (lambda (form-src usage-environment macro-environment)
     (let ((rest (cdr (source-code form-src))))
       (sourcify-deep-if
         `(make-y-rotation-matrix! (make-matrix^) ,@rest)
-        form-src))))
-
-
-(syntax public make-z-rotation-matrix&
-  (lambda (form-src usage-environment macro-environment)
-    (let ((rest (cdr (source-code form-src))))
-      (sourcify-deep-if
-        `(make-z-rotation-matrix! (make-matrix&) ,@rest)
         form-src))))
 
 

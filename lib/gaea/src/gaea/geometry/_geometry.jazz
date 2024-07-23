@@ -889,9 +889,9 @@
 
 (definition public (make-euler-matrix! res <matrix> r <vertex>) <matrix>
   (matrix-multiply! res
-                    (make-x-rotation-matrix& (vertex-x r))
-                    (make-y-rotation-matrix& (vertex-y r))
-                    (make-z-rotation-matrix& (vertex-z r))))
+                    (make-x-rotation-matrix^ (vertex-x r))
+                    (make-y-rotation-matrix^ (vertex-y r))
+                    (make-z-rotation-matrix^ (vertex-z r))))
 
 
 (definition public (make-rotation-matrix axis <vertex> angle <fl>) <matrix>
@@ -1025,9 +1025,9 @@
   (matrix-multiply! sphere-matrix
                     (make-scaling-matrix^ (vertex-inverse^ radiuses))
                     (make-inverse-lookat-matrix^ lookat)
-                    (make-translation-matrix& (vertex-negate^ origin)))
+                    (make-translation-matrix^ (vertex-negate^ origin)))
   (matrix-multiply! inverse-matrix
-                    (make-translation-matrix& origin)
+                    (make-translation-matrix^ origin)
                     (make-lookat-matrix^ lookat)
                     (make-scaling-matrix^ radiuses)))
 
