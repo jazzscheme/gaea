@@ -587,27 +587,11 @@
         form-src))))
 
 
-(syntax public direction-lookat&
-  (lambda (form-src usage-environment macro-environment)
-    (let ((rest (cdr (source-code form-src))))
-      (sourcify-deep-if
-        `(direction-lookat! (make-lookat&) ,@rest)
-        form-src))))
-
-
 (syntax public direction-lookat^
   (lambda (form-src usage-environment macro-environment)
     (let ((rest (cdr (source-code form-src))))
       (sourcify-deep-if
         `(direction-lookat! (make-lookat^) ,@rest)
-        form-src))))
-
-
-(syntax public horizon-lookat&
-  (lambda (form-src usage-environment macro-environment)
-    (let ((rest (cdr (source-code form-src))))
-      (sourcify-deep-if
-        `(horizon-lookat! (make-lookat&) ,@rest)
         form-src))))
 
 
@@ -619,27 +603,11 @@
         form-src))))
 
 
-(syntax public realign-lookat&
-  (lambda (form-src usage-environment macro-environment)
-    (let ((rest (cdr (source-code form-src))))
-      (sourcify-deep-if
-        `(realign-lookat! (make-lookat&) ,@rest)
-        form-src))))
-
-
 (syntax public realign-lookat^
   (lambda (form-src usage-environment macro-environment)
     (let ((rest (cdr (source-code form-src))))
       (sourcify-deep-if
         `(realign-lookat! (make-lookat^) ,@rest)
-        form-src))))
-
-
-(syntax public realign-lookat-horizon&
-  (lambda (form-src usage-environment macro-environment)
-    (let ((rest (cdr (source-code form-src))))
-      (sourcify-deep-if
-        `(realign-lookat-horizon! (make-lookat&) ,@rest)
         form-src))))
 
 
@@ -651,14 +619,6 @@
         form-src))))
 
 
-(syntax public rotate-lookat&
-  (lambda (form-src usage-environment macro-environment)
-    (let ((rest (cdr (source-code form-src))))
-      (sourcify-deep-if
-        `(rotate-lookat! (make-lookat&) ,@rest)
-        form-src))))
-
-
 (syntax public rotate-lookat^
   (lambda (form-src usage-environment macro-environment)
     (let ((rest (cdr (source-code form-src))))
@@ -667,27 +627,11 @@
         form-src))))
 
 
-(syntax public rotate-lookat-vertical&
-  (lambda (form-src usage-environment macro-environment)
-    (let ((rest (cdr (source-code form-src))))
-      (sourcify-deep-if
-        `(rotate-lookat-vertical! (make-lookat&) ,@rest)
-        form-src))))
-
-
 (syntax public rotate-lookat-vertical^
   (lambda (form-src usage-environment macro-environment)
     (let ((rest (cdr (source-code form-src))))
       (sourcify-deep-if
         `(rotate-lookat-vertical! (make-lookat^) ,@rest)
-        form-src))))
-
-
-(syntax public rotate-lookat-vertical-up&
-  (lambda (form-src usage-environment macro-environment)
-    (let ((rest (cdr (source-code form-src))))
-      (sourcify-deep-if
-        `(rotate-lookat-vertical-up! (make-lookat&) ,@rest)
         form-src))))
 
 
