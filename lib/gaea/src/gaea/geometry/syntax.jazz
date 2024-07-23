@@ -440,6 +440,14 @@
         form-src))))
 
 
+(syntax public dot-product&
+  (lambda (form-src usage-environment macro-environment)
+    (let ((rest (cdr (source-code form-src))))
+      (sourcify-deep-if
+        `(dot-product! (make-f64&) ,@rest)
+        form-src))))
+
+
 (syntax public dot-product^
   (lambda (form-src usage-environment macro-environment)
     (let ((rest (cdr (source-code form-src))))
@@ -472,27 +480,11 @@
         form-src))))
 
 
-(syntax public plane-normal&
-  (lambda (form-src usage-environment macro-environment)
-    (let ((rest (cdr (source-code form-src))))
-      (sourcify-deep-if
-        `(plane-normal! (make-vertex&) ,@rest)
-        form-src))))
-
-
 (syntax public plane-normal^
   (lambda (form-src usage-environment macro-environment)
     (let ((rest (cdr (source-code form-src))))
       (sourcify-deep-if
         `(plane-normal! (make-vertex^) ,@rest)
-        form-src))))
-
-
-(syntax public polygon-normal&
-  (lambda (form-src usage-environment macro-environment)
-    (let ((rest (cdr (source-code form-src))))
-      (sourcify-deep-if
-        `(polygon-normal! (make-vertex&) ,@rest)
         form-src))))
 
 
@@ -504,14 +496,6 @@
         form-src))))
 
 
-(syntax public polygon-radius&
-  (lambda (form-src usage-environment macro-environment)
-    (let ((rest (cdr (source-code form-src))))
-      (sourcify-deep-if
-        `(polygon-radius! (make-f64&) ,@rest)
-        form-src))))
-
-
 (syntax public polygon-radius^
   (lambda (form-src usage-environment macro-environment)
     (let ((rest (cdr (source-code form-src))))
@@ -520,27 +504,11 @@
         form-src))))
 
 
-(syntax public center-of-mass&
-  (lambda (form-src usage-environment macro-environment)
-    (let ((rest (cdr (source-code form-src))))
-      (sourcify-deep-if
-        `(center-of-mass! (make-vertex&) ,@rest)
-        form-src))))
-
-
 (syntax public center-of-mass^
   (lambda (form-src usage-environment macro-environment)
     (let ((rest (cdr (source-code form-src))))
       (sourcify-deep-if
         `(center-of-mass! (make-vertex^) ,@rest)
-        form-src))))
-
-
-(syntax public roll-free-up&
-  (lambda (form-src usage-environment macro-environment)
-    (let ((rest (cdr (source-code form-src))))
-      (sourcify-deep-if
-        `(roll-free-up! (make-vertex&) ,@rest)
         form-src))))
 
 
