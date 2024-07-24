@@ -130,26 +130,11 @@
       form-src)))
 
 
-(syntax public make-box^
-  (lambda (form-src usage-environment macro-environment)
-    (sourcify-deep-if
-      `(stack <box>)
-      form-src)))
-
-
 (syntax public box&
   (lambda (form-src usage-environment macro-environment)
     (let ((rest (cdr (source-code form-src))))
       (sourcify-deep-if
         `(box! (make-box&) ,@rest)
-        form-src))))
-
-
-(syntax public box^
-  (lambda (form-src usage-environment macro-environment)
-    (let ((rest (cdr (source-code form-src))))
-      (sourcify-deep-if
-        `(box! (make-box^) ,@rest)
         form-src))))
 
 
