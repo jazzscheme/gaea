@@ -505,14 +505,6 @@
         form-src))))
 
 
-(syntax public pop-vertex&
-  (lambda (form-src usage-environment macro-environment)
-    (let ((rest (cdr (source-code form-src))))
-      (sourcify-deep-if
-        `(pop-vertex! (make-vertex&) ,@rest)
-        form-src))))
-
-
 (syntax public pop-vertex^
   (lambda (form-src usage-environment macro-environment)
     (let ((rest (cdr (source-code form-src))))
@@ -553,14 +545,6 @@
     (let ((rest (cdr (source-code form-src))))
       (sourcify-deep-if
         `(lookat! (make-lookat^) ,@rest)
-        form-src))))
-
-
-(syntax public lookat-copy&
-  (lambda (form-src usage-environment macro-environment)
-    (let ((rest (cdr (source-code form-src))))
-      (sourcify-deep-if
-        `(lookat-copy! (make-lookat&) ,@rest)
         form-src))))
 
 
@@ -625,14 +609,6 @@
     (let ((rest (cdr (source-code form-src))))
       (sourcify-deep-if
         `(rotate-lookat-vertical-up! (make-lookat^) ,@rest)
-        form-src))))
-
-
-(syntax public pop-lookat&
-  (lambda (form-src usage-environment macro-environment)
-    (let ((rest (cdr (source-code form-src))))
-      (sourcify-deep-if
-        `(pop-lookat! (make-lookat&) ,@rest)
         form-src))))
 
 
