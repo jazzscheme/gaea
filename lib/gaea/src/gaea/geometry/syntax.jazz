@@ -978,26 +978,11 @@
 ;;;
 
 
-(syntax public make-dye&
-  (lambda (form-src usage-environment macro-environment)
-    (sourcify-deep-if
-      `(static (make-dye))
-      form-src)))
-
-
 (syntax public make-dye^
   (lambda (form-src usage-environment macro-environment)
     (sourcify-deep-if
       `(stack <dye>)
       form-src)))
-
-
-(syntax public dye&
-  (lambda (form-src usage-environment macro-environment)
-    (let ((rest (cdr (source-code form-src))))
-      (sourcify-deep-if
-        `(dye! (make-dye&) ,@rest)
-        form-src))))
 
 
 (syntax public dye^
