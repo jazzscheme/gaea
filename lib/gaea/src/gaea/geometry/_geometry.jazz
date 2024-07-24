@@ -1448,14 +1448,14 @@
 
 
 (definition public (make-parallelepiped matrix <matrix+> left <fl> right <fl> bottom <fl> top <fl> back <fl> front <fl>) <Parallelepiped>
-  (let ((left/bottom/back (matrix+-transform-3x4& matrix (vertex^ left bottom back)))
-        (left/bottom/front (matrix+-transform-3x4& matrix (vertex^ left bottom front)))
-        (left/top/back (matrix+-transform-3x4& matrix (vertex^ left top back)))
-        (left/top/front (matrix+-transform-3x4& matrix (vertex^ left top front)))
-        (right/bottom/back (matrix+-transform-3x4& matrix (vertex^ right bottom back)))
-        (right/bottom/front (matrix+-transform-3x4& matrix (vertex^ right bottom front)))
-        (right/top/back (matrix+-transform-3x4& matrix (vertex^ right top back)))
-        (right/top/front (matrix+-transform-3x4& matrix (vertex^ right top front))))
+  (let ((left/bottom/back (matrix+-transform-3x4 matrix (vertex^ left bottom back)))
+        (left/bottom/front (matrix+-transform-3x4 matrix (vertex^ left bottom front)))
+        (left/top/back (matrix+-transform-3x4 matrix (vertex^ left top back)))
+        (left/top/front (matrix+-transform-3x4 matrix (vertex^ left top front)))
+        (right/bottom/back (matrix+-transform-3x4 matrix (vertex^ right bottom back)))
+        (right/bottom/front (matrix+-transform-3x4 matrix (vertex^ right bottom front)))
+        (right/top/back (matrix+-transform-3x4 matrix (vertex^ right top back)))
+        (right/top/front (matrix+-transform-3x4 matrix (vertex^ right top front))))
     (let ((top-quad (vector right/top/back left/top/back left/top/front right/top/front))
           (bottom-quad (vector right/bottom/front left/bottom/front left/bottom/back right/bottom/back))
           (front-quad (vector left/bottom/front right/bottom/front right/top/front left/top/front))
