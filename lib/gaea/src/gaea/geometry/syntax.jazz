@@ -749,14 +749,6 @@
       form-src)))
 
 
-(syntax public make-identity-matrix&
-  (lambda (form-src usage-environment macro-environment)
-    (let ((rest (cdr (source-code form-src))))
-      (sourcify-deep-if
-        `(make-identity-matrix! (make-matrix&) ,@rest)
-        form-src))))
-
-
 (syntax public make-identity-matrix^
   (lambda (form-src usage-environment macro-environment)
     (let ((rest (cdr (source-code form-src))))
@@ -765,27 +757,11 @@
         form-src))))
 
 
-(syntax public matrix-multiply&
-  (lambda (form-src usage-environment macro-environment)
-    (let ((rest (cdr (source-code form-src))))
-      (sourcify-deep-if
-        `(matrix-multiply! (make-matrix&) ,@rest)
-        form-src))))
-
-
 (syntax public matrix-multiply^
   (lambda (form-src usage-environment macro-environment)
     (let ((rest (cdr (source-code form-src))))
       (sourcify-deep-if
         `(matrix-multiply! (make-matrix^) ,@rest)
-        form-src))))
-
-
-(syntax public matrix-multiply*&
-  (lambda (form-src usage-environment macro-environment)
-    (let ((matrices (cadr (source-code form-src))))
-      (sourcify-deep-if
-        `(matrix-multiply*! (make-matrix&) ,matrices)
         form-src))))
 
 
