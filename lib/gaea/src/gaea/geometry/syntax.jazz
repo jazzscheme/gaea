@@ -700,13 +700,6 @@
 ;;;
 
 
-(syntax public make-cuboid&
-  (lambda (form-src usage-environment macro-environment)
-    (sourcify-deep-if
-      `(static (make-cuboid))
-      form-src)))
-
-
 (syntax public make-cuboid^
   (lambda (form-src usage-environment macro-environment)
     (sourcify-deep-if
