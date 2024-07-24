@@ -1053,29 +1053,18 @@
 ;;;
 
 
-(syntax public make-movement&
-  (lambda (form-src usage-environment macro-environment)
-    (let ((origin (cadr (source-code form-src)))
-          (vector (caddr (source-code form-src)))
-          (mvt (generate-symbol "mvt")))
-      (sourcify-deep-if
-        `(let ((,mvt (static (new Movement (vertex 0. 0. 0.) (vertex 0. 0. 1.)))))
-           (set-origin ,mvt ,origin)
-           (set-vector ,mvt ,vector)
-           ,mvt)
-        form-src))))
-
-
 (syntax public make-movement^
   (lambda (form-src usage-environment macro-environment)
-    (let ((origin (cadr (source-code form-src)))
-          (vector (caddr (source-code form-src)))
-          (mvt (generate-symbol "mvt")))
+    (sourcify-deep-if
+      `(stack <Movement> Movement (make-vertex^) (make-vertex^) (make-vertex^) (make-fl^))
+      form-src)))
+
+
+(syntax public movement^
+  (lambda (form-src usage-environment macro-environment)
+    (let ((rest (cdr (source-code form-src))))
       (sourcify-deep-if
-        `(let ((,mvt (stack <Movement> Movement (make-vertex^) (make-vertex^) (make-vertex^) (make-fl^))))
-           (set-origin ,mvt ,origin)
-           (set-vector ,mvt ,vector)
-           ,mvt)
+        `(movement! (make-movement^) ,@rest)
         form-src))))
 
 
@@ -1092,6 +1081,14 @@
     (let ((rest (cdr (source-code form-src))))
       (sourcify-deep-if
         `(movement-end-to! (make-vertex^) ,@rest)
+        form-src))))
+
+
+(syntax public collide-movement^
+  (lambda (form-src usage-environment macro-environment)
+    (let ((rest (cdr (source-code form-src))))
+      (sourcify-deep-if
+        `(collide-movement! (make-movement^) ,@rest)
         form-src))))
 
 
