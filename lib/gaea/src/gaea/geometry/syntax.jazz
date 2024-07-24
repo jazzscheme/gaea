@@ -1137,6 +1137,14 @@
         form-src))))
 
 
+(syntax public plane-to-point-distance^
+  (lambda (form-src usage-environment macro-environment)
+    (let ((rest (cdr (source-code form-src))))
+      (sourcify-deep-if
+        `(plane-to-point-distance! (make-f64^) ,@rest)
+        form-src))))
+
+
 ;;;
 ;;;; Polygon
 ;;;

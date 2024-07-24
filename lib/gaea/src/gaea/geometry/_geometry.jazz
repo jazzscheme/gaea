@@ -1549,8 +1549,8 @@
       (matrix-transform-normal& inverse-matrix normal))))
 
 
-(definition public (plane-to-point-distance& plane <Plane> point <vertex>) <fv>
-  (dot-product& (get-normal plane) (vertex-^ point (get-origin plane))))
+(definition public (plane-to-point-distance! res <f64> plane <Plane> point <vertex>) <fv>
+  (dot-product! res (get-normal plane) (vertex-^ point (get-origin plane))))
 
 
 (definition public (intersect-plane plane <Plane> r <Movement>) <values>
@@ -1578,7 +1578,7 @@
 
 
 (definition public (plane-closest! res <vertex> plane <Plane> point <vertex>) <vertex>
-  (let ((t (plane-to-point-distance& plane point)))
+  (let ((t (plane-to-point-distance^ plane point)))
     (vertex-! res point (vertex-scalar*^ (get-normal plane) t)))
   res)
 
