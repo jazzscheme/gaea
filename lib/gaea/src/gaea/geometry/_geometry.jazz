@@ -108,9 +108,9 @@
 
 
 (definition public (vertex-64->32 vert)
-  (let ((x (f32& (vertex-x vert)))
-        (y (f32& (vertex-y vert)))
-        (z (f32& (vertex-z vert))))
+  (let ((x (f32^ (vertex-x vert)))
+        (y (f32^ (vertex-y vert)))
+        (z (f32^ (vertex-z vert))))
     (vertex (f32-ref x)
             (f32-ref y)
             (f32-ref z))))
