@@ -252,7 +252,7 @@
 
 
 (definition public (polygon-radius center <vertex> vertices <vector>) <fl>
-  (let ((radius (f64& -1.)))
+  (let ((radius (f64^ -1.)))
     (loop (for vertex in-vector vertices)
           (let ((dist (vertex-distance^ center vertex)))
             (when (> dist radius)
@@ -261,7 +261,7 @@
 
 
 (definition public (polygon-radius! res <f64> center <vertex> vertices <vector>) <f64>
-  (let ((radius (f64& -1.)))
+  (let ((radius (f64^ -1.)))
     (loop (for vertex in-vector vertices)
           (let ((dist (vertex-distance^ center vertex)))
             (when (> dist radius)
@@ -305,7 +305,7 @@
 
 
 (definition public (ray-triangle-distance p <vertex> d <vertex> v0 <vertex> v1 <vertex> v2 <vertex>) <fl>
-  (f64-ref (ray-triangle-distance! (make-f64&) p d v0 v1 v2)))
+  (f64-ref (ray-triangle-distance! (make-f64^) p d v0 v1 v2)))
 
 
 (definition public (ray-triangle-distance! res <f64> p <vertex> d <vertex> v0 <vertex> v1 <vertex> v2 <vertex>) <f64>
@@ -315,21 +315,21 @@
       (let ((a (dot-product^ e1 h)))
         (if (and (> a -0.00001) (< a 0.00001))
             (f64-set! res -1.)
-          (let ((f (f64& (/ 1. a)))
+          (let ((f (f64^ (/ 1. a)))
                 (s (vertex-^ p v0)))
             (let ((b (dot-product^ s h)))
-              (let ((u (f64& (* f b))))
+              (let ((u (f64^ (* f b))))
                 (if (or (< u 0.0) (> u 1.0))
                     (f64-set! res -1.)
                   (let ((q (cross-product^ s e1)))
                     (let ((c (dot-product^ d q)))
-                      (let ((v (f64& (* f c))))
+                      (let ((v (f64^ (* f c))))
                         (if (or (< v 0.0) (> (+ u v) 1.0))
                             (f64-set! res -1.)
                           ;; at this stage we can compute t to find out where
                           ;; the intersection point is on the line
                           (let ((d (dot-product^ e2 q)))
-                            (let ((t (f64& (* f d))))
+                            (let ((t (f64^ (* f d))))
                               (if (> t 0.00001) ;; ray intersection
                                   (f64-set! res t)
                                 ;; this means that there is a line intersection
@@ -339,7 +339,7 @@
 
 
 (definition public (ray-intersects-triangle? p <vertex> d <vertex> v0 <vertex> v1 <vertex> v2 <vertex>) <bool>
-  (let ((dist (make-f64&)))
+  (let ((dist (make-f64^)))
     (ray-triangle-distance! dist p d v0 v1 v2)
     (/= dist -1.)))
 
@@ -347,9 +347,9 @@
 (definition public (ray-intersects-sphere? p <vertex> d <vertex> s <vertex> r <fv>) <bool>
   (let ((t (vertex-^ p s)))
     (let ((i (dot-product^ t d)))
-      (let ((b (f64& (- i))))
+      (let ((b (f64^ (- i))))
         (let ((j (dot-product^ t t)))
-          (let ((det (f64& (+ (- (* b b) j) (* r r)))))
+          (let ((det (f64^ (+ (- (* b b) j) (* r r)))))
             (if (< det 0.)
                 #f
               (f64-set! det (sqrt det))
@@ -499,8 +499,8 @@
   (declare (inline))
   (declare (inlining-limit 1000))
   ;; decide if one of the quaternions is backwards
-  (let ((a (f64& 0.))
-        (b (f64& 0.)))
+  (let ((a (f64^ 0.))
+        (b (f64^ 0.)))
     (loop (for i from 0 below 4)
           (let ((pi (f64vector-ref p i))
                 (qi (f64vector-ref q i)))
@@ -511,13 +511,13 @@
         (loop (for i from 0 below 4)
               (f64vector-set! q i (- (f64vector-ref q i)))))
       (let ((cosom
-              (f64& (+ (* (quaternion-x p) (quaternion-x q))
+              (f64^ (+ (* (quaternion-x p) (quaternion-x q))
                        (* (quaternion-y p) (quaternion-y q))
                        (* (quaternion-z p) (quaternion-z q))
                        (* (quaternion-w p) (quaternion-w q))))))
         (if (> (+ 1. cosom) 1e-8)
-            (let ((sclp (make-f64&))
-                  (sclq (make-f64&)))
+            (let ((sclp (make-f64^))
+                  (sclq (make-f64^)))
               (if (> (- 1. cosom) 1e-8)
                   (let ((omega (acos cosom)))
                     (let ((sinom (sin omega)))

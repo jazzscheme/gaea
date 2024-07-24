@@ -103,13 +103,6 @@
 ;;;
 
 
-(syntax public make-f64&
-  (lambda (form-src usage-environment macro-environment)
-    (sourcify-deep-if
-      `(static (make-f64))
-      form-src)))
-
-
 (syntax public make-f64^
   (lambda (form-src usage-environment macro-environment)
     (sourcify-deep-if
@@ -117,11 +110,11 @@
       form-src)))
 
 
-(syntax public f64&
+(syntax public f64^
   (lambda (form-src usage-environment macro-environment)
     (let ((rest (cdr (source-code form-src))))
       (sourcify-deep-if
-        `(f64! (make-f64&) ,@rest)
+        `(f64! (make-f64^) ,@rest)
         form-src))))
 
 
@@ -137,11 +130,26 @@
       form-src)))
 
 
+(syntax public make-box^
+  (lambda (form-src usage-environment macro-environment)
+    (sourcify-deep-if
+      `(stack <box>)
+      form-src)))
+
+
 (syntax public box&
   (lambda (form-src usage-environment macro-environment)
     (let ((rest (cdr (source-code form-src))))
       (sourcify-deep-if
         `(box! (make-box&) ,@rest)
+        form-src))))
+
+
+(syntax public box^
+  (lambda (form-src usage-environment macro-environment)
+    (let ((rest (cdr (source-code form-src))))
+      (sourcify-deep-if
+        `(box! (make-box^) ,@rest)
         form-src))))
 
 
@@ -422,14 +430,6 @@
     (let ((rest (cdr (source-code form-src))))
       (sourcify-deep-if
         `(rotate-vertex-upon! (make-vertex^) ,@rest)
-        form-src))))
-
-
-(syntax public dot-product&
-  (lambda (form-src usage-environment macro-environment)
-    (let ((rest (cdr (source-code form-src))))
-      (sourcify-deep-if
-        `(dot-product! (make-f64&) ,@rest)
         form-src))))
 
 
@@ -1090,19 +1090,19 @@
         form-src))))
 
 
-(syntax public ray-point-distance&
+(syntax public ray-point-distance^
   (lambda (form-src usage-environment macro-environment)
     (let ((rest (cdr (source-code form-src))))
       (sourcify-deep-if
-        `(ray-point-distance! (make-f64&) ,@rest)
+        `(ray-point-distance! (make-f64^) ,@rest)
         form-src))))
 
 
-(syntax public ray-point-horizontal-distance&
+(syntax public ray-point-horizontal-distance^
   (lambda (form-src usage-environment macro-environment)
     (let ((rest (cdr (source-code form-src))))
       (sourcify-deep-if
-        `(ray-point-horizontal-distance! (make-f64&) ,@rest)
+        `(ray-point-horizontal-distance! (make-f64^) ,@rest)
         form-src))))
 
 

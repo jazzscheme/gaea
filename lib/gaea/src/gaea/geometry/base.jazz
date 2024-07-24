@@ -238,16 +238,16 @@
 
 
 (definition public inline (vertex-normalize v <vertex>) <vertex>
-  (vertex-scalar* v (f64& (/ (vertex-norm^ v)))))
+  (vertex-scalar* v (f64^ (/ (vertex-norm^ v)))))
 
 
 (definition public inline (vertex-normalize! res <vertex> v <vertex>) <vertex>
-  (vertex-scalar*! res v (f64& (/ (vertex-norm^ v)))))
+  (vertex-scalar*! res v (f64^ (/ (vertex-norm^ v)))))
 
 
 ;; hack around an unsafe warning in generate-mesh that I do not understand
 (definition public (vertex-normalize-onsite! res <vertex> v <vertex>) <vertex>
-  (vertex-scalar*! res v (f64& (/ (vertex-norm^ v)))))
+  (vertex-scalar*! res v (f64^ (/ (vertex-norm^ v)))))
 
 
 (definition public inline (vertex-normalize-safe v <vertex>) <vertex>
@@ -261,7 +261,7 @@
   (let ((norm (vertex-norm^ v)))
     (if (= norm 0.)
         (vertex-copy! res v)
-      (vertex-scalar*! res v (f64& (/ norm)))))
+      (vertex-scalar*! res v (f64^ (/ norm)))))
   res)
 
 
@@ -272,7 +272,7 @@
 
 
 (definition public inline (vertex-lerp! res <vertex> p <vertex> q <vertex> t <fv>) <vertex>
-  (vertex+! res (vertex-scalar*^ p (f64& (- 1. t))) (vertex-scalar*^ q t))
+  (vertex+! res (vertex-scalar*^ p (f64^ (- 1. t))) (vertex-scalar*^ q t))
   res)
 
 
