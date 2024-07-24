@@ -224,41 +224,41 @@
 ;;;
 
 
-(syntax public make-index&
+(syntax public make-index^
   (lambda (form-src usage-environment macro-environment)
     (sourcify-deep-if
-      `(static (make-index))
+      `(stack <index>)
       form-src)))
 
 
-(syntax public indexed&
+(syntax public indexed^
   (lambda (form-src usage-environment macro-environment)
     (let ((rest (cdr (source-code form-src))))
       (sourcify-deep-if
-        `(index! (make-index&) ,@rest)
+        `(index! (make-index^) ,@rest)
         form-src))))
 
 
-(syntax public make-planar-index&
+(syntax public make-planar-index^
   (lambda (form-src usage-environment macro-environment)
     (sourcify-deep-if
-      `(static (make-planar-index))
+      `(stack <planar-index>)
       form-src)))
 
 
-(syntax public planar-index&
+(syntax public planar-index^
   (lambda (form-src usage-environment macro-environment)
     (let ((rest (cdr (source-code form-src))))
       (sourcify-deep-if
-        `(planar-index! (make-planar-index&) ,@rest)
+        `(planar-index! (make-planar-index^) ,@rest)
         form-src))))
 
 
-(syntax public section->chunk-index&
+(syntax public section->chunk-index^
   (lambda (form-src usage-environment macro-environment)
     (let ((rest (cdr (source-code form-src))))
       (sourcify-deep-if
-        `(section->chunk-index! (make-planar-index&) ,@rest)
+        `(section->chunk-index! (make-planar-index^) ,@rest)
         form-src))))
 
 
