@@ -518,26 +518,11 @@
 ;;;
 
 
-(syntax public make-lookat&
-  (lambda (form-src usage-environment macro-environment)
-    (sourcify-deep-if
-      `(static (make-lookat))
-      form-src)))
-
-
 (syntax public make-lookat^
   (lambda (form-src usage-environment macro-environment)
     (sourcify-deep-if
       `(stack <LookAt> LookAt (make-vertex^) (make-vertex^) (make-vertex^))
       form-src)))
-
-
-(syntax public lookat&
-  (lambda (form-src usage-environment macro-environment)
-    (let ((rest (cdr (source-code form-src))))
-      (sourcify-deep-if
-        `(lookat! (make-lookat&) ,@rest)
-        form-src))))
 
 
 (syntax public lookat^
