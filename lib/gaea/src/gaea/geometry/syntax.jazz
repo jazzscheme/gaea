@@ -663,14 +663,6 @@
       form-src)))
 
 
-(syntax public quaternion&
-  (lambda (form-src usage-environment macro-environment)
-    (let ((rest (cdr (source-code form-src))))
-      (sourcify-deep-if
-        `(quaternion! (make-quaternion&) ,@rest)
-        form-src))))
-
-
 (syntax public quaternion^
   (lambda (form-src usage-environment macro-environment)
     (let ((rest (cdr (source-code form-src))))
