@@ -506,7 +506,7 @@
                 (qi (f64vector-ref q i)))
             (f64-set! a (+ a (let ((pi-qi (- pi qi))) (* pi-qi pi-qi))))
             (f64-set! b (+ b (let ((pi+qi (+ pi qi))) (* pi+qi pi+qi))))))
-    (let ((q (quaternion-copy& q)))
+    (let ((q (quaternion-copy^ q)))
       (when (> a b)
         (loop (for i from 0 below 4)
               (f64vector-set! q i (- (f64vector-ref q i)))))
