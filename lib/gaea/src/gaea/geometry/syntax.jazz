@@ -132,26 +132,6 @@
 
 
 ;;;
-;;;; Box
-;;;
-
-
-(syntax public make-box&
-  (lambda (form-src usage-environment macro-environment)
-    (sourcify-deep-if
-      `(static (box #f))
-      form-src)))
-
-
-(syntax public box&
-  (lambda (form-src usage-environment macro-environment)
-    (let ((rest (cdr (source-code form-src))))
-      (sourcify-deep-if
-        `(box! (make-box&) ,@rest)
-        form-src))))
-
-
-;;;
 ;;;; Values
 ;;;
 
@@ -161,6 +141,19 @@
     (let ((rest (cdr (source-code form-src))))
       (sourcify-deep-if
         `(stack <values> ,@rest)
+        form-src))))
+
+
+;;;
+;;;; Box
+;;;
+
+
+(syntax public box^
+  (lambda (form-src usage-environment macro-environment)
+    (let ((rest (cdr (source-code form-src))))
+      (sourcify-deep-if
+        `(stack <box> ,@rest)
         form-src))))
 
 
@@ -783,6 +776,24 @@
     (let ((rest (cdr (source-code form-src))))
       (sourcify-deep-if
         `(make-view-matrix! (make-matrix^) ,@rest)
+        form-src))))
+
+
+;;;
+;;;; Lighting
+;;;
+
+
+(syntax public make-lighting^
+  (lambda (form-src usage-environment macro-environment)
+    (let ((rest (cdr (source-code form-src))))
+      (sourcify-deep-if
+        `(let ((l (stack <f32vector> 4)))
+           (f32vector-set! l 0 0.)
+           (f32vector-set! l 1 0.)
+           (f32vector-set! l 2 0.)
+           (f32vector-set! l 3 0.)
+           l)
         form-src))))
 
 
