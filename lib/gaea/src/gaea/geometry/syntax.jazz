@@ -119,6 +119,19 @@
 
 
 ;;;
+;;;; Vector
+;;;
+
+
+(syntax public vector^
+  (lambda (form-src usage-environment macro-environment)
+    (let ((rest (cdr (source-code form-src))))
+      (sourcify-deep-if
+        `(stack <vector> ,@rest)
+        form-src))))
+
+
+;;;
 ;;;; Box
 ;;;
 
@@ -143,18 +156,11 @@
 ;;;
 
 
-(syntax public values&
+(syntax public values^
   (lambda (form-src usage-environment macro-environment)
     (let ((rest (cdr (source-code form-src))))
       (sourcify-deep-if
-        (let ((len (length rest))
-              (values (generate-symbol "values")))
-          `(let ((,values (static (values ,@(make-list len #f)))))
-             ,@(map (lambda (expr rank)
-                      `(values-set! ,values ,rank ,expr))
-                    rest
-                    (naturals 0 len))
-             ,values))
+        `(stack <values> ,@rest)
         form-src))))
 
 
@@ -163,18 +169,11 @@
 ;;;
 
 
-(syntax public wrap&
+(syntax public wrap^
   (lambda (form-src usage-environment macro-environment)
     (let ((rest (cdr (source-code form-src))))
       (sourcify-deep-if
-        (let ((len (length rest))
-              (env (generate-symbol "env")))
-          `(let ((,env (static (vector ,@(make-list len #f)))))
-             ,@(map (lambda (expr rank)
-                      `(vector-set! ,env ,rank ,expr))
-                    rest
-                    (naturals 0 len))
-             ,env))
+        `(vector^ ,@rest)
         form-src))))
 
 
@@ -252,26 +251,11 @@
 ;;;
 
 
-(syntax public make-vertex&
-  (lambda (form-src usage-environment macro-environment)
-    (sourcify-deep-if
-      `(static (make-vertex))
-      form-src)))
-
-
 (syntax public make-vertex^
   (lambda (form-src usage-environment macro-environment)
     (sourcify-deep-if
       `(stack <vertex>)
       form-src)))
-
-
-(syntax public vertex&
-  (lambda (form-src usage-environment macro-environment)
-    (let ((rest (cdr (source-code form-src))))
-      (sourcify-deep-if
-        `(vertex! (make-vertex&) ,@rest)
-        form-src))))
 
 
 (syntax public vertex^
@@ -896,11 +880,12 @@
 ;;;
 
 
-(syntax public transform-ray&
+;; todo callers are not correct with stack
+(syntax public transform-ray^
   (lambda (form-src usage-environment macro-environment)
     (let ((rest (cdr (source-code form-src))))
       (sourcify-deep-if
-        `(transform-ray! (values& (make-vertex&) (make-vertex&)) ,@rest)
+        `(transform-ray! (values (make-vertex) (make-vertex)) ,@rest)
         form-src))))
 
 
