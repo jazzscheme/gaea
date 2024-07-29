@@ -46,7 +46,7 @@
 (syntax public make-fx^
   (lambda (form-src usage-environment macro-environment)
     (sourcify-deep-if
-      `(stack <s32>)
+      `(stack (make-fx))
       form-src)))
 
 
@@ -66,7 +66,7 @@
 (syntax public make-fl^
   (lambda (form-src usage-environment macro-environment)
     (sourcify-deep-if
-      `(stack <fl>)
+      `(stack (make-fl))
       form-src)))
 
 
@@ -86,7 +86,7 @@
 (syntax public make-f32^
   (lambda (form-src usage-environment macro-environment)
     (sourcify-deep-if
-      `(stack <f32>)
+      `(stack (make-f32))
       form-src)))
 
 
@@ -106,7 +106,7 @@
 (syntax public make-f64^
   (lambda (form-src usage-environment macro-environment)
     (sourcify-deep-if
-      `(stack <f64>)
+      `(stack (make-f64))
       form-src)))
 
 
@@ -127,7 +127,7 @@
   (lambda (form-src usage-environment macro-environment)
     (let ((rest (cdr (source-code form-src))))
       (sourcify-deep-if
-        `(stack <vector> ,@rest)
+        `(stack (vector ,@rest))
         form-src))))
 
 
@@ -140,7 +140,7 @@
   (lambda (form-src usage-environment macro-environment)
     (let ((rest (cdr (source-code form-src))))
       (sourcify-deep-if
-        `(stack <values> ,@rest)
+        `(stack (values ,@rest))
         form-src))))
 
 
@@ -153,7 +153,7 @@
   (lambda (form-src usage-environment macro-environment)
     (let ((rest (cdr (source-code form-src))))
       (sourcify-deep-if
-        `(stack <box> ,@rest)
+        `(stack (box ,@rest))
         form-src))))
 
 
@@ -204,7 +204,7 @@
 (syntax public make-index^
   (lambda (form-src usage-environment macro-environment)
     (sourcify-deep-if
-      `(stack <index>)
+      `(stack (make-index))
       form-src)))
 
 
@@ -219,7 +219,7 @@
 (syntax public make-planar-index^
   (lambda (form-src usage-environment macro-environment)
     (sourcify-deep-if
-      `(stack <planar-index>)
+      `(stack (make-planar-index))
       form-src)))
 
 
@@ -247,7 +247,7 @@
 (syntax public make-vertex^
   (lambda (form-src usage-environment macro-environment)
     (sourcify-deep-if
-      `(stack <vertex>)
+      `(stack (make-vertex))
       form-src)))
 
 
@@ -475,7 +475,7 @@
 (syntax public make-lookat^
   (lambda (form-src usage-environment macro-environment)
     (sourcify-deep-if
-      `(stack <LookAt> LookAt (make-vertex^) (make-vertex^) (make-vertex^))
+      `(stack (allocate LookAt (make-vertex^) (make-vertex^) (make-vertex^)))
       form-src)))
 
 
@@ -567,7 +567,7 @@
 (syntax public make-quaternion^
   (lambda (form-src usage-environment macro-environment)
     (sourcify-deep-if
-      `(stack <quaternion>)
+      `(stack (make-quaternion))
       form-src)))
 
 
@@ -595,7 +595,7 @@
 (syntax public make-cuboid^
   (lambda (form-src usage-environment macro-environment)
     (sourcify-deep-if
-      `(stack <cuboid>)
+      `(stack (make-cuboid))
       form-src)))
 
 
@@ -623,7 +623,7 @@
 (syntax public make-matrix^
   (lambda (form-src usage-environment macro-environment)
     (sourcify-deep-if
-      `(stack <matrix>)
+      `(stack (make-matrix))
       form-src)))
 
 
@@ -788,12 +788,7 @@
   (lambda (form-src usage-environment macro-environment)
     (let ((rest (cdr (source-code form-src))))
       (sourcify-deep-if
-        `(let ((l (stack <f32vector> 4)))
-           (f32vector-set! l 0 0.)
-           (f32vector-set! l 1 0.)
-           (f32vector-set! l 2 0.)
-           (f32vector-set! l 3 0.)
-           l)
+        `(stack (f32vector 0. 0. 0. 0.))
         form-src))))
 
 
@@ -805,7 +800,7 @@
 (syntax public make-dye^
   (lambda (form-src usage-environment macro-environment)
     (sourcify-deep-if
-      `(stack <dye>)
+      `(stack (make-dye))
       form-src)))
 
 
@@ -825,7 +820,7 @@
 (syntax public make-uv^
   (lambda (form-src usage-environment macro-environment)
     (sourcify-deep-if
-      `(stack <uv>)
+      `(stack (make-uv))
       form-src)))
 
 
@@ -850,7 +845,7 @@
 (syntax public make-movement^
   (lambda (form-src usage-environment macro-environment)
     (sourcify-deep-if
-      `(stack <Movement> Movement (make-vertex^) (make-vertex^) (make-vertex^) (make-fl^))
+      `(stack (new Movement (vertex 0. 0. 0.) (vertex 0. 0. 1.)))
       form-src)))
 
 
